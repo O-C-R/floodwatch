@@ -34,11 +34,11 @@ func compareHashAndPassword(hash []byte, password string) ([]byte, error) {
 
 type User struct {
 	ID       uint64    `db:"id" json:"-"`
-	Username string    `db:"username json:"username"`
+	Username string    `db:"username" json:"username"`
 	Email    []byte    `db:"h_email" json:"-"`
 	Password []byte    `db:"h_password" json:"-"`
 	OptIn    bool      `db:"opt_in" json:"opt_in"`
-	LastSeen time.Time `db:"last_seen" json:"last_seen`
+	LastSeen time.Time `db:"last_seen" json:"last_seen"`
 }
 
 func (u *User) SetPassword(password string) error {

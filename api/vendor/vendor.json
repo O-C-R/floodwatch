@@ -3,6 +3,53 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "jySmn7EUsgXI0PQCWSOKI4PgyOk=",
+			"path": "github.com/O-C-R/sqlutil",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "2UmMbNHc8FBr98mJFN1k8ISOIHk=",
+			"path": "github.com/garyburd/redigo/internal",
+			"revision": "ffa8d46ada782d81cfda81a0fbd9f45ceae448e8",
+			"revisionTime": "2016-08-10T23:49:51Z"
+		},
+		{
+			"checksumSHA1": "qqi0xwKRUSRkYMFZcqWSS/4YAjA=",
+			"path": "github.com/garyburd/redigo/redis",
+			"revision": "ffa8d46ada782d81cfda81a0fbd9f45ceae448e8",
+			"revisionTime": "2016-08-10T23:49:51Z"
+		},
+		{
+			"checksumSHA1": "6/9VW/AyJyjRXLu+nbhqGYvOO2k=",
+			"path": "github.com/gorilla/handlers",
+			"revision": "a5775781a543af3c6b9f5baf10995e4d14168950",
+			"revisionTime": "2016-08-16T18:47:29Z"
+		},
+		{
+			"checksumSHA1": "p/qzxBRYGQTr4JKDAN8JxtSv5iU=",
+			"path": "github.com/jmoiron/sqlx",
+			"revision": "05b81a7d5d38058e42148dc01f17daf4acba4640",
+			"revisionTime": "2016-09-14T23:45:33Z"
+		},
+		{
+			"checksumSHA1": "NJHTyLwheqVk7+syzj9UN7p1dKs=",
+			"path": "github.com/jmoiron/sqlx/reflectx",
+			"revision": "05b81a7d5d38058e42148dc01f17daf4acba4640",
+			"revisionTime": "2016-09-14T23:45:33Z"
+		},
+		{
+			"checksumSHA1": "dNYxHiBLalTqluak2/Z8c3RsSEM=",
+			"path": "github.com/lib/pq",
+			"revision": "50761b0867bd1d9d069276790bcd4a3bccf2324a",
+			"revisionTime": "2016-08-31T22:25:20Z"
+		},
+		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "50761b0867bd1d9d069276790bcd4a3bccf2324a",
+			"revisionTime": "2016-08-31T22:25:20Z"
+		},
+		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
 			"path": "golang.org/x/crypto/bcrypt",
 			"revision": "6ab629be5e31660579425a738ba8870beb5b7404",

@@ -22,3 +22,15 @@ func TestPasslibPassword(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestPasslibEmail(t *testing.T) {
+	user := &User{Email: []byte(testPasslibPasswordHash)}
+
+	if err := user.CheckEmail(testPassword); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword(user.Email, []byte(testPassword)); err != nil {
+		t.Error(err)
+	}
+}
