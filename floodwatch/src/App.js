@@ -1,21 +1,99 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { withRouter, Link } from 'react-router'
+import auth from './auth.js';
 import './App.css';
 
-class App extends Component {
-  render() {
+var AppNavigation =  withRouter( React.createClass({
+  render: function() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+      <div className="row">
+        <div className="col-md-12">
+          <ul className="nav nav-tabs">
+            {this.props.navs.map((nav, key) => {
+              return (
+                <li className="nav-item" key={key}>
+                  <Link to={nav.to} className="nav-link" activeClassName="nav-link active">{nav.name}</Link>
+                </li>
+              )
+            })}
+          </ul>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      </div>
+    )
+  }
+}))
+
+var App = withRouter( React.createClass({
+  getInitialState: function() {
+    return {user: null};
+  },
+  componentDidMount: function() {
+    if(auth.loggedIn()){
+      this.loadUserFromServer()
+    } else {
+      this.setState({user: null});
+      this.props.router.push('/login')
+    }
+  }, 
+  loadUserFromServer: function() {
+    return auth.get('/api/v1/user/current', null)
+      .then((user) => {
+        this.setState({user: user});
+      })
+      .catch((error) => {
+        this.setState({user: null});
+        this.props.router.push('/login')
+      })
+  },
+  handleLogout: function(loginInfo) {
+    auth.logout()
+      .then(() => {
+        this.setState({user: null});
+        this.props.router.push('/login')
+      })
+  },
+  render: function() {
+    return (
+      <div className="container">
+        {(() => {
+          if(this.state.user) {
+            return (
+              <div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <small>
+                      User <strong>{this.state.user.username}</strong> logged in. <a href="#" onClick={this.handleLogout}>Log out</a>.
+                    </small>
+                     <hr />
+                  </div>
+                </div>
+                <AppNavigation navs={[{name:"User", to:"/user"},{name:"Upload", to:"/upload"}]} />
+              </div>
+            )
+          } else {
+            return (
+              <div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <small>
+                      Please <Link to='/register'>register</Link> or <Link to='/login'>login</Link> to continue.
+                    </small>
+                     <hr />
+                  </div>
+                </div>
+                <AppNavigation navs={[{name:"Register", to:"/register"}, {name:"Login", to:"/login"}]} />
+              </div>
+            )
+          }
+        })()}
+        {this.props.children && React.cloneElement(this.props.children, {
+          loadUserFromServer: this.loadUserFromServer,
+          user: this.state.user
+        })}
       </div>
     );
   }
-}
+}))
+
 
 export default App;
