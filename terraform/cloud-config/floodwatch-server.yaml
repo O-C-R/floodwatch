@@ -1,0 +1,19 @@
+#cloud-config
+
+hostname: "${hostname}"
+coreos:
+  update:
+    reboot-strategy: "best-effort"
+  etcd2:
+    proxy: "on"
+    initial-cluster: "etcd-a=http://10.0.0.10:2380,etcd-c=http://10.0.64.10:2380,etcd-d=http://10.0.192.10:2380"
+    listen-client-urls: "http://127.0.0.1:2379,http://127.0.0.1:4001"
+  fleet:
+    metadata: "az=${az},role=floodwatch-${role}"
+  units:
+    - name: "etcd2.service"
+      command: "start"
+    - name: "docker.service"
+      command: "start"
+    - name: "fleet.service"
+      command: "start"
