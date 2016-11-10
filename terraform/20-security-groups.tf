@@ -18,26 +18,6 @@ resource "aws_security_group" "ssh" {
   }
 }
 
-resource "aws_security_group" "etcd" {
-  name = "etcd"
-  description = "etcd"
-  vpc_id = "${aws_vpc.floodwatch.id}"
-
-  ingress {
-      from_port = 2379
-      to_port = 2380
-      protocol = "tcp"
-      self = true
-  }
-
-  egress {
-      from_port = 0
-      to_port = 0
-      protocol = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_security_group" "floodwatch-server-elb" {
   name = "floodwatch-server-elb"
   description = "floodwatch-server-elb"
@@ -69,6 +49,19 @@ resource "aws_security_group" "floodwatch-server" {
       protocol = "tcp"
       security_groups = ["${aws_security_group.floodwatch-server-elb.id}"]
   }
+
+  egress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "floodwatch-classification" {
+  name = "floodwatch-classification"
+  description = "floodwatch-classification"
+  vpc_id = "${aws_vpc.floodwatch.id}"
 
   egress {
       from_port = 0

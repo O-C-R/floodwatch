@@ -1,0 +1,32 @@
+#cloud-config
+write_files:
+- path: /etc/floodwatch-classification.env
+  owner: root:root
+  permissions: '0600'
+  content: |
+    AWS_DEFAULT_REGION=${region}
+    INPUT_QUEUE_URL=${input-queue-url}
+    OUTPUT_QUEUE_URL=${output-queue-url}
+- path: /lib/systemd/system/floodwatch-classification.service
+  owner: root:root
+  permissions: '0644'
+  content: |
+    [Unit]
+    Description=floodwatch-classification
+
+    [Service]
+    Restart=always
+    TimeoutStartSec=10min
+    ExecStartPre=/usr/bin/nvidia-docker pull ocrnyc/floodwatch-classification
+    ExecStart=/usr/bin/nvidia-docker run --name=floodwatch-classification --rm --env-file=/etc/floodwatch-classification.env ocrnyc/floodwatch-classification
+    ExecStop=-/usr/bin/nvidia-docker stop floodwatch-classification
+    RestartSec=5s
+
+    [Install]
+    WantedBy=multi-user.target
+runcmd:
+  - apt-get update
+  - apt-get upgrade -y
+  - systemctl daemon-reload
+  - systemctl enable floodwatch-classification.service
+  - systemctl start --no-block floodwatch-classification.service
