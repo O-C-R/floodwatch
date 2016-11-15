@@ -36,7 +36,7 @@ var App = withRouter( React.createClass({
     }
   }, 
   loadUserFromServer: function() {
-    return auth.get('/api/v1/user/current', null)
+    return auth.get('/api/person/current', null)
       .then((user) => {
         this.setState({user: user});
       })

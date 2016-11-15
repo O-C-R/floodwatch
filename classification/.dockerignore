@@ -1,4 +1,5 @@
 *.pyc
 .DS_Store
 .gitignore
+build.bash
 README.md

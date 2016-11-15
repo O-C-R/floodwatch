@@ -23,7 +23,7 @@ var Register = withRouter( React.createClass({
       return
     }
 
-    auth.post("/api/v1/register", {
+    auth.post("/api/register", {
       username: this.state.username,
       email: this.state.email,
       password: this.state.password

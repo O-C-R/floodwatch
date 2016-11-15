@@ -1,0 +1,13 @@
+[Unit]
+Description=floodwatch-classification
+
+[Service]
+Restart=always
+TimeoutStartSec=10min
+ExecStartPre=/usr/bin/docker pull ocrnyc/floodwatch-classification
+ExecStart=/usr/bin/nvidia-docker run --name=floodwatch-classification --rm ocrnyc/floodwatch-classification
+ExecStop=/usr/bin/nvidia-docker stop floodwatch-classification
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

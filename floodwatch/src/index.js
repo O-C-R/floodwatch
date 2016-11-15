@@ -6,7 +6,7 @@ import { Router, Route, hashHistory, IndexRedirect } from 'react-router'
 import App from './App'
 import Register from './Register'
 import Login from './Login'
-import User from './User'
+import Person from './Person'
 import auth from './auth.js'
 
 
@@ -24,8 +24,8 @@ function requireAuth(nextState, replace) {
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={App} onEnter={App.handleEnter}>
-    	<IndexRedirect to="/user" />
-      <Route path="user" component={User} onEnter={requireAuth}>
+    	<IndexRedirect to="/person" />
+      <Route path="person" component={Person} onEnter={requireAuth}>
       
       </Route>
      

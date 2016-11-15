@@ -23,7 +23,7 @@ function checkStatus(response) {
 
 module.exports = {
   login(username, password) {
-    return this.post('/api/v1/login', {
+    return this.post('/api/login', {
       username: username,
       password: password
     }).then((data) => {
@@ -33,7 +33,7 @@ module.exports = {
   },
 
   logout() {
-    return this.get('/api/v1/logout')
+    return this.get('/api/logout')
       .then(() => {
         delete localStorage.loggedIn
       })
