@@ -98,10 +98,10 @@
 			"revisionTime": "2016-09-28T21:02:28Z"
 		},
 		{
-			"checksumSHA1": "AFcUmKIbqHEKLdNMYB8ubtT+FHA=",
+			"checksumSHA1": "eOo6evLMAxQfo7Qkc5/h5euN1Sw=",
 			"path": "github.com/aws/aws-sdk-go/aws/session",
-			"revision": "1b2abe886743dc2bcc78472bfd30a15dc0a61fb8",
-			"revisionTime": "2016-10-13T20:17:12Z"
+			"revision": "d7dc55d865e7877f2c44a9ee28843e80a87aee1e",
+			"revisionTime": "2016-11-15T01:15:31Z"
 		},
 		{
 			"checksumSHA1": "9YaNtvwUeP1i0GLQ/gmGFS3VlDs=",
