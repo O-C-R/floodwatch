@@ -64,10 +64,10 @@ resource "aws_security_group" "floodwatch-classification" {
   vpc_id = "${aws_vpc.floodwatch.id}"
 
   egress {
-      from_port = 0
-      to_port = 0
-      protocol = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -77,9 +77,22 @@ resource "aws_security_group" "postgresql" {
   vpc_id = "${aws_vpc.floodwatch.id}"
 
   ingress {
-      from_port = 5432
-      to_port = 5432
-      protocol = "tcp"
-      security_groups = ["${aws_security_group.floodwatch-server.id}"]
+    from_port = 5432
+    to_port = 5432
+    protocol = "tcp"
+    security_groups = ["${aws_security_group.floodwatch-server.id}"]
+  }
+}
+
+resource "aws_security_group" "redis" {
+  name = "redis"
+  description = "redis"
+  vpc_id = "${aws_vpc.floodwatch.id}"
+
+  ingress {
+    from_port = 6379
+    to_port = 6379
+    protocol = "tcp"
+    security_groups = ["${aws_security_group.floodwatch-server.id}"]
   }
 }

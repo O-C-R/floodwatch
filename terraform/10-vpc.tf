@@ -60,3 +60,9 @@ resource "aws_db_subnet_group" "floodwatch" {
     Name = "floodwatch"
   }
 }
+
+resource "aws_elasticache_subnet_group" "floodwatch" {
+  name = "floodwatch"
+  description = "floodwatch"
+  subnet_ids = ["${aws_subnet.floodwatch-a.id}", "${aws_subnet.floodwatch-c.id}", "${aws_subnet.floodwatch-d.id}"]
+}
