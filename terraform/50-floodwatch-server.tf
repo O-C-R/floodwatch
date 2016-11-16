@@ -26,7 +26,7 @@ resource "aws_instance" "floodwatch-server-a" {
 resource "aws_route53_record" "floodwatch-server-a" {
   zone_id = "Z1QWEZUQ6RWVUS"
   name = "floodwatch-server-a.floodwatch.me"
-  type = "CNAME"
+  type = "A"
   ttl = "60"
   records = ["${aws_instance.floodwatch-server-a.public_ip}"]
 }

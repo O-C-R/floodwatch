@@ -13,7 +13,7 @@ deploy () {
 		&& sudo systemctl start floodwatch-server'
 }
 
-SERVERS=(54.235.46.190)
+SERVERS=(floodwatch-server-a.floodwatch.me)
 
 for server in ${SERVERS[@]}
 do
