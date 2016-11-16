@@ -1,0 +1,12 @@
+[Unit]
+Description=floodwatch-server
+
+[Service]
+ExecStartPre=docker pull ocrnyc/floodwatch-server
+ExecStart=/usr/bin/docker run --name=floodwatch-server --rm --env-file=/etc/floodwatch-server/floodwatch-server.env -v /usr/share/ca-certificates/:/etc/ssl/certs -p 80:80 ocrnyc/floodwatch-server
+ExecStop=-/usr/bin/docker stop floodwatch-server
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
