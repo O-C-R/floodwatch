@@ -51,6 +51,12 @@ resource "aws_iam_instance_profile" "floodwatch-server" {
   roles = ["${aws_iam_role.floodwatch-server.name}"]
 }
 
+resource "aws_iam_role_policy" "floodwatch-server" {
+  name = "floodwatch-server"
+  role = "${aws_iam_role.floodwatch-server.id}"
+  policy = "${data.aws_iam_policy_document.floodwatch-server.json}"
+}
+
 data "aws_iam_policy_document" "floodwatch-classification" {
   statement {
     actions = [
