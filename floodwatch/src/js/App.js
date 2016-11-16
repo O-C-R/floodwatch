@@ -7,12 +7,12 @@ import auth from './api/auth.js';
 import history from './common/history';
 
 import {Main} from './components/Main';
-import Register from './components/Register';
-import Login from './components/Login';
+import {Register} from './components/Register';
+import {Login} from './components/Login';
 import Person from './components/Person';
 
 
-function requireAuth(nextState: Router, replace): void {
+function requireAuth(nextState, replace): void {
   if (!auth.loggedIn()) {
     replace({
       pathname: '/register',

@@ -32,11 +32,9 @@ module.exports = {
     })
   },
 
-  logout() {
-    return this.get('/api/logout')
-      .then(() => {
-        delete localStorage.loggedIn
-      })
+  async logout() {
+    this.get('/api/logout')
+    delete localStorage.loggedIn;
   },
 
   get(path, data) {
