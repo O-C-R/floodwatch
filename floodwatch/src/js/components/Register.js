@@ -53,13 +53,13 @@ var Register = withRouter( React.createClass({
             <h3>Signup to use Floodwatch.</h3>
           </div>
 	        <div className="col-md-12">
-	          <div class="container">
+	          <div className="container">
               <form onSubmit={this.handleSubmit}>
   	            <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: "none"}}>
   	              <strong>Registration failed.</strong> {this.state.error}
   	            </div>
   	            <div className={this.state.usernameFeedback ? "form-group row has-danger" : "form-group row"}>
-  	              <label className="col-sm-2 col-form-label" for="username">Username</label>
+  	              <label className="col-sm-2 col-form-label" htmlFor="username">Username</label>
                   <div className="col-sm-10">
                     <input type="text" className="form-control" id="username" placeholder="Username" required={true}  maxLength="120" pattern="\S{3,}" value={this.state.username} onChange={this.setFormState} ref="username" />
                     {(() => {if(this.state.usernameFeedback){
@@ -69,13 +69,13 @@ var Register = withRouter( React.createClass({
                   </div>
   	            </div>
                 <div className="form-group row">
-                  <label className="col-sm-2 col-form-label" for="email">Email <small className="text-muted">(optional)</small></label>
+                  <label className="col-sm-2 col-form-label" htmlFor="email">Email <small className="text-muted">(optional)</small></label>
                   <div className="col-sm-10">
                     <input type="email" className="form-control" id="email" placeholder="Email" value={this.state.email} onChange={this.setFormState} />
                   </div>
                 </div>
   	            <div className={this.state.passwordFeedback ? "form-group row has-danger" : "form-group row"}>
-                  <label className="col-sm-2 col-form-label" for="password">Password</label>
+                  <label className="col-sm-2 col-form-label" htmlFor="password">Password</label>
                   <div className="col-sm-10">
                     <input type="password" className={this.state.passwordFeedback ? "form-control form-control-danger" : "form-control"} id="password" placeholder="Password" minLength="10" required={true} value={this.state.password} onChange={this.setFormState} />
                   </div>
