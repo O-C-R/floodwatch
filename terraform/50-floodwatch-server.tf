@@ -23,6 +23,13 @@ resource "aws_instance" "floodwatch-server-a" {
   }
 }
 
+resource "aws_route53_record" "floodwatch-server-a" {
+  zone_id = "Z1QWEZUQ6RWVUS"
+  name = "floodwatch-server-a.floodwatch.me"
+  type = "A"
+  ttl = "60"
+  records = ["${aws_instance.floodwatch-server-a.public_ip}"]
+}
 
 resource "aws_elb" "floodwatch" {
   name = "floodwatch"
@@ -30,9 +37,9 @@ resource "aws_elb" "floodwatch" {
   security_groups = ["${aws_security_group.floodwatch-server-elb.id}"]
   
   listener {
-    instance_port = 443
+    instance_port = 80
     instance_protocol = "http"
-    lb_port = 80
+    lb_port = 443
     lb_protocol = "https"
     ssl_certificate_id = "arn:aws:acm:us-east-1:963245043784:certificate/7f55d237-6b70-4f8e-8c84-2198b109c6ba"
   }
@@ -54,9 +61,9 @@ resource "aws_elb" "floodwatch" {
 }
 
 resource "aws_route53_record" "beta-floodwatch-me" {
-   zone_id = "Z1QWEZUQ6RWVUS"
-   name = "beta.floodwatch.me"
-   type = "CNAME"
-   ttl = "60"
-   records = ["${aws_elb.floodwatch.dns_name}"]
+  zone_id = "Z1QWEZUQ6RWVUS"
+  name = "beta.floodwatch.me"
+  type = "CNAME"
+  ttl = "60"
+  records = ["${aws_elb.floodwatch.dns_name}"]
 }

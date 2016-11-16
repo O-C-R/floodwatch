@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sqs"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/data"
+	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 func handleClassifierOutput(options *Options) {

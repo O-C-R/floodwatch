@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/backend"
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/webserver"
+	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/webserver"
 )
 
 var (

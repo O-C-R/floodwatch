@@ -9,7 +9,7 @@ import (
 	"github.com/O-C-R/auth/id"
 	"github.com/garyburd/redigo/redis"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/data"
+	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 // Arguments: current unix timestamp (nanoseconds), rate (tokens per nanosecond), bucket capacity.
