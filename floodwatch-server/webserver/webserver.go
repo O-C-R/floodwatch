@@ -81,7 +81,6 @@ func New(options *Options) (*Webserver, error) {
 		sessionAuthenticator := NewSessionAuthenticator(options.SessionStore)
 		authenticatedHandler = httpauth.TokenCookieAuthenticationHandler(authenticatedHandler, sessionAuthenticator, sessionKey{}, CookieName)
 	}
-	authenticatedHandler = RateLimitHandler(authenticatedHandler, options, 100/60e9, 100)
 
 	mux.Handle("/api/", authenticatedHandler)
 
@@ -108,6 +107,7 @@ func New(options *Options) (*Webserver, error) {
 		handlers.AllowCredentials(),
 		handlers.AllowedOrigins([]string{"https://floodwatch.me", "http://localhost:3000"}),
 	)(handler)
+	handler = RateLimitHandler(handler, options, 100/60e9, 100)
 
 	webserver := &Webserver{
 		options: options,
