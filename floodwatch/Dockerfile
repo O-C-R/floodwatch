@@ -1,6 +1,8 @@
 FROM node:6.9.1
 WORKDIR /usr/app
+RUN npm install -g yarn
 COPY ./package.json /usr/app/
-RUN npm install
+COPY ./yarn.lock /usr/app/
+RUN yarn install
 COPY . /usr/app/
-RUN npm run build
+RUN yarn run build

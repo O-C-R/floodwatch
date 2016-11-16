@@ -1,7 +1,7 @@
 import 'whatwg-fetch'
 
 function url(path) {
-  return 'https://beta.floodwatch.me' + path
+  return process.env.REACT_APP_API_HOST + path
 }
 
 function checkStatus(response) {
@@ -15,7 +15,7 @@ function checkStatus(response) {
   if (response.status === 401) {
     delete localStorage.loggedIn
   }
-  
+
   var error = new Error(response.statusText)
   error.response = response
   throw error
@@ -32,11 +32,9 @@ module.exports = {
     })
   },
 
-  logout() {
-    return this.get('/api/logout')
-      .then(() => {
-        delete localStorage.loggedIn
-      })
+  async logout() {
+    this.get('/api/logout')
+    delete localStorage.loggedIn;
   },
 
   get(path, data) {
@@ -72,4 +70,3 @@ module.exports = {
     return localStorage.loggedIn
   }
 }
-
