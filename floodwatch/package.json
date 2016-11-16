@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "devDependencies": {
+    "flow-bin": "^0.35.0",
     "node-sass": "^3.13.0",
     "react-scripts": "^0.7.0"
   },
@@ -17,8 +18,7 @@
     "build": "yarn sass-build && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-
     "sass-watch": "node-sass --watch --recursive src/sass -o src/css",
-    "sass-build":  "node-sass --recursive src/sass -o src/css"
+    "sass-build": "node-sass --recursive src/sass -o src/css"
   }
 }
