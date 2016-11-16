@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/handlers"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
 )
 
 const (

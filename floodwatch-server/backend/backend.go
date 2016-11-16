@@ -9,7 +9,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/data"
+	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 var (

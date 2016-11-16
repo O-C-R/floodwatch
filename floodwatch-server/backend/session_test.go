@@ -6,7 +6,7 @@ import (
 
 	"github.com/O-C-R/auth/id"
 
-	"github.com/O-C-R/floodwatch-server/floodwatch-server/data"
+	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 func TestSession(t *testing.T) {
