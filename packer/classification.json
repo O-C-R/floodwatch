@@ -1,0 +1,42 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "us-east-1",
+    "source_ami": "ami-40d28157",
+    "instance_type": "p2.xlarge",
+    "ssh_username": "ubuntu",
+    "ami_name": "floodwatch-classification {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt-get update",
+        "sudo apt-get dist-upgrade -y",
+        "sudo apt-get install -y apt-transport-https ca-certificates",
+        "sudo reboot"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D",
+        "echo 'deb https://apt.dockerproject.org/repo ubuntu-xenial main' | sudo tee /etc/apt/sources.list.d/docker.list",
+        "sudo apt-get update",
+        "sudo apt-get install -y nvidia-367 docker-engine",
+        "sudo reboot"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sleep 30",
+        "wget -P /tmp https://github.com/NVIDIA/nvidia-docker/releases/download/v1.0.0-rc.3/nvidia-docker_1.0.0.rc.3-1_amd64.deb",
+        "sudo dpkg -i /tmp/nvidia-docker_1.0.0.rc.3-1_amd64.deb",
+        "rm /tmp/nvidia-docker_1.0.0.rc.3-1_amd64.deb"
+      ]
+    }
+  ]
+}
