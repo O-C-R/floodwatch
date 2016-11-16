@@ -15,9 +15,8 @@ import (
 
 var (
 	config struct {
-		backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL string
-		addr                                                                                                                  string
-		insecure                                                                                                              bool
+		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL string
+		insecure                                                                                                                                bool
 	}
 )
 
@@ -29,6 +28,7 @@ func init() {
 	flag.StringVar(&config.s3Bucket, "bucket", "floodwatch-ads", "S3 bucket")
 	flag.StringVar(&config.sqsClassifierInputQueueURL, "input-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-input", "S3 bucket")
 	flag.StringVar(&config.sqsClassifierOutputQueueURL, "output-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-output", "S3 bucket")
+	flag.StringVar(&config.staticPath, "static", "", "static path")
 	flag.BoolVar(&config.insecure, "i", false, "insecure (no user authentication)")
 }
 
@@ -93,6 +93,7 @@ func main() {
 		SQSClassifierInputQueueURL:  config.sqsClassifierInputQueueURL,
 		SQSClassifierOutputQueueURL: config.sqsClassifierOutputQueueURL,
 		Insecure:                    config.insecure,
+		StaticPath:                  config.staticPath,
 	})
 	if err != nil {
 		log.Fatal(err)

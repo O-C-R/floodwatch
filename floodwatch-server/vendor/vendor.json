@@ -15,6 +15,12 @@
 			"revisionTime": "2016-09-19T16:03:58Z"
 		},
 		{
+			"checksumSHA1": "O08jvEvOP6/zzDCjiFKRBGXCzVs=",
+			"path": "github.com/O-C-R/singlepage",
+			"revision": "6ced795e8097c06efaf5e3e9ba2159648d8de726",
+			"revisionTime": "2016-09-19T16:11:51Z"
+		},
+		{
 			"checksumSHA1": "FaJydv4pK+K5jSZH8mBVfiXvCyw=",
 			"path": "github.com/O-C-R/sqlutil",
 			"revision": ""

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"regexp"
 
+	"github.com/O-C-R/auth/httpauth"
+	"github.com/O-C-R/singlepage"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/gorilla/handlers"
 
-	"github.com/O-C-R/auth/httpauth"
 	"github.com/O-C-R/floodwatch-server/floodwatch-server/backend"
 )
 
@@ -54,6 +56,7 @@ type Options struct {
 	SQSClassifierInputQueueURL  string
 	SQSClassifierOutputQueueURL string
 	Insecure                    bool
+	StaticPath                  string
 }
 
 type Webserver struct {
@@ -73,16 +76,34 @@ func New(options *Options) (*Webserver, error) {
 	authenticatedMux.Handle("/api/ads", Ads(options))
 
 	authenticatedHandler := http.Handler(authenticatedMux)
-	authenticatedHandler = RateLimitHandler(authenticatedHandler, options, 100/60e9, 100)
+	authenticatedHandler = handlers.CompressHandler(authenticatedHandler)
 	if !options.Insecure {
 		sessionAuthenticator := NewSessionAuthenticator(options.SessionStore)
 		authenticatedHandler = httpauth.TokenCookieAuthenticationHandler(authenticatedHandler, sessionAuthenticator, sessionKey{}, CookieName)
 	}
+	authenticatedHandler = RateLimitHandler(authenticatedHandler, options, 100/60e9, 100)
 
 	mux.Handle("/api/", authenticatedHandler)
 
+	if options.StaticPath != "" {
+		application, err := regexp.Compile(`^/.*$`)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		longtermCache, err := regexp.Compile(`\.(?:css|js)(?:\.gz)?$`)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		mux.Handle(`/`, singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{
+			Root:          http.Dir(options.StaticPath),
+			Application:   application,
+			LongtermCache: longtermCache,
+		}))
+	}
+
 	handler := http.Handler(mux)
-	handler = handlers.CompressHandler(handler)
 	handler = handlers.CORS(
 		handlers.AllowCredentials(),
 		handlers.AllowedOrigins([]string{"https://floodwatch.me", "http://localhost:3000"}),
