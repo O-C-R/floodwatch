@@ -1,7 +1,7 @@
 import 'whatwg-fetch'
 
 function url(path) {
-  return 'http://localhost:8080' + path
+  return 'https://beta.floodwatch.me' + path
 }
 
 function checkStatus(response) {

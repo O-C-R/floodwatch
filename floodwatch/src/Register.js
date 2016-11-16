@@ -72,7 +72,6 @@ var Register = withRouter( React.createClass({
                   <label className="col-sm-2 col-form-label" for="email">Email <small className="text-muted">(optional)</small></label>
                   <div className="col-sm-10">
                     <input type="email" className="form-control" id="email" placeholder="Email" value={this.state.email} onChange={this.setFormState} />
-                    <small id="emailHelp" className="form-text text-muted">When provided, only a <a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function#Password_verification">hash digest</a> of your email is stored to allow you to reset your password if you forget it.</small>
                   </div>
                 </div>
   	            <div className={this.state.passwordFeedback ? "form-group row has-danger" : "form-group row"}>
