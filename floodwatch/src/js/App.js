@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router'
-import auth from './auth.js';
-import './App.css';
+import auth from './api/auth.js';
+import '../css/App.css';
 
 var AppNavigation =  withRouter( React.createClass({
   render: function() {
@@ -34,7 +34,7 @@ var App = withRouter( React.createClass({
       this.setState({user: null});
       this.props.router.push('/login')
     }
-  }, 
+  },
   loadUserFromServer: function() {
     return auth.get('/api/person/current', null)
       .then((user) => {

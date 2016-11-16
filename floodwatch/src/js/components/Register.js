@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from 'react-router';
-import auth from './auth';
+import auth from '../api/auth';
 
 var Register = withRouter( React.createClass({
   getInitialState: function() {

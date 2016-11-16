@@ -1,4 +1,5 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+# CSS is output of SASS in this project
+*.css
 
 # dependencies
 node_modules

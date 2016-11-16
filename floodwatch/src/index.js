@@ -3,11 +3,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, hashHistory, IndexRedirect } from 'react-router'
-import App from './App'
-import Register from './Register'
-import Login from './Login'
-import Person from './Person'
-import auth from './auth.js'
+import App from './js/App'
+import Register from './js/components/Register'
+import Login from './js/components/Login'
+import Person from './js/components/Person'
+import auth from './js/api/auth.js'
 
 
 function requireAuth(nextState, replace) {
@@ -26,9 +26,9 @@ ReactDOM.render((
     <Route path="/" component={App} onEnter={App.handleEnter}>
     	<IndexRedirect to="/person" />
       <Route path="person" component={Person} onEnter={requireAuth}>
-      
+
       </Route>
-     
+
       <Route path="login" component={Login} />
       <Route path="register" component={Register} />
     </Route>
