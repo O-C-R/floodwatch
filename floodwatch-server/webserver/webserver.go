@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"regexp"
 
 	"github.com/O-C-R/auth/httpauth"
@@ -75,6 +77,14 @@ func New(options *Options) (*Webserver, error) {
 	authenticatedMux.Handle("/api/person/current", PersonCurrent(options))
 	authenticatedMux.Handle("/api/ads", Ads(options))
 
+	url, err := url.Parse("http://twofishes.floodwatch.me")
+	if err != nil {
+		return nil, err
+	}
+
+	twofishesHandler := http.StripPrefix("/api/twofishes", httputil.NewSingleHostReverseProxy(url))
+	authenticatedMux.Handle("/api/twofishes", twofishesHandler)
+
 	authenticatedHandler := http.Handler(authenticatedMux)
 	authenticatedHandler = handlers.CompressHandler(authenticatedHandler)
 	if !options.Insecure {
@@ -87,12 +97,12 @@ func New(options *Options) (*Webserver, error) {
 	if options.StaticPath != "" {
 		application, err := regexp.Compile(`^/.*$`)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		longtermCache, err := regexp.Compile(`\.(?:css|js)(?:\.gz)?$`)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		mux.Handle(`/`, singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{

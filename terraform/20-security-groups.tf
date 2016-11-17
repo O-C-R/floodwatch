@@ -71,6 +71,47 @@ resource "aws_security_group" "floodwatch-classification" {
   }
 }
 
+resource "aws_security_group" "floodwatch-twofishes-elb" {
+  name = "floodwatch-twofishes-elb"
+  description = "floodwatch-twofishes-elb"
+  vpc_id = "${aws_vpc.floodwatch.id}"
+
+  ingress {
+      from_port = 80
+      to_port = 80
+      protocol = "tcp"
+      cidr_blocks = ["24.103.10.214/32"]
+      security_groups = ["${aws_security_group.floodwatch-server.id}"]
+  }
+
+  egress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "floodwatch-twofishes" {
+  name = "floodwatch-twofishes"
+  description = "floodwatch-twofishes"
+  vpc_id = "${aws_vpc.floodwatch.id}"
+
+  ingress {
+      from_port = 8081
+      to_port = 8081
+      protocol = "tcp"
+      security_groups = ["${aws_security_group.floodwatch-twofishes-elb.id}"]
+  }
+
+  egress {
+      from_port = 0
+      to_port = 0
+      protocol = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_security_group" "postgresql" {
   name = "postgresql"
   description = "postgresql"

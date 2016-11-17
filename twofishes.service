@@ -1,0 +1,11 @@
+[Unit]
+Description=twofishes
+
+[Service]
+ExecStart=/usr/bin/docker run --name=twofishes --rm -p 8081:8081 fsqio/twofishes
+ExecStop=/usr/bin/docker stop twofishes
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
