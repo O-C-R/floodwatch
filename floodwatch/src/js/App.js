@@ -27,7 +27,7 @@ export class App extends Component {
     return (
       <Router history={history}>
         <Route path="/" component={Main}>
-        	<IndexRedirect to="/person" />
+          <IndexRedirect to="/person" />
 
           <Route path="person" component={Person} onEnter={requireAuth} />
           <Route path="faq" component={Faq} />
