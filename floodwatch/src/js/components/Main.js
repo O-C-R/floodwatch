@@ -2,6 +2,7 @@
 
 import React, {Component} from 'react';
 import {Link} from 'react-router';
+import {Grid} from 'react-bootstrap';
 
 import '../../css/App.css';
 
@@ -92,7 +93,7 @@ export class Main extends Component {
 
   render() {
     return (
-      <div className="container">
+      <Grid>
         {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
         {this.state.user && this.loggedInHeader(this.state.user)}
         {!this.state.user && this.loggedOutHeader()}
@@ -102,7 +103,7 @@ export class Main extends Component {
           loginChanged: this.loadUserFromServer.bind(this),
           user: this.state.user
         })}
-      </div>
+      </Grid>
     );
   }
 }

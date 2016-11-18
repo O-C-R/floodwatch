@@ -10,6 +10,7 @@ import {Main} from './components/Main';
 import {Register} from './components/Register';
 import {Login} from './components/Login';
 import Person from './components/Person';
+import {Faq} from './components/Faq';
 
 
 function requireAuth(nextState, replace): void {
@@ -29,6 +30,7 @@ export class App extends Component {
         	<IndexRedirect to="/person" />
 
           <Route path="person" component={Person} onEnter={requireAuth} />
+          <Route path="faq" component={Faq} />
           <Route path="login" component={Login} />
           <Route path="register" component={Register} />
         </Route>
