@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router';
 
-var Person = withRouter( React.createClass({
+var Person = withRouter(React.createClass({
   render: function() {
     return (
       <div className="row">
@@ -22,8 +22,8 @@ var Person = withRouter( React.createClass({
           })}
         </div>
       </div>
-    )
+    );
   }
-}))
+}));
 
 export default Person;
