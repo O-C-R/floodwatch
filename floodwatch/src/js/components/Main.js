@@ -2,6 +2,7 @@
 
 import React, {Component} from 'react';
 import {Link} from 'react-router';
+import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
 
 import '../../css/App.css';
 
@@ -11,19 +12,20 @@ import auth from '../api/auth';
 export class AppNavigation extends Component {
   render() {
     return (
-      <div className="row">
-        <div className="col-md-12">
-          <ul className="nav nav-tabs">
-            {this.props.navs.map((nav, key) => {
-              return (
-                <li className="nav-item" key={key}>
-                  <Link to={nav.to} className="nav-link" activeClassName="nav-link active">{nav.name}</Link>
-                </li>
+      <Navbar>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <a href="#">Floodwatch</a>
+          </Navbar.Brand>
+        </Navbar.Header>
+        <Nav pullRight>
+          {this.props.navs.map((nav, key) => {
+            return (
+                  <NavItem key={key} activeHref={this.props.location}><Link to={nav.to}>{nav.name}</Link></NavItem>
               )
-            })}
-          </ul>
-        </div>
-      </div>
+          })}
+        </Nav>
+      </Navbar>
     );
   }
 }
@@ -70,39 +72,44 @@ export class Main extends Component {
 
   loggedInHeader(user: Object) {
     return (
-      <div>
-        <div className="row">
-          <div className="col-md-12">
-            <small>
-              User <strong>{user.username}</strong> logged in. <a href="#" onClick={this.handleLogout.bind(this)}>Log out</a>.
-            </small>
-             <hr />
-          </div>
-        </div>
-        <AppNavigation navs={[{name:"User", to:"/user"},{name:"Upload", to:"/upload"}]} />
-      </div>
+      <Row>
+        <Col>
+        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, {name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
+        </Col>
+      </Row>
     );
   }
 
   loggedOutHeader() {
     return (
-      <AppNavigation navs={[{name:"Register", to:"/register"}, {name:"Login", to:"/login"}]} />
+      <Row>
+      <Col>
+      <AppNavigation navs={[{name:'Register', to:'/register'}, {name:'Login', to:'/login'}]} />
+      </Col>
+      </Row>
     );
   }
 
   render() {
     return (
-      <div className="container">
-        {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
+      <Grid style={{position:'relative'}}>
+        <Row>
+
+                {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
         {this.state.user && this.loggedInHeader(this.state.user)}
         {!this.state.user && this.loggedOutHeader()}
+        </Row>
+        <Row>
+        <Col xs={8} xsOffset={2}>
 
         {this.props.children && React.cloneElement(this.props.children, {
           showMessage: this.showMessage.bind(this),
           loginChanged: this.loadUserFromServer.bind(this),
           user: this.state.user
         })}
-      </div>
+        </Col>
+        </Row>
+      </Grid>
     );
   }
 }
