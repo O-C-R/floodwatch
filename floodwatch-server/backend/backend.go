@@ -259,6 +259,12 @@ func (b *Backend) UpdateAdFromClassifier(adID, categoryID id.ID, classificationO
 	return err
 }
 
+func (b *Backend) UnclassifiedAds() ([]data.Ad, error) {
+	ads := []data.Ad{}
+	b.db.Select(&ads, "SELECT * FROM ad.ad WHERE ad.ad.category_id IS NULL")
+	return ads, nil
+}
+
 func init() {
 	sqlutil.Register(data.Person{}, "person.person")
 	sqlutil.Register(data.Ad{}, "ad.ad")
