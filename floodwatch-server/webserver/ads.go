@@ -33,7 +33,6 @@ func handleClassifierOutput(options *Options) {
 		}
 
 		for _, message := range response.Messages {
-
 			if _, ok := message.MessageAttributes["id"]; !ok {
 				log.Println("sqs message missing id")
 				continue
@@ -75,16 +74,14 @@ func handleClassifierOutput(options *Options) {
 				continue
 			}
 
-			go func() {
-				deleteMessageInput := &sqs.DeleteMessageInput{
-					QueueUrl:      aws.String(options.SQSClassifierOutputQueueURL),
-					ReceiptHandle: message.ReceiptHandle,
-				}
+			deleteMessageInput := &sqs.DeleteMessageInput{
+				QueueUrl:      aws.String(options.SQSClassifierOutputQueueURL),
+				ReceiptHandle: message.ReceiptHandle,
+			}
 
-				if _, err := sqsClient.DeleteMessage(deleteMessageInput); err != nil {
-					log.Println(err)
-				}
-			}()
+			if _, err := sqsClient.DeleteMessage(deleteMessageInput); err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }
