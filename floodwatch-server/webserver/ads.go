@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/O-C-R/auth/id"
 	"github.com/aws/aws-sdk-go/aws"
@@ -177,6 +178,7 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 		CaptureType: adRequest.Capture.CaptureType,
 		MediaType:   adRequest.Ad.MediaType,
 		HTML:        adRequest.Ad.HTML,
+		Timestamp:   time.Now(),
 	}
 
 	if _, err := options.Backend.UpsertImpression(impression); err != nil {
