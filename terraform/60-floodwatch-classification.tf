@@ -14,6 +14,7 @@ resource "aws_spot_fleet_request" "floodwatch-classification" {
   target_capacity = 1
   terminate_instances_with_expiration = true
   excess_capacity_termination_policy= "default"
+  valid_until = "2017-12-31T23:59:59Z"
   launch_specification {
     instance_type = "p2.xlarge"
     ami = "ami-2281a335"
