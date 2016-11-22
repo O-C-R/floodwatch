@@ -72,7 +72,19 @@ func handleClassifierOutput(options *Options) {
 
 			if err := options.Backend.UpdateAdFromClassifier(adID, currentAdCategoryID, classificationOutput); err != nil {
 				log.Println(err)
+				continue
 			}
+
+			go func() {
+				deleteMessageInput := &sqs.DeleteMessageInput{
+					QueueUrl:      aws.String(options.SQSClassifierOutputQueueURL),
+					ReceiptHandle: message.ReceiptHandle,
+				}
+
+				if _, err := sqsClient.DeleteMessage(deleteMessageInput); err != nil {
+					log.Println(err)
+				}
+			}()
 		}
 	}
 }
