@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&config.backendURL, "backend-url", "postgres://localhost/floodwatch_v2?sslmode=disable", "postgres backend URL")
+	flag.StringVar(&config.backendURL, "backend-url", "postgres://localhost/floodwatch?sslmode=disable", "postgres backend URL")
 	flag.StringVar(&config.sessionStoreAddr, "session-store-address", "localhost:6379", "redis session store address")
 	flag.StringVar(&config.sessionStorePassword, "session-store-password", "", "redis session store password")
 	flag.StringVar(&config.addr, "a", "127.0.0.1:8080", "address to listen on")

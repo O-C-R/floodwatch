@@ -52,15 +52,8 @@ func handleClassifierOutput(options *Options) {
 				continue
 			}
 
-			adCategoryID, err := id.New()
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
 			adCategoryName, _ := classificationResponse.MostProbableCategory()
 			adCategory := &data.AdCategory{
-				ID:   adCategoryID,
 				Name: adCategoryName,
 			}
 
