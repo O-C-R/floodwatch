@@ -1,41 +1,38 @@
 .centered {
-	text-align:center;
+  text-align:center;
 }
 
 .italics {
-	font-style: italic;
-}
-
-#faq {
+  font-style: italic;
 }
 
 #faqpp .header {
 }
 
 #faqpp h4 {
-	margin-top:50px;
+  margin-top:50px;
 }
 
 #faqpp h4 > *, #faqpp h1 > * {
-    color:black!important;
+  color:black!important;
 }
 
 #faqpp .section {
-	margin-top:25px;
+  margin-top:25px;
 }
 
 #faqpp a:hover {
-	text-decoration:none;
-	color:black;
+  text-decoration:none;
+  color:black;
 }
 
 #faqpp .underlined {
-	text-decoration:underline;
-    color:black;
+  text-decoration:underline;
+  color:black;
 }
 
 #faqpp .underlined:hover {
-	text-decoration:underline;
-	color:gray;
+  text-decoration:underline;
+  color:gray;
 }
 
