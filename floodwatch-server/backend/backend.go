@@ -242,19 +242,19 @@ func (b *Backend) AdCategory(id id.ID) (*data.AdCategory, error) {
 	return adCategory, nil
 }
 
-func (b *Backend) UpsertAdCategory(adCategory *data.AdCategory) (id.ID, error) {
+func (b *Backend) UpsertAdCategory(adCategory *data.AdCategory) (interface{}, error) {
 	return b.upsertAdCategory(adCategory)
 }
 
-func (b *Backend) UpsertImpression(impression *data.Impression) (id.ID, error) {
+func (b *Backend) UpsertImpression(impression *data.Impression) (interface{}, error) {
 	return b.upsertImpression(impression)
 }
 
-func (b *Backend) UpsertSite(site *data.Site) (id.ID, error) {
+func (b *Backend) UpsertSite(site *data.Site) (interface{}, error) {
 	return b.upsertSite(site)
 }
 
-func (b *Backend) UpdateAdFromClassifier(adID, categoryID id.ID, classificationOutput []byte) error {
+func (b *Backend) UpdateAdFromClassifier(adID, categoryID interface{}, classificationOutput []byte) error {
 	_, err := b.updateAdFromClassifier.Exec(adID, categoryID, classificationOutput)
 	return err
 }

@@ -21,9 +21,10 @@
 			"revisionTime": "2016-09-19T16:11:51Z"
 		},
 		{
-			"checksumSHA1": "FaJydv4pK+K5jSZH8mBVfiXvCyw=",
+			"checksumSHA1": "CByQ1qP1pClVPk8vbMat1DT+o0A=",
 			"path": "github.com/O-C-R/sqlutil",
-			"revision": ""
+			"revision": "fa91ad7fb1e3fb34b4ef2fb17cc6b61b81331f85",
+			"revisionTime": "2016-11-28T18:21:02Z"
 		},
 		{
 			"checksumSHA1": "++P7Oigz8GdxeSDcnpE3aCPKfb8=",
