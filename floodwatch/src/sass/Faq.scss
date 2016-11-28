@@ -16,6 +16,10 @@
 	margin-top:50px;
 }
 
+#faqpp h4 > *, #faqpp h1 > * {
+    color:black!important;
+}
+
 #faqpp .section {
 	margin-top:25px;
 }
@@ -27,6 +31,7 @@
 
 #faqpp .underlined {
 	text-decoration:underline;
+    color:black;
 }
 
 #faqpp .underlined:hover {
