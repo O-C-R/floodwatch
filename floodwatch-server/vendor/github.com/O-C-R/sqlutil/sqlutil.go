@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
-
-	"github.com/O-C-R/auth/id"
 )
 
 const (
@@ -20,7 +18,7 @@ var (
 	TypeError = errors.New("sqlutil: type error")
 )
 
-type ValueFunc func(interface{}) (id.ID, error)
+type ValueFunc func(interface{}) (interface{}, error)
 
 func elem(value interface{}) reflect.Value {
 	valueElem := reflect.ValueOf(value)
@@ -192,16 +190,16 @@ func Select(value interface{}, omit map[string]bool, remainder string) (string, 
 	return s.selectStatement(omit, remainder), nil
 }
 
-func execFunc(statement *sql.Stmt, fieldIndicies []string) func(value interface{}) (id.ID, error) {
-	return func(value interface{}) (id.ID, error) {
+func execFunc(statement *sql.Stmt, fieldIndicies []string) func(value interface{}) (interface{}, error) {
+	return func(value interface{}) (interface{}, error) {
 		valueFieldValues, err := fieldValues(fieldIndicies, value)
 		if err != nil {
-			return id.ID{}, err
+			return nil, err
 		}
 
-		rowID := id.ID{}
+		var rowID interface{}
 		if err := statement.QueryRow(valueFieldValues...).Scan(&rowID); err != nil {
-			return id.ID{}, err
+			return nil, err
 		}
 
 		return rowID, nil
