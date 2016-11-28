@@ -227,7 +227,7 @@ func (b *Backend) UpdateAd(ad *data.Ad) error {
 	return err
 }
 
-func (b *Backend) AdCategory(id id.ID) (*data.AdCategory, error) {
+func (b *Backend) AdCategory(id int) (*data.AdCategory, error) {
 	adCategory := &data.AdCategory{}
 
 	err := b.adCategory.Get(adCategory, id)

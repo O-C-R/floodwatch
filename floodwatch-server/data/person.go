@@ -33,14 +33,15 @@ func compareHashAndPassword(hashedPassword []byte, password string) ([]byte, err
 }
 
 type Person struct {
-	ID       id.ID  `db:"id" json:"-"`
-	Username string `db:"username" json:"username"`
-	Email    string `db:"email" json:"-"`
-	Password []byte `db:"password" json:"-"`
-	Admin    bool   `db:"admin" json:"admin"`
-	// BirthYear int    `db:"birth_year" json:"birth_year"`
-	// PlaceId   int       `db:"place_id" json:"place_id"`
-	LastSeen time.Time `db:"last_seen" json:"last_seen"`
+	ID          id.ID     `db:"id" json:"-"`
+	Username    string    `db:"username" json:"username"`
+	Email       string    `db:"email" json:"-"`
+	Password    []byte    `db:"password" json:"-"`
+	Admin       bool      `db:"admin" json:"admin"`
+	BirthYear   *int      `db:"birth_year" json:"birth_year"`
+	GeoNameID   *int      `db:"geonameid" json:"geonameid"`
+	CountryCode *string   `db:"country_code" json:"country_code"`
+	LastSeen    time.Time `db:"last_seen" json:"last_seen"`
 }
 
 func (p *Person) SetPassword(password string) error {
