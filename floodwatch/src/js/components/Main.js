@@ -1,5 +1,4 @@
 // @flow
-
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
@@ -9,22 +8,51 @@ import '../../css/App.css';
 import history from '../common/history';
 import auth from '../api/auth';
 
+type AppNavigationState = {
+  selectedKey: ?string;
+}
+
 export class AppNavigation extends Component {
+  state: AppNavigationState;
+
+  constructor(props) {
+    super(props);
+
+    let curPath = window.location.pathname;
+    let selectedKey = null; 
+    this.props.navs.map((nav, key) => {
+      if (nav.to === curPath) {
+        selectedKey = key;
+      }
+    })
+
+    this.state = { selectedKey }
+  }
+
+  handleSelect(selectedKey) {
+    this.setState({
+      selectedKey: selectedKey
+    })
+  }
+
   render() {
     return (
-      <Navbar>
+      <Navbar collapseOnSelect>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="#">Floodwatch</a>
+            <Navbar.Link href="#"><Navbar.Text>Floodwatch</Navbar.Text></Navbar.Link>
           </Navbar.Brand>
+          <Navbar.Toggle/>
         </Navbar.Header>
-        <Nav pullRight>
-          {this.props.navs.map((nav, key) => {
-            return (
-                  <NavItem key={key} activeHref={this.props.location}><Link to={nav.to}>{nav.name}</Link></NavItem>
-              )
-          })}
-        </Nav>
+        <Navbar.Collapse>
+          <Nav pullRight onSelect={this.handleSelect.bind(this)} activeKey={this.state.selectedKey}>
+            {this.props.navs.map((nav, key) => {
+              return (
+                    <NavItem eventKey={key} key={key}><Link to={nav.to}><Navbar.Text>{nav.name}</Navbar.Text></Link></NavItem>
+                )
+            })}
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
     );
   }
@@ -40,7 +68,6 @@ export class Main extends Component {
 
   constructor() {
     super();
-
     this.state = {
       user: null,
       message: null
@@ -92,7 +119,7 @@ export class Main extends Component {
 
   render() {
     return (
-      <Grid style={{position:'relative'}}>
+      <Grid fluid style={{position:'relative'}}>
         <Row>
 
                 {this.state.message && <div className="alert alert-info">{this.state.message}</div>}

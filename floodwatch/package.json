@@ -20,7 +20,7 @@
     "whatwg-fetch": "^1.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "yarn sass-build && react-scripts start",
     "build": "yarn sass-build && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
