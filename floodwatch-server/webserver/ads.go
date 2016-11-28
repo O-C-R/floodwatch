@@ -151,6 +151,12 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 		return
 	}
 
+	currentSiteIDVal, ok := currentSiteID.(id.ID)
+	if !ok {
+		adResponse.Error = "Bad ID"
+		return
+	}
+
 	impressionID, err := id.New()
 	if err != nil {
 		adResponse.Error = err.Error()
@@ -159,7 +165,7 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 
 	impression := &data.Impression{
 		ID:       impressionID,
-		SiteID:   currentSiteID,
+		SiteID:   currentSiteIDVal,
 		PersonID: personID,
 		LocalID:  adRequest.Ad.LocalID,
 		AdID:     adID,
