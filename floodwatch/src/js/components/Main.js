@@ -8,21 +8,25 @@ import '../../css/App.css';
 import history from '../common/history';
 import auth from '../api/auth';
 
+type AppNavigationState = {
+  selectedKey: ?string;
+}
+
 export class AppNavigation extends Component {
+  state: AppNavigationState;
+
   constructor(props) {
     super(props);
 
     let curPath = window.location.pathname;
     let selectedKey = null; 
     this.props.navs.map((nav, key) => {
-      if (nav.to == curPath) {
+      if (nav.to === curPath) {
         selectedKey = key;
       }
     })
 
-    this.state = {
-      selectedKey:selectedKey
-    }
+    this.state = { selectedKey }
   }
 
   handleSelect(selectedKey) {
