@@ -38,6 +38,7 @@ export class Register extends Component {
   constructor(props: Props) {
     super(props);
     this.state = initialState();
+
   }
 
   setFormState(e: Event) {

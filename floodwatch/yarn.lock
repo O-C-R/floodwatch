@@ -1571,6 +1571,10 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
+d3@3.5.17:
+  version "3.5.17"
+  resolved "https://registry.yarnpkg.com/d3/-/d3-3.5.17.tgz#bc46748004378b21a360c9fc7cf5231790762fb8"
+
 d@^0.1.1, d@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/d/-/d-0.1.1.tgz#da184c535d18d8ee7ba2aa229b914009fae11309"
@@ -3217,6 +3221,10 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
+jquery@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.1.1.tgz#347c1c21c7e004115e0a4da32cece041fad3c8a3"
+
 js-base64@^2.1.9:
   version "2.1.9"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
@@ -3501,7 +3509,7 @@ lodash.words@^3.0.0:
   dependencies:
     lodash._root "^3.0.0"
 
-"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.16.4, lodash@^4.2.0, lodash@^4.3.0:
+"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.15.0, lodash@^4.16.2, lodash@^4.16.4, lodash@^4.17.2, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 
