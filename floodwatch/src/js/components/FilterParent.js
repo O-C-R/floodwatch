@@ -28,7 +28,7 @@ export class FilterParent extends Component {
     })
 
     let dataStackLayout = d3.layout.stack()
-    var stack = dataStackLayout(intermediate)
+    let stack = dataStackLayout(intermediate)
     return stack;
   }
 

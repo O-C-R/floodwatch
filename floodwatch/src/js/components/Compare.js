@@ -60,7 +60,7 @@ export class CompareContainer extends Component {
   }
 
   createSentence(options) {
-    var sentence = 'Floodwatch users';
+    let sentence = 'Floodwatch users';
     if (options.length == 0) {
       sentence = 'All ' + sentence;
       return sentence

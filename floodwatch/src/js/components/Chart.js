@@ -33,11 +33,11 @@ export class Chart extends React.Component {
   }
 
   componentDidMount() {
-    var ctx = this;
-    var svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
-    var defs = svg.append('defs')
+    let ctx = this;
+    let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
+    let defs = svg.append('defs')
 
-    var keys = Object.keys(colors)
+    let keys = Object.keys(colors)
     keys.map((key) => {
       console.log(key)
 
@@ -95,7 +95,7 @@ export class Chart extends React.Component {
       ])
 
 
-    var layer = svg.selectAll('.stack')
+    let layer = svg.selectAll('.stack')
       .data(data)
             
 
@@ -172,7 +172,7 @@ export class Chart extends React.Component {
         return 0
       })
 
-    var text = layer.selectAll('.text-label')
+    let text = layer.selectAll('.text-label')
       .data(function(d) {
         return d
       })
@@ -210,7 +210,7 @@ export class Chart extends React.Component {
       })
             
 
-    var percentage = layer.selectAll('.text-number')
+    let percentage = layer.selectAll('.text-number')
       .data(function(d) {
         return d
       })
