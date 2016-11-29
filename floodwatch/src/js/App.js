@@ -17,7 +17,7 @@ import {Compare} from './components/Compare';
 function requireAuth(nextState, replace): void {
   if (!auth.loggedIn()) {
     replace({
-      pathname: '/compare',
+      pathname: '/register',
       state: { nextPathname: nextState.location.pathname }
     })
   }
