@@ -1,8 +1,8 @@
 package data
 
 type DemographicFilter struct {
-	Logic  string `json:"logic"`
-	Values []int  `json:"values"`
+	Operator string `json:"operator"`
+	Values   []int  `json:"values"`
 }
 
 type RangeFilter struct {
@@ -11,7 +11,7 @@ type RangeFilter struct {
 }
 
 type LocationFilter struct {
-	CountryCodes []string `json:"country_codes"`
+	CountryCodes []string `json:"countryCodes"`
 }
 
 type PersonFilter struct {
@@ -22,7 +22,7 @@ type PersonFilter struct {
 
 type FilterResponseItem struct {
 	Categories map[int]float32 `json:"categories"`
-	TotalCount int             `json:"total_count"`
+	TotalCount int             `json:"totalCount"`
 }
 
 func NewFilterResponseItem() *FilterResponseItem {
@@ -39,5 +39,5 @@ type FilterRequest struct {
 type FilterResponse struct {
 	FilterA         *FilterResponseItem `json:"filterA"`
 	FilterB         *FilterResponseItem `json:"filterB"`
-	CalculationTime *int                `json:"calc_time,omitempty"`
+	CalculationTime *int                `json:"calcTime,omitempty"`
 }

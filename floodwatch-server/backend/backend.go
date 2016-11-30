@@ -313,13 +313,13 @@ func (b *Backend) FilteredAds(f data.PersonFilter) (*data.FilterResponseItem, er
 
 	for idx, df := range f.Demographics {
 		key := fmt.Sprintf("demographic_%d", idx)
-		if df.Logic == "and" {
+		if df.Operator == "and" {
 			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids @> :%s", key))
 			itemData[key] = pq.Array(df.Values)
-		} else if df.Logic == "or" {
+		} else if df.Operator == "or" {
 			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids && :%s", key))
 			itemData[key] = pq.Array(df.Values)
-		} else if df.Logic == "nor" {
+		} else if df.Operator == "nor" {
 			whereClauses = append(whereClauses, fmt.Sprintf("NOT person.person_demographic_aggregate.demographic_ids && :%s", key))
 			itemData[key] = pq.Array(df.Values)
 		} else {
