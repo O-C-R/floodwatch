@@ -7,16 +7,16 @@ import _ from 'lodash'
 import {Chart} from './Chart'
 
 type PropsType = {
-  barData: [],
+  data: [],
   currentTopic: string,
   side: string,
-  updateMouseOver: (topic: Topic) => void
+  updateMouseOver: (topic: string) => void
 };
 
 export class GraphParent extends Component {
   props: PropsType;
 
-  constructor(props: Props): void {
+  constructor(props: PropsType): void {
     super(props);
   }
 

@@ -15,7 +15,7 @@ type AppNavigationState = {
 export class AppNavigation extends Component {
   state: AppNavigationState;
 
-  constructor(props) {
+  constructor(props: Object) {
     super(props);
 
     let curPath = window.location.pathname;
@@ -29,7 +29,7 @@ export class AppNavigation extends Component {
     this.state = { selectedKey }
   }
 
-  handleSelect(selectedKey) {
+  handleSelect(selectedKey: string) {
     this.setState({
       selectedKey: selectedKey
     })

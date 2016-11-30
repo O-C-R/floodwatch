@@ -5,16 +5,18 @@ import { Row, Col } from 'react-bootstrap';
 import * as d3 from 'd3';
 import _ from 'lodash';
 import colors from './colors'
+import type {StackedData} from './FilterParent'
 
 type PropsType = {
-  barData: [Object],
+  barData: Array<Array<StackedData>>,
   currentTopic: string,
   side: string,
-  updateMouseOver: (topic: Topic) => void
+  updateMouseOver: (topic: string) => void
 };
 
 type StateType = {
-  height: number
+  height: number,
+  svg: Object
 };
 
 function initialState(): Object {
@@ -27,7 +29,7 @@ export class Chart extends Component {
   state: StateType;
   props: PropsType;
 
-  constructor(props: Props): void {
+  constructor(props: PropsType): void {
     super(props);
     this.state = initialState();
   }
@@ -67,7 +69,7 @@ export class Chart extends Component {
     })
   }
 
-  drawRects(svg: Object, mydata: Object): void {
+  drawRects(svg: Object, mydata: Array<Array<StackedData>>): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
 
     const data = _.cloneDeep(mydata)
@@ -199,7 +201,7 @@ export class Chart extends Component {
       .attr('y', (d: Object): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2)
       })
-      .text((d: Object): number => {
+      .text((d: Object): mixed => {
         if (d.y > .03) {
           return d.name + ' ads'
         } 
@@ -233,7 +235,7 @@ export class Chart extends Component {
       .attr('y', (d: Object): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
       })
-      .text((d: Object): string => { 
+      .text((d: Object): mixed => { 
         if (d.y > 0.05) {
           return Math.floor((d.y)*100) + '%'
         }

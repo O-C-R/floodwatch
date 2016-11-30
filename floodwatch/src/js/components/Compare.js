@@ -24,6 +24,8 @@ export class Compare extends Component {
 type StateType = {
   leftOptions: Object,
   rightOptions: Object,
+  leftData: Object,
+  rightData: Object,
   currentTopic: string
 };
 
@@ -78,7 +80,7 @@ export class CompareContainer extends Component {
     return sentence
   }
 
-  updateMouseOver(newTopic: Topic): void {
+  updateMouseOver(newTopic: string): void {
     this.setState({
       currentTopic: newTopic
     })

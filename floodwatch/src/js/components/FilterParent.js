@@ -8,7 +8,7 @@ import _ from 'lodash';
 import d3 from 'd3'
 
 type StateType = {
-  dataStackLayout: () => void
+  dataStackLayout: (data: Array<Array<StackedData>>) => Array<Array<StackedData>>
 };
 
 function initialState(): Object {
@@ -20,21 +20,28 @@ function initialState(): Object {
 type PropsType = {
   side: string,
   currentTopic: string,
-  updateMouseOver: (topic: Topic) => void
+  updateMouseOver: (topic: string) => void,
+  data: Object
 };
+
+export type StackedData = {
+  x: number,
+  y: number,
+  name: string
+}
 
 export class FilterParent extends Component {
   props: PropsType;
   state: StateType;
 
-  constructor(props: Props): void {
+  constructor(props: PropsType): void {
     super(props);
     this.state = initialState()
   }
 
-  stackData(data: Object): [] {
+  stackData(data: Object): Array<Array<StackedData>> {
     const topics = Object.keys(data);
-    const intermediate = topics.map((key: string): [] => {
+    const intermediate = topics.map((key: string): Array<StackedData> => {
       const dTemp = data[key]
       return [{x: 0, y: dTemp, name: key}]
     })
