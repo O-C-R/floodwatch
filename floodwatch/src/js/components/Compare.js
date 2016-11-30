@@ -9,14 +9,7 @@ import Filters from '../../stubbed_data/filter_response.json';
 
 // import '../../Compare.css';
 
-type CompareState = {}
 export class Compare extends Component {
-  state: CompareState;
-
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <Row>
@@ -28,13 +21,13 @@ export class Compare extends Component {
   }
 }
 
-type CompareContainerState = {
-  leftOptions: JSON;
-  rightOptions: JSON;
-  currentTopic: string;
-}
+type StateType = {
+  leftOptions: {},
+  rightOptions: {},
+  currentTopic: string
+};
 
-function CompareContainerInitialState() {
+function CompareContainerInitialState(): {} {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
@@ -45,21 +38,21 @@ function CompareContainerInitialState() {
 }
 
 export class CompareContainer extends Component {
-  state: CompareContainerState;
+  state: StateType;
 
-  constructor(props) {
-    super(props);
+  constructor(): void {
+    super();
     this.state = CompareContainerInitialState()
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.setState({
       leftData: AdBreakdown.filterA,
       rightData: AdBreakdown.filterB
     })
   }
 
-  createSentence(options) {
+  createSentence(options: {}): string {
     let sentence = 'Floodwatch users';
     if (options.length == 0) {
       sentence = 'All ' + sentence;
@@ -70,10 +63,10 @@ export class CompareContainer extends Component {
       return 'You'
     }
 
-    options.map((opt, key) => {
+    options.map((opt: {}): void => {
       let logic = ''
       let choices = ''
-      if (opt.logic == 'NOT') { 
+      if (opt.logic == 'NOR') { 
         logic = ' Non-';
         choices = opt.choices.join(', non-')
       } else {
@@ -85,22 +78,22 @@ export class CompareContainer extends Component {
     return sentence
   }
 
-  updateMouseOver(newTopic) {
+  updateMouseOver(newTopic: Topic): void {
     this.setState({
       currentTopic: newTopic
     })
   }
 
-  calculatePercentDiff(a, b) {
-    let abs = (a-b)
-    let denom = (Math.abs(a))
-    let prc = (abs/denom)*100
+  calculatePercentDiff(a: number, b: number): number {
+    const abs = (a-b)
+    const denom = (Math.abs(a))
+    const prc = (abs/denom)*100
     return prc
   }
 
-  generateDifferenceSentence(lVal, rVal) {
+  generateDifferenceSentence(lVal: number, rVal: number): string {
     let sentence = '';
-    let prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
+    const prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
 
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
@@ -119,20 +112,32 @@ export class CompareContainer extends Component {
   }
 
   render() {
-    let lVal = this.state.leftData[this.state.currentTopic];
-    let rVal = this.state.rightData[this.state.currentTopic];
-    let sentence = this.generateDifferenceSentence(lVal, rVal)
+    const lVal = this.state.leftData[this.state.currentTopic];
+    const rVal = this.state.rightData[this.state.currentTopic];
+    const sentence = this.generateDifferenceSentence(lVal, rVal)
 
     return (
       <Row className="main">
         <Col xs={12}>
           <Row>
             <Col xs={5} xsOffset={1}>
-              <FilterParent className="chart" side="left" data={this.state.leftData} currentSelection={this.state.leftOptions} currentTopic={this.state.currentTopic} updateMouseOver={this.updateMouseOver.bind(this)}/>
+              <FilterParent 
+                className="chart" 
+                side="left" 
+                data={this.state.leftData} 
+                currentSelection={this.state.leftOptions} 
+                currentTopic={this.state.currentTopic} 
+                updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
 
             <Col xs={5}>
-              <FilterParent className="chart" side="right" data={this.state.rightData} currentSelection={this.state.rightOptions} currentTopic={this.state.currentTopic} updateMouseOver={this.updateMouseOver.bind(this)}/>
+              <FilterParent 
+                className="chart" 
+                side="right" 
+                data={this.state.rightData} 
+                currentSelection={this.state.rightOptions} 
+                currentTopic={this.state.currentTopic} 
+                updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
           </Row>
           <Row>
@@ -142,7 +147,8 @@ export class CompareContainer extends Component {
           </Row>
           <Row>
             <p className="centered">
-            <button className="btn btn-default button">Share finding</button><button className="btn btn-primary button">Change comparison</button>
+              <button className="btn btn-default button">Share finding</button>
+              <button className="btn btn-primary button">Change comparison</button>
             </p>
           </Row>
         </Col>

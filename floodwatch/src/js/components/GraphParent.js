@@ -6,17 +6,17 @@ import * as d3 from 'd3';
 import _ from 'lodash'
 import {Chart} from './Chart'
 
-type Props = {
-  barData: Array;
-  currentTopic: string;
-  side: string;
-  updateMouseOver: Function;
-}
+type PropsType = {
+  barData: [],
+  currentTopic: string,
+  side: string,
+  updateMouseOver: (topic: Topic) => void
+};
 
 export class GraphParent extends Component {
-  props: Props;
+  props: PropsType;
 
-  constructor(props: Props) {
+  constructor(props: Props): void {
     super(props);
   }
 

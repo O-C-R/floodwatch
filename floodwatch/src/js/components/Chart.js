@@ -6,40 +6,39 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import colors from './colors'
 
-type Props = {
-  barData: Array;
-  currentTopic: string;
-  side: string;
-  updateMouseOver: Function;
-}
+type PropsType = {
+  barData: [{}],
+  currentTopic: string,
+  side: string,
+  updateMouseOver: (topic: Topic) => void
+};
 
-type State = {
-  height: Number;
-}
+type StateType = {
+  height: number
+};
 
-function initialState() {
+function initialState(): {} {
   return {
     height:500
   }
 }
 
-export class Chart extends React.Component {
-  state: State;
-  props: Props
+export class Chart extends Component {
+  state: StateType;
+  props: PropsType;
 
-  constructor(props: Props) {
+  constructor(props: Props): void {
     super(props);
     this.state = initialState();
   }
 
-  componentDidMount() {
-    let ctx = this;
+  componentDidMount(): void {
+    const ctx = this;
     let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
     let defs = svg.append('defs')
 
-    let keys = Object.keys(colors)
-    keys.map((key) => {
-      console.log(key)
+    const keys = Object.keys(colors)
+    keys.map((key: string): void => {
 
       let thisGradient = defs.append('linearGradient')
         .attr('id', key)
@@ -68,30 +67,28 @@ export class Chart extends React.Component {
     })
   }
 
-  drawRects(svg, mydata) {
+  drawRects(svg: {}, mydata: {}): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
 
-    let data = _.cloneDeep(mydata)
+    const data = _.cloneDeep(mydata)
     let ctx = this;
 
     if (data[0] == undefined) {
       return;
     }
 
-    let x = d3.scale.ordinal()
-      .rangeRoundBands([0, 1000], 0);
-
-    x.domain(data[0].map(function(d) {
-      return d.x;
-    }));
+    const x = d3.scale.ordinal()
+      .rangeRoundBands([0, 1000], 0)
+      .domain(data[0].map((d: {}): number => {
+        return d.x;
+      }));
     
 
-    let y = d3.scale.linear()
-      .range([ctx.state.height, 0]);
-
-    y.domain([0,
+    const y = d3.scale.linear()
+      .range([ctx.state.height, 0])
+      .domain([0,
       d3.max(data[data.length - 1],
-        function(d) { return d.y0 + d.y;})
+        (d: {}): number => { return d.y0 + d.y;})
       ])
 
 
@@ -102,12 +99,12 @@ export class Chart extends React.Component {
     layer.enter().append('g')
       .attr('class', 'stack ')
       .attr('width', '100%')
-      .attr('fill', function(d) {
+      .attr('fill', (d: {}): string => {
         return 'url(#' + d[0].name + ')'
       })
 
     layer.data(data)
-      .attr('fill', function(d) {
+      .attr('fill', (d: {}): string => {
         return 'url(#' + d[0].name + ')'
       })
 
@@ -116,26 +113,26 @@ export class Chart extends React.Component {
 
 
     let rect = layer.selectAll('rect')
-      .data(function(d) {
+      .data((d: {}): {} => {
         return d
       })
 
     rect.enter().append('rect')
-      .attr('x', function(d) {
+      .attr('x', (d: {}): number => {
         return x(d.x);
       })
-      .attr('y', function(d) {
+      .attr('y', (d: {}): number => {
         return y(d.y + d.y0);
       })
-      .attr('height', function(d) {
+      .attr('height', (d: {}): number => {
         return y(d.y0) - y(d.y + d.y0);
       })
-      .attr('class', function(d) {
+      .attr('class', (d: {}): string => {
         return (d.name.toLowerCase())
       })
       .attr('width', '100%')
-      .on('click', function(d) {
-        ctx.props.updateMouseOver(d.name)
+      .on('click', (d: {}): void => {
+        this.props.updateMouseOver(d.name)
       })
       .style('overflowY', 'hidden')
 
@@ -145,42 +142,42 @@ export class Chart extends React.Component {
       .attr('width', 0)
       .remove()
 
-    rect.data(function(d) {
+    rect.data((d: {}): {} => {
       return d
     })
       .transition()
-      .attr('x', function(d) {
+      .attr('x', (d: {}): number => {
         return x(d.x);
       })
-      .attr('y', function(d) {
+      .attr('y', (d: {}): number => {
         return y(d.y + d.y0) 
       })
-      .attr('height', function(d) {
+      .attr('height', (d: {}): number => {
         return y(d.y0) - y(d.y + d.y0);
       })
       .attr('width', '100%')
-      .attr('stroke', function(d) {
-        if (d.name == ctx.props.currentTopic) {
+      .attr('stroke', (d: {}): string => {
+        if (d.name == this.props.currentTopic) {
           return 'white'
         }
         return 'transparent'
       })
-      .attr('stroke-width', function(d) {
-        if (d.name == ctx.props.currentTopic) {
+      .attr('stroke-width', (d: {}): number => {
+        if (d.name == this.props.currentTopic) {
           return 3
         }
         return 0
       })
 
     let text = layer.selectAll('.text-label')
-      .data(function(d) {
+      .data((d: {}): {} => {
         return d
       })
 
     text.enter().append('text')
       .attr('x','50%')
       .attr('fill', 'white')
-      .text(function(d) {
+      .text((d: {}): string => {
         if (d.y > 0.03) {
           return d.name + ' ads'
         } 
@@ -194,15 +191,15 @@ export class Chart extends React.Component {
       .transition()
       .remove()
 
-    text.data(function(d) {
+    text.data((d: {}): {} => {
       return d
     })
       .transition()
       .attr('x', '50%')
-      .attr('y', function(d) {
+      .attr('y', (d: {}): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2)
       })
-      .text(function(d) {
+      .text((d: {}): number => {
         if (d.y > .03) {
           return d.name + ' ads'
         } 
@@ -211,16 +208,16 @@ export class Chart extends React.Component {
             
 
     let percentage = layer.selectAll('.text-number')
-      .data(function(d) {
+      .data((d: {}): {} => {
         return d
       })
 
     percentage.enter().append('text').attr('class', 'text-number')
       .attr('x', '50%')
-      .attr('y', function(d) {
+      .attr('y', (d: {}): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
       })
-      .text(function(d){ 
+      .text((d: {}): string =>{ 
         if (d.y > 0.05) {
           return Math.floor((d.y)*100) + '%'
         }
@@ -231,12 +228,12 @@ export class Chart extends React.Component {
       .style('font-size', '8px')
 
 
-    percentage.data(function(d) { return d })
+    percentage.data((d: {}): {} => { return d })
       .attr('x', '50%')
-      .attr('y', function(d) {
+      .attr('y', (d: {}): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
       })
-      .text(function(d){ 
+      .text((d: {}): string => { 
         if (d.y > 0.05) {
           return Math.floor((d.y)*100) + '%'
         }
@@ -248,15 +245,15 @@ export class Chart extends React.Component {
       .exit().remove()
 
     layer.selectAll('rect')
-      .data(function(d) {
+      .data((d: {}): {} => {
         return d
       })
       .exit().remove()
-    
+  
   }
 
 
-  componentDidUpdate() {
+  componentDidUpdate(): void {
     if (this.state.svg) {
       this.drawRects(this.state.svg, this.props.barData)  
     }

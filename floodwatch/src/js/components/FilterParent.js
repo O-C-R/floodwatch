@@ -7,33 +7,48 @@ import {GraphParent} from './GraphParent';
 import _ from 'lodash';
 import d3 from 'd3'
 
-type Props = {
-  side: string;
-  currentTopic: string;
-  updateMouseOver: Function;
+type StateType = {
+  dataStackLayout: () => void
+};
+
+function initialState(): {} {
+  return {
+    dataStackLayout: d3.layout.stack()
+  }
 }
 
-export class FilterParent extends Component {
-  props: Props;
+type PropsType = {
+  side: string,
+  currentTopic: string,
+  updateMouseOver: (topic: Topic) => void
+};
 
-  constructor(props: Props) {
+export class FilterParent extends Component {
+  props: PropsType;
+  state: StateType;
+
+  constructor(props: Props): void {
     super(props);
+    this.state = initialState()
   }
 
-  stackData(data) {
-    let topics = Object.keys(data);
-    let intermediate = topics.map(function(key) {
-      let dTemp = data[key]
+  stackData(data: {}): [] {
+    const topics = Object.keys(data);
+    const intermediate = topics.map((key: string): [] => {
+      const dTemp = data[key]
       return [{x: 0, y: dTemp, name: key}]
     })
 
-    let dataStackLayout = d3.layout.stack()
-    let stack = dataStackLayout(intermediate)
+    const stack = this.state.dataStackLayout(intermediate)
     return stack;
   }
 
+  shouldComponentUpdate() {
+    
+  }
+
   render() {
-    let data = this.stackData(this.props.data)
+    const data = this.stackData(this.props.data)
     return (
       <Row>
         <Col xs={12}>

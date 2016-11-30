@@ -1908,6 +1908,12 @@ eslint-plugin-flowtype@2.21.0:
   dependencies:
     lodash "^4.15.0"
 
+eslint-plugin-flowtype@^2.28.2:
+  version "2.28.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.28.2.tgz#2430ac1bf434db878e16cfde454f64b13896317b"
+  dependencies:
+    lodash "^4.15.0"
+
 eslint-plugin-import@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.0.1.tgz#dcfe96357d476b3f822570d42c29bec66f5d9c5c"
@@ -2279,10 +2285,6 @@ flat-cache@^1.2.1:
 flatten@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
-
-flow-bin:
-  version "0.35.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.35.0.tgz#63d4eb9582ce352541be98e6a424503217141b07"
 
 for-in@^0.1.5:
   version "0.1.6"
