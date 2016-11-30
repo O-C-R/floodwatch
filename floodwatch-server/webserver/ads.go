@@ -252,3 +252,33 @@ func Ads(options *Options) http.Handler {
 		WriteJSON(w, adsResponse)
 	})
 }
+
+func FilteredAdStats(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+
+		var filterRequest data.FilterRequest
+		err := decoder.Decode(&filterRequest)
+		if err != nil {
+			Error(w, err, 500)
+		}
+		defer req.Body.Close()
+
+		resA, err := options.Backend.FilteredAds(filterRequest.FilterA)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		resB, err := options.Backend.FilteredAds(filterRequest.FilterB)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		res := data.FilterResponse{
+			FilterA: resA,
+			FilterB: resB,
+		}
+
+		WriteJSON(w, res)
+	})
+}
