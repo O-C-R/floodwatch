@@ -43,9 +43,12 @@ export class FilterParent extends Component {
     return stack;
   }
 
-  // shouldComponentUpdate() {
-    
-  // }
+  shouldComponentUpdate(nextProps: Object, nextState: Object): boolean {
+    if (_.isEqual(nextProps.data, this.props.data) && this.props.currentTopic == nextProps.currentTopic) {
+      return false;
+    }
+    return true;
+  }
 
   render() {
     const data = this.stackData(this.props.data)
