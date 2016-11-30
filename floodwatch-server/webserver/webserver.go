@@ -76,6 +76,7 @@ func New(options *Options) (*Webserver, error) {
 	authenticatedMux := http.NewServeMux()
 	authenticatedMux.Handle("/api/person/current", PersonCurrent(options))
 	authenticatedMux.Handle("/api/ads", Ads(options))
+	authenticatedMux.Handle("/api/ads/filtered", FilteredAdStats(options))
 
 	url, err := url.Parse("http://twofishes.floodwatch.me")
 	if err != nil {
