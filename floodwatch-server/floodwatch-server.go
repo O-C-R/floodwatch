@@ -67,7 +67,7 @@ func main() {
 	sessionStore, err := backend.NewSessionStore(backend.SessionStoreOptions{
 		Addr:            config.sessionStoreAddr,
 		Password:        config.sessionStorePassword,
-		SessionDuration: time.Hour * 72,
+		SessionDuration: time.Hour * 24 * 365,
 	})
 	if err != nil {
 		log.Fatal(err)
