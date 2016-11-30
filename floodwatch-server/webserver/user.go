@@ -160,7 +160,7 @@ func PersonCurrent(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
 		if session == nil {
-			Error(w, nil, 500)
+			Error(w, nil, 401)
 		}
 
 		person, err := options.Backend.Person(session.UserID)
