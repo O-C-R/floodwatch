@@ -10,13 +10,13 @@ type Props = {
   showMessage: Function,
   loginChanged: Function,
   user: ?Object
-}
+};
 
 type State = {
-  username: string;
-  password: string;
-  error: ?string;
-}
+  username: string,
+  password: string,
+  error: ?string
+};
 
 export class Login extends Component {
   props: Props;

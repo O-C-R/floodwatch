@@ -9,8 +9,8 @@ import history from '../common/history';
 import auth from '../api/auth';
 
 type AppNavigationState = {
-  selectedKey: ?string;
-}
+  selectedKey: ?string
+};
 
 export class AppNavigation extends Component {
   state: AppNavigationState;
@@ -59,9 +59,9 @@ export class AppNavigation extends Component {
 }
 
 type MainState = {
-  user: ?Object;
-  message: ?string;
-}
+  user: ?Object,
+  message: ?string
+};
 
 export class Main extends Component {
   state: MainState;

@@ -43,9 +43,9 @@ export class FilterParent extends Component {
     return stack;
   }
 
-  shouldComponentUpdate() {
+  // shouldComponentUpdate() {
     
-  }
+  // }
 
   render() {
     const data = this.stackData(this.props.data)

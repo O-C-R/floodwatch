@@ -6,14 +6,14 @@ import auth from '../api/auth';
 import history from '../common/history';
 
 type State = {
-  username: string;
-  usernameFeedback: ?string;
-  password: string;
-  passwordRepeated: string;
-  passwordFeedback: ?string;
-  email: ?string;
-  error: ?string;
-}
+  username: string,
+  usernameFeedback: ?string,
+  password: string,
+  passwordRepeated: string,
+  passwordFeedback: ?string,
+  email: ?string,
+  error: ?string
+};
 
 function initialState() {
   return {
@@ -28,8 +28,8 @@ function initialState() {
 }
 
 type Props = {
-  showMessage: Function;
-}
+  showMessage: Function
+};
 
 export class Register extends Component {
   props: Props;
