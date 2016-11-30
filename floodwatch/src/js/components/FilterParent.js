@@ -28,7 +28,7 @@ export type StackedData = {
   x: number,
   y: number,
   name: string
-}
+};
 
 export class FilterParent extends Component {
   props: PropsType;
