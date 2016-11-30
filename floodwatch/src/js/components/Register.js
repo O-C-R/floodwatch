@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import {withRouter} from 'react-router';
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
 import history from '../common/history';
 
 type State = {
@@ -63,11 +63,7 @@ export class Register extends Component {
     }
 
     try {
-      await auth.post('/api/register', {
-        username: this.state.username,
-        email: this.state.email,
-        password: this.state.password
-      });
+      await FWApiClient.get().register(this.state.username, this.state.email, this.state.password);
 
       this.setState(initialState());
       this.props.showMessage('Registered successfully! Please log in in the extension.');

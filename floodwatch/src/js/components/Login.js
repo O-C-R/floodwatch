@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
 import history from '../common/history';
 
 type Props = {
@@ -52,7 +52,7 @@ export class Login extends Component {
     e.preventDefault();
 
     try {
-      await auth.login(this.state.username, this.state.password);
+      await FWApiClient.get().login(this.state.username, this.state.password);
       this.props.showMessage('Logged in!');
       this.props.loginChanged();
 
