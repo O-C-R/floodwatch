@@ -292,36 +292,36 @@ type DBAdCatRow struct {
 
 func (b *Backend) FilteredAds(f data.PersonFilter) (*data.FilterResponseItem, error) {
 	whereClauses := make([]string, 0)
-	itemData := make(map[string]interface{})
+	params := make(map[string]interface{})
 
 	if f.Age != nil {
 		if f.Age.Min != nil {
-			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year >= :min_age")
-			itemData["min_age"] = *f.Age.Min
+			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year >= :minAge")
+			params["minAge"] = *f.Age.Min
 		}
 		if f.Age.Max != nil {
-			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year <= :max_age")
-			itemData["max_age"] = *f.Age.Max
+			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year <= :maxAge")
+			params["maxAge"] = *f.Age.Max
 		}
 	}
 
 	// TODO: fix - this needs to actually use the in binding
 	if f.Location != nil {
-		whereClauses = append(whereClauses, "person.person.country_code IN (:country_codes)")
-		itemData["country_codes"] = pq.Array(f.Location.CountryCodes)
+		whereClauses = append(whereClauses, "person.person.country_code IN (:countryCodes)")
+		params["countryCodes"] = f.Location.CountryCodes
 	}
 
 	for idx, df := range f.Demographics {
 		key := fmt.Sprintf("demographic_%d", idx)
 		if df.Operator == "and" {
 			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids @> :%s", key))
-			itemData[key] = pq.Array(df.Values)
+			params[key] = pq.Array(df.Values)
 		} else if df.Operator == "or" {
 			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids && :%s", key))
-			itemData[key] = pq.Array(df.Values)
+			params[key] = pq.Array(df.Values)
 		} else if df.Operator == "nor" {
 			whereClauses = append(whereClauses, fmt.Sprintf("NOT person.person_demographic_aggregate.demographic_ids && :%s", key))
-			itemData[key] = pq.Array(df.Values)
+			params[key] = pq.Array(df.Values)
 		} else {
 			return nil, errors.New("Demographic logic was not and, or, nor nor")
 		}
@@ -333,7 +333,10 @@ func (b *Backend) FilteredAds(f data.PersonFilter) (*data.FilterResponseItem, er
 	}
 	query := fmt.Sprintf(adFilterQuery, whereStr)
 
-	rows, err := b.db.NamedQuery(query, itemData)
+	query, args, err := sqlx.Named(query, params)
+	query, args, err = sqlx.In(query, args...)
+	query = b.db.Rebind(query)
+	rows, err := b.db.Queryx(query, args...)
 	if err != nil {
 		return nil, err
 	}
