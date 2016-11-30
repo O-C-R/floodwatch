@@ -7,7 +7,7 @@ import _ from 'lodash';
 import colors from './colors'
 
 type PropsType = {
-  barData: [{}],
+  barData: [Object],
   currentTopic: string,
   side: string,
   updateMouseOver: (topic: Topic) => void
@@ -17,7 +17,7 @@ type StateType = {
   height: number
 };
 
-function initialState(): {} {
+function initialState(): Object {
   return {
     height:500
   }
@@ -67,7 +67,7 @@ export class Chart extends Component {
     })
   }
 
-  drawRects(svg: {}, mydata: {}): void {
+  drawRects(svg: Object, mydata: Object): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
 
     const data = _.cloneDeep(mydata)
@@ -79,7 +79,7 @@ export class Chart extends Component {
 
     const x = d3.scale.ordinal()
       .rangeRoundBands([0, 1000], 0)
-      .domain(data[0].map((d: {}): number => {
+      .domain(data[0].map((d: Object): number => {
         return d.x;
       }));
     
@@ -88,7 +88,7 @@ export class Chart extends Component {
       .range([ctx.state.height, 0])
       .domain([0,
       d3.max(data[data.length - 1],
-        (d: {}): number => { return d.y0 + d.y;})
+        (d: Object): number => { return d.y0 + d.y;})
       ])
 
 
@@ -99,12 +99,12 @@ export class Chart extends Component {
     layer.enter().append('g')
       .attr('class', 'stack ')
       .attr('width', '100%')
-      .attr('fill', (d: {}): string => {
+      .attr('fill', (d: Object): string => {
         return 'url(#' + d[0].name + ')'
       })
 
     layer.data(data)
-      .attr('fill', (d: {}): string => {
+      .attr('fill', (d: Object): string => {
         return 'url(#' + d[0].name + ')'
       })
 
@@ -113,25 +113,25 @@ export class Chart extends Component {
 
 
     let rect = layer.selectAll('rect')
-      .data((d: {}): {} => {
+      .data((d: Object): Object => {
         return d
       })
 
     rect.enter().append('rect')
-      .attr('x', (d: {}): number => {
+      .attr('x', (d: Object): number => {
         return x(d.x);
       })
-      .attr('y', (d: {}): number => {
+      .attr('y', (d: Object): number => {
         return y(d.y + d.y0);
       })
-      .attr('height', (d: {}): number => {
+      .attr('height', (d: Object): number => {
         return y(d.y0) - y(d.y + d.y0);
       })
-      .attr('class', (d: {}): string => {
+      .attr('class', (d: Object): string => {
         return (d.name.toLowerCase())
       })
       .attr('width', '100%')
-      .on('click', (d: {}): void => {
+      .on('click', (d: Object): void => {
         this.props.updateMouseOver(d.name)
       })
       .style('overflowY', 'hidden')
@@ -142,27 +142,27 @@ export class Chart extends Component {
       .attr('width', 0)
       .remove()
 
-    rect.data((d: {}): {} => {
+    rect.data((d: Object): Object => {
       return d
     })
       .transition()
-      .attr('x', (d: {}): number => {
+      .attr('x', (d: Object): number => {
         return x(d.x);
       })
-      .attr('y', (d: {}): number => {
+      .attr('y', (d: Object): number => {
         return y(d.y + d.y0) 
       })
-      .attr('height', (d: {}): number => {
+      .attr('height', (d: Object): number => {
         return y(d.y0) - y(d.y + d.y0);
       })
       .attr('width', '100%')
-      .attr('stroke', (d: {}): string => {
+      .attr('stroke', (d: Object): string => {
         if (d.name == this.props.currentTopic) {
           return 'white'
         }
         return 'transparent'
       })
-      .attr('stroke-width', (d: {}): number => {
+      .attr('stroke-width', (d: Object): number => {
         if (d.name == this.props.currentTopic) {
           return 3
         }
@@ -170,14 +170,14 @@ export class Chart extends Component {
       })
 
     let text = layer.selectAll('.text-label')
-      .data((d: {}): {} => {
+      .data((d: Object): Object => {
         return d
       })
 
     text.enter().append('text')
       .attr('x','50%')
       .attr('fill', 'white')
-      .text((d: {}): string => {
+      .text((d: Object): string => {
         if (d.y > 0.03) {
           return d.name + ' ads'
         } 
@@ -191,15 +191,15 @@ export class Chart extends Component {
       .transition()
       .remove()
 
-    text.data((d: {}): {} => {
+    text.data((d: Object): Object => {
       return d
     })
       .transition()
       .attr('x', '50%')
-      .attr('y', (d: {}): number => {
+      .attr('y', (d: Object): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2)
       })
-      .text((d: {}): number => {
+      .text((d: Object): number => {
         if (d.y > .03) {
           return d.name + ' ads'
         } 
@@ -208,16 +208,16 @@ export class Chart extends Component {
             
 
     let percentage = layer.selectAll('.text-number')
-      .data((d: {}): {} => {
+      .data((d: Object): Object => {
         return d
       })
 
     percentage.enter().append('text').attr('class', 'text-number')
       .attr('x', '50%')
-      .attr('y', (d: {}): number => {
+      .attr('y', (d: Object): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
       })
-      .text((d: {}): string =>{ 
+      .text((d: Object): string =>{ 
         if (d.y > 0.05) {
           return Math.floor((d.y)*100) + '%'
         }
@@ -228,12 +228,12 @@ export class Chart extends Component {
       .style('font-size', '8px')
 
 
-    percentage.data((d: {}): {} => { return d })
+    percentage.data((d: Object): Object => { return d })
       .attr('x', '50%')
-      .attr('y', (d: {}): number => {
+      .attr('y', (d: Object): number => {
         return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
       })
-      .text((d: {}): string => { 
+      .text((d: Object): string => { 
         if (d.y > 0.05) {
           return Math.floor((d.y)*100) + '%'
         }
@@ -245,7 +245,7 @@ export class Chart extends Component {
       .exit().remove()
 
     layer.selectAll('rect')
-      .data((d: {}): {} => {
+      .data((d: Object): Object => {
         return d
       })
       .exit().remove()

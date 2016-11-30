@@ -22,17 +22,17 @@ export class Compare extends Component {
 }
 
 type StateType = {
-  leftOptions: {},
-  rightOptions: {},
+  leftOptions: Object,
+  rightOptions: Object,
   currentTopic: string
 };
 
-function CompareContainerInitialState(): {} {
+function CompareContainerInitialState(): Object {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
-    leftData: {},
-    rightData: {},
+    leftData: Object,
+    rightData: Object,
     currentTopic: 'Food'
   }
 }
@@ -52,7 +52,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  createSentence(options: {}): string {
+  createSentence(options: Object): string {
     let sentence = 'Floodwatch users';
     if (options.length == 0) {
       sentence = 'All ' + sentence;
@@ -63,7 +63,7 @@ export class CompareContainer extends Component {
       return 'You'
     }
 
-    options.map((opt: {}): void => {
+    options.map((opt: Object): void => {
       let logic = ''
       let choices = ''
       if (opt.logic == 'NOR') { 

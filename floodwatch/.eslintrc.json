@@ -47,7 +47,9 @@
       "never"
     ],
     "flowtype/no-primitive-constructor-types": 2,
-    "flowtype/no-weak-types": 2,
+    "flowtype/no-weak-types": [2, {
+      "Object": false
+    }],
     "flowtype/object-type-delimiter": [
       2,
       "comma"

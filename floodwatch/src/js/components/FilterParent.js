@@ -11,7 +11,7 @@ type StateType = {
   dataStackLayout: () => void
 };
 
-function initialState(): {} {
+function initialState(): Object {
   return {
     dataStackLayout: d3.layout.stack()
   }
@@ -32,7 +32,7 @@ export class FilterParent extends Component {
     this.state = initialState()
   }
 
-  stackData(data: {}): [] {
+  stackData(data: Object): [] {
     const topics = Object.keys(data);
     const intermediate = topics.map((key: string): [] => {
       const dTemp = data[key]
