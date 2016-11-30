@@ -4,10 +4,7 @@ import 'whatwg-fetch';
 import log from 'loglevel';
 
 import {BaseError} from '../common/util';
-
-export type PersonResponse = {
-  username: string;
-}
+import type {PersonResponse, FilterRequest, FilterResponse} from './types';
 
 export class APIError extends BaseError {};
 export class AuthenticationError extends APIError {};
@@ -203,5 +200,9 @@ export class FWApiClient extends APIClient {
   async logout(): Promise<void> {
     await this.postForm('/api/logout');
     this.onLogout();
+  }
+
+  async getFilteredAdCounts(f: FilterRequest): Promise<FilterResponse> {
+    return this.postJSON('/api/ads/filtered', f);
   }
 }
