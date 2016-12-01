@@ -17,12 +17,13 @@ type PropsType = {
 
 type StateType = {
   height: number,
-  svg: Object
+  svg?: mixed
 };
 
-function initialState(): Object {
+function initialState(): StateType {
   return {
-    height:500
+    height:500,
+    // svg: null
   }
 }
 
@@ -69,7 +70,7 @@ export class Chart extends Component {
     })
   }
 
-  drawRects(svg: Object, mydata: Array<Array<StackedData>>): void {
+  drawRects(svg: any, mydata: Array<Array<StackedData>>): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
 
     const data = _.cloneDeep(mydata)

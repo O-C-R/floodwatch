@@ -21,7 +21,7 @@ type PropsType = {
   side: string,
   currentTopic: string,
   updateMouseOver: (topic: string) => void,
-  data: Object
+  data: UnstackedData
 };
 
 export type StackedData = {
@@ -29,6 +29,10 @@ export type StackedData = {
   y: number,
   name: string
 };
+
+export type UnstackedData = {
+  [key: string]: number
+}
 
 export class FilterParent extends Component {
   props: PropsType;
@@ -58,6 +62,7 @@ export class FilterParent extends Component {
   }
 
   render() {
+    console.log(this.props.data)
     const data = this.stackData(this.props.data)
     return (
       <Row>

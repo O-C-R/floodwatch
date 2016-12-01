@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
 import {FilterParent} from './FilterParent';
-// import AdBreakdown from '../../stubbed_data/adbreakdown_response.json';
 import Filters from '../../stubbed_data/filter_response.json';
 import {FWApiClient} from '../api/api';
+import TopicKeys from '../../stubbed_data/topic_keys.json';
+import type {UnstackedData} from './FilterParent'
 
 // import '../../Compare.css';
 
@@ -22,11 +23,22 @@ export class Compare extends Component {
   }
 }
 
+type FilterOptionsType = {
+  name: string,
+  filters: Array<FilterType>
+};
+
+type FilterType = {
+  name: string,
+  choices: Array<string>,
+  logic: string
+};
+
 type StateType = {
-  leftOptions: Object,
-  rightOptions: Object,
-  leftData: Object,
-  rightData: Object,
+  leftOptions: FilterOptionsType,
+  rightOptions: FilterOptionsType,
+  leftData: UnstackedData,
+  rightData: UnstackedData,
   currentTopic: string
 };
 
@@ -34,8 +46,8 @@ function CompareContainerInitialState(): Object {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
-    leftData: Object,
-    rightData: Object,
+    leftData: {},
+    rightData: {},
     currentTopic: '1'
   }
 }
@@ -48,7 +60,7 @@ export class CompareContainer extends Component {
     this.state = CompareContainerInitialState()
   }
 
-  async componentDidMount(): void {
+  async componentDidMount(): any {
     const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: {}, filterB: {} })
 
     this.setState({
@@ -102,15 +114,15 @@ export class CompareContainer extends Component {
 
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} don't see any ${this.state.currentTopic} ads, as opposed to ${this.createSentence(this.state.rightOptions)}`
+      sentence = `On average, ${this.createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${this.createSentence(this.state.rightOptions)}`
     } else if (prc == 100) {
-      sentence = `On average, ${this.createSentence(this.state.rightOptions)} don't see any ${this.state.currentTopic} ads, as opposed to ${this.createSentence(this.state.leftOptions)}`
+      sentence = `On average, ${this.createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${this.createSentence(this.state.leftOptions)}`
     } else if (prc < 0) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% less ${this.state.currentTopic} ads than ${this.createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${this.createSentence(this.state.rightOptions)}`;
     } else if (prc > 0) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% more ${this.state.currentTopic} ads than ${this.createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${this.createSentence(this.state.rightOptions)}`;
     } else if (prc == 0) {
-      sentence = `${this.createSentence(this.state.leftOptions)} and ${this.createSentence(this.state.rightOptions)} see the same amount of ${this.state.currentTopic} ads`;
+      sentence = `${this.createSentence(this.state.leftOptions)} and ${this.createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads`;
     }
 
     return sentence;
