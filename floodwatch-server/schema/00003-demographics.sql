@@ -40,3 +40,4 @@ INSERT INTO demographic.demographic (category_id, name)
 
 ALTER TABLE person.person ADD COLUMN birth_year int DEFAULT NULL;
 ALTER TABLE person.person ADD COLUMN geonameid bigint DEFAULT NULL;
+ALTER TABLE person.person ADD COLUMN country_code varchar(2) DEFAULT NULL;

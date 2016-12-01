@@ -15,13 +15,13 @@ import (
 
 var (
 	config struct {
-		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL string
-		insecure                                                                                                                                bool
+		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL, twofishesHost string
+		insecure                                                                                                                                               bool
 	}
 )
 
 func init() {
-	flag.StringVar(&config.backendURL, "backend-url", "postgres://localhost/floodwatch_v2?sslmode=disable", "postgres backend URL")
+	flag.StringVar(&config.backendURL, "backend-url", "postgres://localhost/floodwatch?sslmode=disable", "postgres backend URL")
 	flag.StringVar(&config.sessionStoreAddr, "session-store-address", "localhost:6379", "redis session store address")
 	flag.StringVar(&config.sessionStorePassword, "session-store-password", "", "redis session store password")
 	flag.StringVar(&config.addr, "a", "127.0.0.1:8080", "address to listen on")
@@ -29,6 +29,7 @@ func init() {
 	flag.StringVar(&config.sqsClassifierInputQueueURL, "input-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-input", "S3 bucket")
 	flag.StringVar(&config.sqsClassifierOutputQueueURL, "output-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-output", "S3 bucket")
 	flag.StringVar(&config.staticPath, "static", "", "static path")
+	flag.StringVar(&config.twofishesHost, "twofishes-host", "http://twofishes.floodwatch.me", "host for twofishes server")
 	flag.BoolVar(&config.insecure, "i", false, "insecure (no user authentication)")
 }
 
@@ -67,7 +68,7 @@ func main() {
 	sessionStore, err := backend.NewSessionStore(backend.SessionStoreOptions{
 		Addr:            config.sessionStoreAddr,
 		Password:        config.sessionStorePassword,
-		SessionDuration: time.Hour * 72,
+		SessionDuration: time.Hour * 24 * 365,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -94,6 +95,7 @@ func main() {
 		SQSClassifierOutputQueueURL: config.sqsClassifierOutputQueueURL,
 		Insecure:                    config.insecure,
 		StaticPath:                  config.staticPath,
+		TwofishesHost:               config.twofishesHost,
 	})
 	if err != nil {
 		log.Fatal(err)

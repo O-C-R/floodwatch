@@ -39,13 +39,13 @@ type AdsResponse struct {
 }
 
 type AdCategory struct {
-	ID   id.ID  `db:"id" json:"id"`
+	ID   int    `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
 }
 
 type Ad struct {
 	ID               id.ID   `db:"id" json:"id"`
-	CategoryID       *id.ID  `db:"category_id" json:"category_id,omitempty"`
+	CategoryID       *int    `db:"category_id" json:"category_id,omitempty"`
 	CategorySource   *string `db:"category_source" json:"category_source,omitempty"`
 	ClassifierOutput *string `db:"classifier_output" json:"classifier_output,omitempty"`
 }

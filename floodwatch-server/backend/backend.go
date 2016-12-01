@@ -3,6 +3,8 @@ package backend
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/O-C-R/auth/id"
 	"github.com/O-C-R/sqlutil"
@@ -10,6 +12,23 @@ import (
 	"github.com/lib/pq"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/data"
+)
+
+const (
+	adFilterQuery = `SELECT
+ad.category.id as category_id,
+ad.category.name as category_name,
+COUNT(DISTINCT person.impression.id) as count
+FROM person.impression
+INNER JOIN ad.ad ON ad.ad.id = person.impression.ad_id
+INNER JOIN ad.category ON ad.category.id = ad.ad.category_id
+INNER JOIN person.person ON person.person.id = person.impression.person_id
+LEFT JOIN person.person_demographic_aggregate on person.person_demographic_aggregate.person_id = person.impression.person_id
+%s
+GROUP BY ad.category.id, ad.category.name
+ORDER BY ad.category.id ASC;`
+
+	personDemographicDelete = `DELETE FROM person.person_demographic WHERE person_id = ? AND demographic_id NOT IN (?)`
 )
 
 var (
@@ -24,7 +43,10 @@ type Backend struct {
 	ad                                      *sqlx.Stmt
 	adCategory                              *sqlx.Stmt
 
-	addPerson, upsertPerson, updatePerson             sqlutil.ValueFunc
+	addPerson, upsertPerson, updatePerson sqlutil.ValueFunc
+
+	upsertPersonDemographic *sqlx.Stmt
+
 	addAdCategory, upsertAdCategory, updateAdCategory sqlutil.ValueFunc
 
 	addAd, upsertAd, updateAd sqlutil.ValueFunc
@@ -32,6 +54,8 @@ type Backend struct {
 
 	upsertImpression sqlutil.ValueFunc
 	upsertSite       sqlutil.ValueFunc
+
+	filterValues *sqlx.Stmt
 }
 
 func New(url string) (*Backend, error) {
@@ -148,6 +172,11 @@ func New(url string) (*Backend, error) {
 		return nil, err
 	}
 
+	b.upsertPersonDemographic, err = b.db.Preparex(`INSERT INTO person.person_demographic (person_id, demographic_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`)
+	if err != nil {
+		return nil, err
+	}
+
 	return b, nil
 }
 
@@ -192,6 +221,42 @@ func (b *Backend) UpsertPerson(person *data.Person) error {
 	return err
 }
 
+func (b *Backend) UpdatePersonDemographics(personId id.ID, demographicIds []int) error {
+	tx, err := b.db.Beginx()
+	if err != nil {
+		return err
+	}
+
+	query, args, err := sqlx.In(personDemographicDelete, personId, demographicIds)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	query = tx.Rebind(query)
+	_, err = tx.Exec(query, args...)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	insertTx := tx.Stmtx(b.upsertPersonDemographic)
+	for _, demographicId := range demographicIds {
+		_, err = insertTx.Exec(personId, demographicId)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (b *Backend) UpdatePerson(person *data.Person) error {
 	_, err := b.updatePerson(person)
 	return err
@@ -227,7 +292,7 @@ func (b *Backend) UpdateAd(ad *data.Ad) error {
 	return err
 }
 
-func (b *Backend) AdCategory(id id.ID) (*data.AdCategory, error) {
+func (b *Backend) AdCategory(id int) (*data.AdCategory, error) {
 	adCategory := &data.AdCategory{}
 
 	err := b.adCategory.Get(adCategory, id)
@@ -242,19 +307,19 @@ func (b *Backend) AdCategory(id id.ID) (*data.AdCategory, error) {
 	return adCategory, nil
 }
 
-func (b *Backend) UpsertAdCategory(adCategory *data.AdCategory) (id.ID, error) {
+func (b *Backend) UpsertAdCategory(adCategory *data.AdCategory) (interface{}, error) {
 	return b.upsertAdCategory(adCategory)
 }
 
-func (b *Backend) UpsertImpression(impression *data.Impression) (id.ID, error) {
+func (b *Backend) UpsertImpression(impression *data.Impression) (interface{}, error) {
 	return b.upsertImpression(impression)
 }
 
-func (b *Backend) UpsertSite(site *data.Site) (id.ID, error) {
+func (b *Backend) UpsertSite(site *data.Site) (interface{}, error) {
 	return b.upsertSite(site)
 }
 
-func (b *Backend) UpdateAdFromClassifier(adID, categoryID id.ID, classificationOutput []byte) error {
+func (b *Backend) UpdateAdFromClassifier(adID, categoryID interface{}, classificationOutput []byte) error {
 	_, err := b.updateAdFromClassifier.Exec(adID, categoryID, classificationOutput)
 	return err
 }
@@ -263,6 +328,84 @@ func (b *Backend) UnclassifiedAds() ([]data.Ad, error) {
 	ads := []data.Ad{}
 	b.db.Select(&ads, "SELECT * FROM ad.ad WHERE ad.ad.category_id IS NULL")
 	return ads, nil
+}
+
+type DBAdCatRow struct {
+	CategoryId   int    `db:"category_id"`
+	CategoryName string `db:"category_name"`
+	Count        int    `db:"count"`
+}
+
+func (b *Backend) FilteredAds(f data.PersonFilter) (*data.FilterResponseItem, error) {
+	whereClauses := make([]string, 0)
+	params := make(map[string]interface{})
+
+	if f.Age != nil {
+		if f.Age.Min != nil {
+			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year >= :minAge")
+			params["minAge"] = *f.Age.Min
+		}
+		if f.Age.Max != nil {
+			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year <= :maxAge")
+			params["maxAge"] = *f.Age.Max
+		}
+	}
+
+	// TODO: fix - this needs to actually use the in binding
+	if f.Location != nil {
+		whereClauses = append(whereClauses, "person.person.country_code IN (:countryCodes)")
+		params["countryCodes"] = f.Location.CountryCodes
+	}
+
+	for idx, df := range f.Demographics {
+		key := fmt.Sprintf("demographic_%d", idx)
+		if df.Operator == "and" {
+			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids @> :%s", key))
+			params[key] = pq.Array(df.Values)
+		} else if df.Operator == "or" {
+			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids && :%s", key))
+			params[key] = pq.Array(df.Values)
+		} else if df.Operator == "nor" {
+			whereClauses = append(whereClauses, fmt.Sprintf("NOT person.person_demographic_aggregate.demographic_ids && :%s", key))
+			params[key] = pq.Array(df.Values)
+		} else {
+			return nil, errors.New("Demographic logic was not and, or, nor nor")
+		}
+	}
+
+	whereStr := ""
+	if len(whereClauses) > 0 {
+		whereStr = fmt.Sprintf("WHERE %s", strings.Join(whereClauses, " AND "))
+	}
+	query := fmt.Sprintf(adFilterQuery, whereStr)
+
+	query, args, err := sqlx.Named(query, params)
+	query, args, err = sqlx.In(query, args...)
+	query = b.db.Rebind(query)
+	rows, err := b.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	adCatRows := make([]DBAdCatRow, 0)
+	for rows.Next() {
+		adCatRow := DBAdCatRow{}
+		err := rows.StructScan(&adCatRow)
+		if err != nil {
+			return nil, err
+		}
+		adCatRows = append(adCatRows, adCatRow)
+	}
+
+	ret := data.NewFilterResponseItem()
+	for _, row := range adCatRows {
+		ret.TotalCount += row.Count
+	}
+	for _, row := range adCatRows {
+		ret.Categories[row.CategoryId] = float32(row.Count) / float32(ret.TotalCount)
+	}
+
+	return ret, nil
 }
 
 func init() {
