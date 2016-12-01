@@ -11,6 +11,7 @@ import {Register} from './components/Register';
 import {Login} from './components/Login';
 import Person from './components/Person';
 import {Faq} from './components/Faq';
+import {Compare} from './components/Compare';
 
 
 function requireAuth(nextState, replace): void {
@@ -41,6 +42,7 @@ export class App extends Component {
 
           <Route path="person" component={Person} onEnter={requireAuth} />
           <Route path="faq" component={Faq} />
+          <Route path="compare" component={Compare} />
           <Route path="login" component={Login} />
           <Route path="register" component={Register} />
         </Route>

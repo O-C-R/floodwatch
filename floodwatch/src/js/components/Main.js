@@ -13,8 +13,8 @@ type AppNavigationProps = {
 }
 
 type AppNavigationState = {
-  selectedKey: ?string;
-}
+  selectedKey: ?string
+};
 
 export class AppNavigation extends Component {
   props: AppNavigationProps;
@@ -64,9 +64,9 @@ export class AppNavigation extends Component {
 }
 
 type MainState = {
-  user: ?Object;
-  message: ?string;
-}
+  user: ?Object,
+  message: ?string
+};
 
 export class Main extends Component {
   state: MainState;
@@ -106,7 +106,7 @@ export class Main extends Component {
     return (
       <Row>
         <Col>
-        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, {name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
+        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
         </Col>
       </Row>
     );

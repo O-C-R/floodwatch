@@ -28,6 +28,10 @@ export type FilterRequest = {
 export type AdCategoryId = string;
 
 export type FilterResponse = {
-  filterA: { [key: AdCategoryId]: number };
-  filterB: { [key: AdCategoryId]: number };
+  filterA: {
+    categories: { [key: AdCategoryId]: number };
+  };
+  filterB: {
+    categories: { [key: AdCategoryId]: number };
+  };
 }

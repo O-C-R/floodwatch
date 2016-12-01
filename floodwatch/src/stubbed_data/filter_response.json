@@ -1,0 +1,136 @@
+{
+    "presets": [
+        {
+            "name": "You",
+            "filters": [
+                {
+                    "name":"data",
+                    "choices": ["You"],
+                    "logic": "OR"
+                }
+            ],
+            "always_available": true
+        },
+        {
+            "name": "All",
+            "filters": [],
+            "always_available": true
+        },
+        {
+            "name": "Men",
+            "filters": [
+                 {
+                    "name": "gender",
+                    "choices": ["Male"],
+                    "logic": "OR"
+                }
+            ]
+        },
+        {
+            "name": "Non-white users",
+            "filters": [
+                {
+                    "name": "race",
+                    "choices": ["white", "black"],
+                    "logic": "NOT"
+                }
+            ]
+        },
+        {
+            "name": "White Christians",
+            "filters": [
+                {
+                    "name": "race",
+                    "choices": ["White"],
+                    "logic": "OR"
+                },
+                {
+                    "name": "religion",
+                    "choices": ["Christian"],
+                    "logic": "OR"
+                }
+            ]
+        }
+    ],
+    "filters": [
+        {
+            "name": "age",  
+            "type": "radio",          
+            "question": "What is your age?",
+            "why": "In the USA, age is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of their age.",
+            "options": [
+                "1-10",
+                "10-20",
+                "20-30",
+                "30-40",
+                "40-50",
+                "50-60",
+                "60+"
+            ]
+            
+        },
+
+        {
+            "name": "gender",  
+            "type": "checkbox",          
+            "question": "What is your gender identity? Please check all that apply.",
+            "why": "A CMU study found that simulated male profiles received ads that were associated with $200,000 jobs six times more often than the simulated female profiles.",
+            "options": [
+                "Trans",
+                "Male",
+                "Female",
+                "Nonbinary",
+                "Agender",
+                "Other"
+            ]
+            
+        }, {
+            "name": "country", 
+            "type": "checkbox",
+            "question": "Where are you from? Please check all that apply.",
+            "why": "In the USA, national origin is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of where they're from.",
+            "options": [
+                "North America",
+                "South America",
+                "Africa",
+                "Asia",
+                "Australia",
+                "Europe"
+            ]
+            
+        }, {
+            "name": "race",
+            "type": "checkbox",
+            "question": "What is your race/ethnicity? Please check all that apply.",
+            "why": "See Latanya Sweeney's analysis of racial discrimination in online advertising.",
+            "options": [
+                "American Indian or Alaska Native",
+                "Hispanic, Latino, or Spanish origin",
+                "White",
+                "Asia",
+                "Middle Eastern or North American",
+                "Black or African American",
+                "Native Hawaiian or Other Pacific Islander",
+                "Another race or ethnicity not listed here"
+            ]
+            
+        },
+        {
+            "name": "religion",
+            "question": "What is your religion? Please check all that apply.",
+            "why": "In the USA, religion is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of their faith.",
+            "type": "checkbox",
+            "options": [
+                "Muslim",
+                "Hindu",
+                "Christian",
+                "Jewish",
+                "Buddhist",
+                "Agnostic",
+                "Atheist"
+            ]
+            
+        }
+
+    ]
+}
