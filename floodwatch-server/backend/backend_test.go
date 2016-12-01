@@ -59,3 +59,20 @@ func TestSite(t *testing.T) {
 		t.Fatalf("Unexpected type %T", currentSiteID)
 	}
 }
+
+func TestUpsertDemographics(t *testing.T) {
+	b, err := New("postgres://localhost/floodwatch?sslmode=disable")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	person, err := b.UserByUsername("chris")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = b.UpdatePersonDemographics(person.ID, []int{7, 10, 11, 18})
+	if err != nil {
+		t.Fatal(err)
+	}
+}

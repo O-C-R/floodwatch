@@ -361,7 +361,7 @@ func updateQuery(value interface{}, table string, searchColumns ...string) (stri
 		statement += fmt.Sprintf(" RETURNING %s", IDColumnName)
 	}
 
-	return statement, append(columnNames, searchFieldNames...), idType, nil
+	return statement, append(searchFieldNames, columnNames...), idType, nil
 }
 
 func UpdateFunc(db *sql.DB, value interface{}, table string, searchFields ...string) (ValueFunc, error) {

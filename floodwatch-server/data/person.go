@@ -39,7 +39,7 @@ type Person struct {
 	Password    []byte    `db:"password" json:"-"`
 	Admin       bool      `db:"admin" json:"admin"`
 	BirthYear   *int      `db:"birth_year" json:"birth_year"`
-	GeoNameID   *int      `db:"geonameid" json:"geonameid"`
+	TwofishesID *string   `db:"twofishes_id" json:"twofishes_id"`
 	CountryCode *string   `db:"country_code" json:"country_code"`
 	LastSeen    time.Time `db:"last_seen" json:"last_seen"`
 }
@@ -65,4 +65,15 @@ func (p *Person) CheckPassword(password string) error {
 	}
 
 	return nil
+}
+
+type PersonDemographicRequest struct {
+	BirthYear      *int    `json:"birth_year"`
+	TwofishesID    *string `json:"twofishes_id"`
+	DemographicIDs []int   `json:"demographic_ids"`
+}
+
+type PersonDemographic struct {
+	PersonID      id.ID `db:"person_id"`
+	DemographicID int   `db:"demographic_id"`
 }
