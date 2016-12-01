@@ -190,26 +190,32 @@ func Select(value interface{}, omit map[string]bool, remainder string) (string, 
 	return s.selectStatement(omit, remainder), nil
 }
 
-func execFunc(statement *sql.Stmt, fieldIndicies []string) func(value interface{}) (interface{}, error) {
+func execFunc(statement *sql.Stmt, fieldIndicies []string, idType reflect.Type) func(value interface{}) (interface{}, error) {
 	return func(value interface{}) (interface{}, error) {
 		valueFieldValues, err := fieldValues(fieldIndicies, value)
 		if err != nil {
 			return nil, err
 		}
 
-		var rowID interface{}
-		if err := statement.QueryRow(valueFieldValues...).Scan(&rowID); err != nil {
+		if idType == nil {
+			_, err := statement.Exec(valueFieldValues...)
 			return nil, err
 		}
 
-		return rowID, nil
+		rowID := reflect.New(idType)
+		if err := statement.QueryRow(valueFieldValues...).Scan(rowID.Interface()); err != nil {
+			return nil, err
+		}
+
+		return rowID.Elem().Interface(), nil
 	}
 }
 
-func insertQuery(value interface{}, table string, conflictTargets ...string) (string, []string, error) {
+func insertQuery(value interface{}, table string, serial bool, conflictTargets ...string) (string, []string, reflect.Type, error) {
+	var idType reflect.Type
 	valueType := reflect.TypeOf(value)
 	if kind := valueType.Kind(); kind != reflect.Struct {
-		return "", nil, TypeError
+		return "", nil, idType, TypeError
 	}
 
 	n := valueType.NumField()
@@ -221,6 +227,13 @@ func insertQuery(value interface{}, table string, conflictTargets ...string) (st
 		columnName := field.Tag.Get(ColumnNameStructTag)
 		if columnName == "" {
 			continue
+		}
+
+		if columnName == IDColumnName {
+			idType = field.Type
+			if serial {
+				continue
+			}
 		}
 
 		columnNames = append(columnNames, columnName)
@@ -242,12 +255,15 @@ func insertQuery(value interface{}, table string, conflictTargets ...string) (st
 		statement += fmt.Sprintf(" ON CONFLICT (%s) DO UPDATE SET %s", strings.Join(conflictTargets, ", "), strings.Join(updateValues, ", "))
 	}
 
-	statement += fmt.Sprintf(" RETURNING %s", IDColumnName)
-	return statement, fieldNames, nil
+	if idType != nil {
+		statement += fmt.Sprintf(" RETURNING %s", IDColumnName)
+	}
+
+	return statement, fieldNames, idType, nil
 }
 
 func InsertFunc(db *sql.DB, value interface{}, table string) (ValueFunc, error) {
-	query, fieldIndicies, err := insertQuery(value, table)
+	query, fieldIndicies, idType, err := insertQuery(value, table, false)
 	if err != nil {
 		return nil, err
 	}
@@ -257,11 +273,25 @@ func InsertFunc(db *sql.DB, value interface{}, table string) (ValueFunc, error) 
 		return nil, err
 	}
 
-	return execFunc(statement, fieldIndicies), nil
+	return execFunc(statement, fieldIndicies, idType), nil
+}
+
+func InsertSerialFunc(db *sql.DB, value interface{}, table string) (ValueFunc, error) {
+	query, fieldIndicies, idType, err := insertQuery(value, table, true)
+	if err != nil {
+		return nil, err
+	}
+
+	statement, err := db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return execFunc(statement, fieldIndicies, idType), nil
 }
 
 func UpsertFunc(db *sql.DB, value interface{}, table string, conflictTargets ...string) (ValueFunc, error) {
-	query, fieldIndicies, err := insertQuery(value, table, conflictTargets...)
+	query, fieldIndicies, idType, err := insertQuery(value, table, false, conflictTargets...)
 	if err != nil {
 		return nil, err
 	}
@@ -271,13 +301,28 @@ func UpsertFunc(db *sql.DB, value interface{}, table string, conflictTargets ...
 		return nil, err
 	}
 
-	return execFunc(statement, fieldIndicies), nil
+	return execFunc(statement, fieldIndicies, idType), nil
 }
 
-func updateQuery(value interface{}, table string, searchColumns ...string) (string, []string, error) {
+func UpsertSerialFunc(db *sql.DB, value interface{}, table string, conflictTargets ...string) (ValueFunc, error) {
+	query, fieldIndicies, idType, err := insertQuery(value, table, true, conflictTargets...)
+	if err != nil {
+		return nil, err
+	}
+
+	statement, err := db.Prepare(query)
+	if err != nil {
+		return nil, err
+	}
+
+	return execFunc(statement, fieldIndicies, idType), nil
+}
+
+func updateQuery(value interface{}, table string, searchColumns ...string) (string, []string, reflect.Type, error) {
+	var idType reflect.Type
 	valueType := reflect.TypeOf(value)
 	if kind := valueType.Kind(); kind != reflect.Struct {
-		return "", nil, TypeError
+		return "", nil, idType, TypeError
 	}
 
 	searchColumnLookup := make(map[string]int)
@@ -303,6 +348,7 @@ func updateQuery(value interface{}, table string, searchColumns ...string) (stri
 		}
 
 		if columnName == IDColumnName {
+			idType = field.Type
 			continue
 		}
 
@@ -310,12 +356,16 @@ func updateQuery(value interface{}, table string, searchColumns ...string) (stri
 		columnNames = append(columnNames, field.Name)
 	}
 
-	statement := fmt.Sprintf("UPDATE %s SET %s WHERE %s RETURNING %s", table, strings.Join(arguments, ", "), strings.Join(searchArguments, " AND "), IDColumnName)
-	return statement, append(columnNames, searchFieldNames...), nil
+	statement := fmt.Sprintf("UPDATE %s SET %s WHERE %s", table, strings.Join(arguments, ", "), strings.Join(searchArguments, " AND "))
+	if idType != nil {
+		statement += fmt.Sprintf(" RETURNING %s", IDColumnName)
+	}
+
+	return statement, append(columnNames, searchFieldNames...), idType, nil
 }
 
 func UpdateFunc(db *sql.DB, value interface{}, table string, searchFields ...string) (ValueFunc, error) {
-	query, fieldIndicies, err := updateQuery(value, table, searchFields...)
+	query, fieldIndicies, idType, err := updateQuery(value, table, searchFields...)
 	if err != nil {
 		return nil, err
 	}
@@ -325,7 +375,7 @@ func UpdateFunc(db *sql.DB, value interface{}, table string, searchFields ...str
 		return nil, err
 	}
 
-	return execFunc(statement, fieldIndicies), nil
+	return execFunc(statement, fieldIndicies, idType), nil
 }
 
 func Table(value interface{}) (string, error) {
