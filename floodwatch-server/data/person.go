@@ -77,3 +77,27 @@ type PersonDemographic struct {
 	PersonID      id.ID `db:"person_id"`
 	DemographicID int   `db:"demographic_id"`
 }
+
+type PersonResponse struct {
+	Username       string    `json:"username"`
+	Admin          bool      `json:"admin"`
+	BirthYear      *int      `json:"birth_year"`
+	TwofishesID    *string   `json:"twofishes_id"`
+	CountryCode    *string   `json:"country_code"`
+	DemographicIDs []int     `json:"demographic_ids"`
+	LastSeen       time.Time `json:"last_seen"`
+}
+
+func (p *Person) NewPersonResponse(demographicIds []int) PersonResponse {
+	res := PersonResponse{
+		Username:       p.Username,
+		Admin:          p.Admin,
+		BirthYear:      p.BirthYear,
+		TwofishesID:    p.TwofishesID,
+		CountryCode:    p.CountryCode,
+		DemographicIDs: demographicIds,
+		LastSeen:       p.LastSeen,
+	}
+
+	return res
+}
