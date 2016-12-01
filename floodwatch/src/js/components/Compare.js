@@ -7,7 +7,8 @@ import {FilterParent} from './FilterParent';
 import Filters from '../../stubbed_data/filter_response.json';
 import {FWApiClient} from '../api/api';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
-import type {UnstackedData} from './FilterParent'
+import type {UnstackedData} from './FilterParent';
+import d3 from 'd3';
 
 // import '../../Compare.css';
 
@@ -62,10 +63,14 @@ export class CompareContainer extends Component {
 
   async componentDidMount(): any {
     const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: {}, filterB: {} })
+    const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
+      return d3.descending(a.value, b.value);
+    })[0]
 
     this.setState({
       leftData: AdBreakdown.filterA.categories,
-      rightData: AdBreakdown.filterB.categories
+      rightData: AdBreakdown.filterB.categories,
+      currentTopic: FilterATopic.key
     })
   }
 
