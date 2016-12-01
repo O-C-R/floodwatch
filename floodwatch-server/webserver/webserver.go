@@ -59,6 +59,7 @@ type Options struct {
 	SQSClassifierOutputQueueURL string
 	Insecure                    bool
 	StaticPath                  string
+	TwofishesHost               string
 }
 
 type Webserver struct {
@@ -75,10 +76,11 @@ func New(options *Options) (*Webserver, error) {
 
 	authenticatedMux := http.NewServeMux()
 	authenticatedMux.Handle("/api/person/current", PersonCurrent(options))
+	authenticatedMux.Handle("/api/person/demographics", UpdatePersonDemographics(options))
 	authenticatedMux.Handle("/api/ads", Ads(options))
 	authenticatedMux.Handle("/api/ads/filtered", FilteredAdStats(options))
 
-	url, err := url.Parse("http://twofishes.floodwatch.me")
+	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
 		return nil, err
 	}

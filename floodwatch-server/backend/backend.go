@@ -27,6 +27,8 @@ LEFT JOIN person.person_demographic_aggregate on person.person_demographic_aggre
 %s
 GROUP BY ad.category.id, ad.category.name
 ORDER BY ad.category.id ASC;`
+
+	personDemographicDelete = `DELETE FROM person.person_demographic WHERE person_id = ? AND demographic_id NOT IN (?)`
 )
 
 var (
@@ -41,7 +43,10 @@ type Backend struct {
 	ad                                      *sqlx.Stmt
 	adCategory                              *sqlx.Stmt
 
-	addPerson, upsertPerson, updatePerson             sqlutil.ValueFunc
+	addPerson, upsertPerson, updatePerson sqlutil.ValueFunc
+
+	upsertPersonDemographic *sqlx.Stmt
+
 	addAdCategory, upsertAdCategory, updateAdCategory sqlutil.ValueFunc
 
 	addAd, upsertAd, updateAd sqlutil.ValueFunc
@@ -167,6 +172,11 @@ func New(url string) (*Backend, error) {
 		return nil, err
 	}
 
+	b.upsertPersonDemographic, err = b.db.Preparex(`INSERT INTO person.person_demographic (person_id, demographic_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`)
+	if err != nil {
+		return nil, err
+	}
+
 	return b, nil
 }
 
@@ -209,6 +219,42 @@ func (b *Backend) AddPerson(person *data.Person) error {
 func (b *Backend) UpsertPerson(person *data.Person) error {
 	_, err := b.upsertPerson(person)
 	return err
+}
+
+func (b *Backend) UpdatePersonDemographics(personId id.ID, demographicIds []int) error {
+	tx, err := b.db.Beginx()
+	if err != nil {
+		return err
+	}
+
+	query, args, err := sqlx.In(personDemographicDelete, personId, demographicIds)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	query = tx.Rebind(query)
+	_, err = tx.Exec(query, args...)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	insertTx := tx.Stmtx(b.upsertPersonDemographic)
+	for _, demographicId := range demographicIds {
+		_, err = insertTx.Exec(personId, demographicId)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (b *Backend) UpdatePerson(person *data.Person) error {
