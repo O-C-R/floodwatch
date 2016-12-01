@@ -62,7 +62,6 @@ export class FilterParent extends Component {
   }
 
   render() {
-    console.log(this.props.data)
     const data = this.stackData(this.props.data)
     return (
       <Row>

@@ -22,8 +22,7 @@ type StateType = {
 
 function initialState(): StateType {
   return {
-    height:500,
-    // svg: null
+    height:500
   }
 }
 
