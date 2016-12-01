@@ -71,7 +71,29 @@ func TestUpsertDemographics(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	err = b.UpdatePersonDemographics(person.ID, []int{10, 11, 19})
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	err = b.UpdatePersonDemographics(person.ID, []int{7, 10, 11, 18})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPersonDemographics(t *testing.T) {
+	b, err := New("postgres://localhost/floodwatch?sslmode=disable")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	person, err := b.UserByUsername("chris")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	demographicIds, err := b.PersonDemographics(person.ID)
 	if err != nil {
 		t.Fatal(err)
 	}

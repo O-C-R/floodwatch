@@ -162,14 +162,23 @@ func PersonCurrent(options *Options) http.Handler {
 		session := ContextSession(req.Context())
 		if session == nil {
 			Error(w, nil, 401)
+			return
 		}
 
 		person, err := options.Backend.Person(session.UserID)
 		if err != nil {
 			Error(w, err, 500)
+			return
 		}
 
-		WriteJSON(w, person)
+		demographicIds, err := options.Backend.PersonDemographics(person.ID)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personResponse := person.NewPersonResponse(demographicIds)
+		WriteJSON(w, personResponse)
 	})
 }
 

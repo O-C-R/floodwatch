@@ -45,7 +45,7 @@ type Backend struct {
 
 	addPerson, upsertPerson, updatePerson sqlutil.ValueFunc
 
-	upsertPersonDemographic *sqlx.Stmt
+	personDemographics, upsertPersonDemographic *sqlx.Stmt
 
 	addAdCategory, upsertAdCategory, updateAdCategory sqlutil.ValueFunc
 
@@ -172,6 +172,11 @@ func New(url string) (*Backend, error) {
 		return nil, err
 	}
 
+	b.personDemographics, err = b.db.Preparex(`SELECT demographic_id FROM person.person_demographic WHERE person_id = $1`)
+	if err != nil {
+		return nil, err
+	}
+
 	b.upsertPersonDemographic, err = b.db.Preparex(`INSERT INTO person.person_demographic (person_id, demographic_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`)
 	if err != nil {
 		return nil, err
@@ -187,6 +192,17 @@ func (b *Backend) Person(id id.ID) (*data.Person, error) {
 	}
 
 	return person, nil
+}
+
+func (b *Backend) PersonDemographics(personId id.ID) ([]int, error) {
+	demographicIds := []int{}
+
+	err := b.personDemographics.Select(&demographicIds, personId)
+	if err != nil {
+		return nil, err
+	}
+
+	return demographicIds, nil
 }
 
 func (b *Backend) UserByUsername(username string) (*data.Person, error) {
