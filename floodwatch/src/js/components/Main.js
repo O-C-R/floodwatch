@@ -6,20 +6,25 @@ import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
 import '../../css/App.css';
 
 import history from '../common/history';
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
+
+type AppNavigationProps = {
+  navs: any;
+}
 
 type AppNavigationState = {
   selectedKey: ?string
 };
 
 export class AppNavigation extends Component {
+  props: AppNavigationProps;
   state: AppNavigationState;
 
-  constructor(props: Object) {
+  constructor(props: AppNavigationProps) {
     super(props);
 
     let curPath = window.location.pathname;
-    let selectedKey = null; 
+    let selectedKey = null;
     this.props.navs.map((nav, key) => {
       if (nav.to === curPath) {
         selectedKey = key;
@@ -77,7 +82,7 @@ export class Main extends Component {
   }
 
   loadUserFromServer() {
-    return auth.get('/api/person/current', null)
+    return FWApiClient.get().getCurrentPerson()
       .then((user) => {
         this.setState({ user: user });
       })
@@ -92,7 +97,7 @@ export class Main extends Component {
   }
 
   async handleLogout() {
-    await auth.logout();
+    await FWApiClient.get().logout();
     this.setState({ user: null });
     history.push('/login');
   }

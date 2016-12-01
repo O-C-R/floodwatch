@@ -4,8 +4,9 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
 import {FilterParent} from './FilterParent';
-import AdBreakdown from '../../stubbed_data/adbreakdown_response.json';
+// import AdBreakdown from '../../stubbed_data/adbreakdown_response.json';
 import Filters from '../../stubbed_data/filter_response.json';
+import {FWApiClient} from '../api/api';
 
 // import '../../Compare.css';
 
@@ -35,7 +36,7 @@ function CompareContainerInitialState(): Object {
     rightOptions: Filters.presets[1].filters,
     leftData: Object,
     rightData: Object,
-    currentTopic: 'Food'
+    currentTopic: '1'
   }
 }
 
@@ -47,10 +48,12 @@ export class CompareContainer extends Component {
     this.state = CompareContainerInitialState()
   }
 
-  componentDidMount(): void {
+  async componentDidMount(): void {
+    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: {}, filterB: {} })
+
     this.setState({
-      leftData: AdBreakdown.filterA,
-      rightData: AdBreakdown.filterB
+      leftData: AdBreakdown.filterA.categories,
+      rightData: AdBreakdown.filterB.categories
     })
   }
 

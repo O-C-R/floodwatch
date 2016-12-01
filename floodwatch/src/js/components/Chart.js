@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 import _ from 'lodash';
 import colors from './colors'
 import type {StackedData} from './FilterParent'
+import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 type PropsType = {
   barData: Array<Array<StackedData>>,
@@ -41,9 +42,8 @@ export class Chart extends Component {
 
     const keys = Object.keys(colors)
     keys.map((key: string): void => {
-
       let thisGradient = defs.append('linearGradient')
-        .attr('id', key)
+        .attr('id', key.replace(/[\/\s,\-!]+/g, ""))
         .attr('x1', '0%')
         .attr('x2', '100%')
         .attr('y1', '0%')
@@ -102,12 +102,12 @@ export class Chart extends Component {
       .attr('class', 'stack ')
       .attr('width', '100%')
       .attr('fill', (d: Object): string => {
-        return 'url(#' + d[0].name + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
       })
 
     layer.data(data)
       .attr('fill', (d: Object): string => {
-        return 'url(#' + d[0].name + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
       })
 
     layer.exit().remove()
@@ -181,7 +181,8 @@ export class Chart extends Component {
       .attr('fill', 'white')
       .text((d: Object): string => {
         if (d.y > 0.03) {
-          return d.name + ' ads'
+          const myName = TopicKeys[+d.name];
+          return myName + ' ads'
         } 
         return ''
       })
@@ -203,7 +204,8 @@ export class Chart extends Component {
       })
       .text((d: Object): mixed => {
         if (d.y > .03) {
-          return d.name + ' ads'
+          const myName = TopicKeys[+d.name];
+          return myName + ' ads'
         } 
         return ''
       })
