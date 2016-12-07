@@ -31,8 +31,8 @@
             "filters": [
                 {
                     "name": "race",
-                    "choices": ["white", "black"],
-                    "logic": "NOT"
+                    "choices": ["white"],
+                    "logic": "NOR"
                 }
             ]
         },

@@ -4,13 +4,46 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
 import {FilterParent} from './FilterParent';
+import {ComparisonModal} from './ComparisonModal';
 import Filters from '../../stubbed_data/filter_response.json';
 import {FWApiClient} from '../api/api';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import type {UnstackedData} from './FilterParent';
 import d3 from 'd3';
+import _ from 'lodash';
 
 // import '../../Compare.css';
+
+export function createSentence(options: Object): string {
+  let sentence = 'Floodwatch users';
+  if (options.length == 0) {
+    sentence = 'All ' + sentence;
+    return sentence
+  }
+
+  if (options[0].name == 'data') {
+    return 'You'
+  }
+
+  console.log(options)
+
+  options.map((opt: Object): void => {
+
+
+
+    let logic = ''
+    let choices = ''
+    if (opt.logic == 'NOR') { 
+      logic = ' Non-';
+      choices = opt.choices.join(', non-')
+    } else {
+        choices = opt.choices.join(', ')  
+    }
+    sentence = logic + choices + ' ' + sentence
+  })
+
+  return sentence
+}
 
 export class Compare extends Component {
   render() {
@@ -40,7 +73,8 @@ type StateType = {
   rightOptions: FilterOptionsType,
   leftData: UnstackedData,
   rightData: UnstackedData,
-  currentTopic: string
+  currentTopic: string,
+  modalVisible: boolean
 };
 
 function CompareContainerInitialState(): Object {
@@ -49,7 +83,8 @@ function CompareContainerInitialState(): Object {
     rightOptions: Filters.presets[1].filters,
     leftData: {},
     rightData: {},
-    currentTopic: '1'
+    currentTopic: '1',
+    modalVisible: false
   }
 }
 
@@ -67,6 +102,9 @@ export class CompareContainer extends Component {
       return d3.descending(a.value, b.value);
     })[0]
 
+    const UserData = await FWApiClient.get().getCurrentPerson()
+    console.log(UserData)
+
     this.setState({
       leftData: AdBreakdown.filterA.categories,
       rightData: AdBreakdown.filterB.categories,
@@ -74,36 +112,168 @@ export class CompareContainer extends Component {
     })
   }
 
-  createSentence(options: Object): string {
-    let sentence = 'Floodwatch users';
-    if (options.length == 0) {
-      sentence = 'All ' + sentence;
-      return sentence
-    }
-
-    if (options[0].name == 'data') {
-      return 'You'
-    }
-
-    options.map((opt: Object): void => {
-      let logic = ''
-      let choices = ''
-      if (opt.logic == 'NOR') { 
-        logic = ' Non-';
-        choices = opt.choices.join(', non-')
-      } else {
-        choices = opt.choices.join(', ')
-      }
-      sentence = logic + choices + ' ' + sentence
-    })
-
-    return sentence
-  }
-
   updateMouseOver(newTopic: string): void {
     this.setState({
       currentTopic: newTopic
     })
+  }
+
+  // changeCategoriesCustom(kind, side, info, event) {
+  //     var curInfo; 
+  //     if (side == 'left') {
+  //       curInfo = _.cloneDeep(this.state.leftOptions)
+  //     } else if (side == 'right') {
+  //       curInfo = _.cloneDeep(this.state.rightOptions)
+  //     }
+  //     var checked = event.target.checked // i think this is necessary bc the checked state doesn't actually change until it propagates back down
+
+  //     var found = false;
+  //     for (let i = 0; i < curInfo.length; i++) {
+  //       if (curInfo[i].name == info.name) {
+  //         if (checked == true) {
+  //           curInfo[i].choices = _.union(curInfo[i].choices, [info.choices])
+  //           curInfo[i].logic = info.logic
+  //           found = true;
+  //         } else {
+  //           _.remove(curInfo[i].choices, function(n) {
+  //             if (n == info.choices) { return true }
+  //             return false
+  //           })
+  //           found = true;
+  //         }
+  //       }
+  //     }
+  //     if (found == false) {
+  //       info.choices = [info.choices]
+  //       curInfo.push(info);        
+  //     }
+
+  //     // fixing something stupid
+  //     for (let i = curInfo.length - 1; i >= 0; i--) {
+  //       if (curInfo[i].name == 'data') {
+  //         curInfo.splice(i, 1)
+  //       }
+  //     }
+
+
+  //     if (side == 'left') {
+  //       this.setState({
+  //         leftOptions: curInfo
+  //       })
+  //     } else if (side == 'right') {
+  //       this.setState({
+  //         rightOptions: curInfo
+  //       })
+  //     }
+  // }
+
+  changeCategoriesCustom(side, mouse, info, event) {
+    var curInfo;
+    if (side == "left") {
+      curInfo = _.cloneDeep(this.state.leftOptions)
+    } else if (side == "right") {
+      curInfo = _.cloneDeep(this.state.rightOptions)
+    }
+
+    console.log(curInfo)
+
+    const checked = event.target.checked
+    let found = false;
+
+
+    curInfo.map((cur, i) => {
+      console.log('cur', cur)
+      if (cur.name == info.name)  {
+        if (checked == true) {
+          curInfo[i].choices = _.union(cur.choices, [info.choices])
+          curInfo[i].logic = info.logic
+          found = true;
+        } else {
+           _.remove(curInfo[i].choices, function(n) {
+              if (n == info.choices) { return true }
+              return false
+            })
+            found = true;
+        }
+      }
+
+
+
+    })
+
+    if (found == false) {
+      info.choices = [info.choices]
+      curInfo.push(info)
+    }
+
+    if (side == 'left') {
+      this.setState({
+        leftOptions: curInfo
+      })
+    } else if (side == 'right') {
+      this.setState({
+        rightOptions: curInfo
+      })
+    }
+
+
+      // if (side == 'left') {
+      //   curInfo = _.cloneDeep(this.state.leftOptions)
+      // } else if (side == 'right') {
+      //   curInfo = _.cloneDeep(this.state.rightOptions)
+      // }
+      // var checked = event.target.checked // i think this is necessary bc the checked state doesn't actually change until it propagates back down
+
+      // var found = false;
+      // for (let i = 0; i < curInfo.length; i++) {
+      //   if (curInfo[i].name == info.name) {
+      //     if (checked == true) {
+      //       curInfo[i].choices = _.union(curInfo[i].choices, [info.choices])
+      //       curInfo[i].logic = info.logic
+      //       found = true;
+      //     } else {
+      //       _.remove(curInfo[i].choices, function(n) {
+      //         if (n == info.choices) { return true }
+      //         return false
+      //       })
+      //       found = true;
+      //     }
+      //   }
+      // }
+      // if (found == false) {
+      //   info.choices = [info.choices]
+      //   curInfo.push(info);        
+      // }
+
+      // // fixing something stupid
+      // for (let i = curInfo.length - 1; i >= 0; i--) {
+      //   if (curInfo[i].name == 'data') {
+      //     curInfo.splice(i, 1)
+      //   }
+      // }
+
+
+      // if (side == 'left') {
+      //   this.setState({
+      //     leftOptions: curInfo
+      //   })
+      // } else if (side == 'right') {
+      //   this.setState({
+      //     rightOptions: curInfo
+      //   })
+      // }
+  }
+
+  changeCategoriesPreset(side, info) {
+    if (side == 'left') {
+      this.setState({
+        leftOptions: info.filters
+      })      
+    } else if (side == 'right') {
+      this.setState({
+        rightOptions: info.filters
+      })
+    }
   }
 
   calculatePercentDiff(a: number, b: number): number {
@@ -119,18 +289,25 @@ export class CompareContainer extends Component {
 
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${this.createSentence(this.state.rightOptions)}`
+      sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}`
     } else if (prc == 100) {
-      sentence = `On average, ${this.createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${this.createSentence(this.state.leftOptions)}`
+      sentence = `On average, ${createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.leftOptions)}`
     } else if (prc < 0) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${this.createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}`;
     } else if (prc > 0) {
-      sentence = `On average, ${this.createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${this.createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}`;
     } else if (prc == 0) {
-      sentence = `${this.createSentence(this.state.leftOptions)} and ${this.createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads`;
+      sentence = `${createSentence(this.state.leftOptions)} and ${createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads`;
     }
 
     return sentence;
+  }
+
+  toggleComparisonModal(): void {
+    const curState = this.state.modalVisible;
+    this.setState({
+      modalVisible: !curState
+    })
   }
 
   render() {
@@ -170,12 +347,18 @@ export class CompareContainer extends Component {
           <Row>
             <p className="centered">
               <button className="btn btn-default button">Share finding</button>
-              <button className="btn btn-primary button">Change comparison</button>
+              <button className="btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
             </p>
           </Row>
         </Col>
+        <ComparisonModal 
+          visible={this.state.modalVisible} 
+          toggleModal={this.toggleComparisonModal.bind(this)}
+          currentSelectionLeft={this.state.leftOptions} 
+          currentSelectionRight={this.state.rightOptions}
+          changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
+          changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}/>
       </Row>
-
     )
   }
 }
