@@ -50,6 +50,21 @@
                     "logic": "OR"
                 }
             ]
+        },
+        {
+            "name": "Male 20-30",
+            "filters": [
+                {
+                    "name": "gender",
+                    "choices": ["Male"],
+                    "logic": "OR"
+                },
+                {
+                    "name": "age",
+                    "choices": ["20-30"],
+                    "logic": "OR"
+                }
+            ]
         }
     ],
     "filters": [

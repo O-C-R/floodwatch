@@ -7,8 +7,6 @@ import {ModalSegment} from './ModalSegment';
 import type {FilterOptionsType} from './Compare'
 import {createSentence} from './Compare'
 
-console.log(createSentence)
-
 type PropsType = {
   visible: boolean,
   currentSelectionLeft: FilterOptionsType,
@@ -75,7 +73,8 @@ export class ComparisonModal extends Component {
         <Modal.Body>
           <Row>
           <Col xs={5}>
-          <ModalSegment side="left" 
+          <ModalSegment userData={this.props.userData} 
+            side="left" 
             currentSelection={this.props.currentSelectionLeft} 
             isCustom={this.state.leftIsCustom} 
             filterData={Filters}
@@ -89,6 +88,7 @@ export class ComparisonModal extends Component {
           </Col>
           <Col xs={5}>
           <ModalSegment side="right" 
+            userData={this.props.userData}
             currentSelection={this.props.currentSelectionRight} 
             isCustom={this.state.rightIsCustom} 
             filterData={Filters}

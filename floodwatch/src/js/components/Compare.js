@@ -25,12 +25,7 @@ export function createSentence(options: Object): string {
     return 'You'
   }
 
-  console.log(options)
-
   options.map((opt: Object): void => {
-
-
-
     let logic = ''
     let choices = ''
     if (opt.logic == 'NOR') { 
@@ -103,12 +98,12 @@ export class CompareContainer extends Component {
     })[0]
 
     const UserData = await FWApiClient.get().getCurrentPerson()
-    console.log(UserData)
 
     this.setState({
       leftData: AdBreakdown.filterA.categories,
       rightData: AdBreakdown.filterB.categories,
-      currentTopic: FilterATopic.key
+      currentTopic: FilterATopic.key,
+      userData: UserData
     })
   }
 
@@ -175,14 +170,11 @@ export class CompareContainer extends Component {
       curInfo = _.cloneDeep(this.state.rightOptions)
     }
 
-    console.log(curInfo)
-
     const checked = event.target.checked
     let found = false;
 
 
     curInfo.map((cur, i) => {
-      console.log('cur', cur)
       if (cur.name == info.name)  {
         if (checked == true) {
           curInfo[i].choices = _.union(cur.choices, [info.choices])
@@ -357,7 +349,8 @@ export class CompareContainer extends Component {
           currentSelectionLeft={this.state.leftOptions} 
           currentSelectionRight={this.state.rightOptions}
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
-          changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}/>
+          changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
+          userData={this.state.userData}/>
       </Row>
     )
   }

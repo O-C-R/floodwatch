@@ -1,0 +1,92 @@
+{
+    "category_to_id": {
+        "religion": "1",
+        "race": "2",
+        "gender": "3"
+    },
+    "demographic_keys": [{
+        "id": "1",
+        "category_id": "1",
+        "name": "Islam"
+    }, {
+        "id": "2",
+        "category_id": "1",
+        "name": "Judaism"
+    }, {
+        "id": "3",
+        "category_id": "1",
+        "name": "Buddhism"
+    }, {
+        "id": "4",
+        "category_id": "1",
+        "name": "Christianity"
+    }, {
+        "id": "5",
+        "category_id": "1",
+        "name": "Hinduism"
+    }, {
+        "id": "6",
+        "category_id": "1",
+        "name": "Agnostic"
+    }, {
+        "id": "7",
+        "category_id": "1",
+        "name": "None/Atheist"
+    }, {
+        "id": "8",
+        "category_id": "1",
+        "name": "Other"
+    }, {
+        "id": "9",
+        "category_id": "2",
+        "name": "American Indian or Alaska Native"
+    }, {
+        "id": "10",
+        "category_id": "2",
+        "name": "Hispanic, Latino, or Spanish origin"
+    }, {
+        "id": "11",
+        "category_id": "2",
+        "name": "White"
+    }, {
+        "id": "12",
+        "category_id": "2",
+        "name": "Asian"
+    }, {
+        "id": "13",
+        "category_id": "2",
+        "name": "Middle Eastern or North African"
+    }, {
+        "id": "14",
+        "category_id": "2",
+        "name": "Black or African American"
+    }, {
+        "id": "15",
+        "category_id": "2",
+        "name": "Native Hawaiian or Other Pacific Islander"
+    }, {
+        "id": "16",
+        "category_id": "2",
+        "name": "Other"
+    }, {
+        "id": "17",
+        "category_id": "3",
+        "name": "Female"
+    }, {
+        "id": "18",
+        "category_id": "3",
+        "name": "Male"
+    }, {
+        "id": "19",
+        "category_id": "3",
+        "name": "Trans"
+    }, {
+        "id": "20",
+        "category_id": "3",
+        "name": "Nonbinary"
+    }, {
+        "id": "21",
+        "category_id": "3",
+        "name": "Other"
+    }]
+}

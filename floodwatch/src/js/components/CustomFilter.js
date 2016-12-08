@@ -37,21 +37,29 @@ export class CustomFilter extends Component {
         'logic': this.state.logic
       }
       
-
-        let checked = false;
-        if (this.props.mySelection) {
-          if ($.inArray(opt, this.props.mySelection.choices) > -1) {
-            checked = true;
-          }
+      let checked = false;
+      if (this.props.mySelection) {
+        if ($.inArray(opt, this.props.mySelection.choices) > -1) {
+          checked = true;
         }
+      }
+
+      console.log(opt)
 
 
+      let disabled = false;
+      if (this.props.shouldBeDisabled.disabled) {
+        disabled = true
+      }
+      if (disabled) {
+        
+      } else {
+        elems.push(<div className="custom-option" /*style={{backgroundColor: backgroundColor}}*/><label><input checked={checked} disabled={disabled} onChange={this.props.handleFilterClick.bind(this, event, obj)} name={this.props.filter.name} type="checkbox"/>{opt}</label></div>)
+      }
 
-      elems.push(<div className="custom-option" /*style={{backgroundColor: backgroundColor}}*/><label><input checked={checked} onChange={this.props.handleFilterClick.bind(this, event, obj)} name={this.props.filter.name} type="checkbox"/>{opt}</label></div>)
-      // elems.push(<div className="custom-option">{opt}</div>)
+      
     }) 
 
-    // let elems = [];
     // // first, check if this filter is enabled
     // if (this.props.shouldBeDisabled[0].disabled) {
     //   var myOverlay = <RequireOverlay requirements={this.props.shouldBeDisabled}/>

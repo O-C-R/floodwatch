@@ -14,12 +14,12 @@ export class ModalSegment extends Component {
     if (!this.props.isCustom) {
       elem = <RegularOptions currentSentence={this.props.currentSentence}/>
     } else {
-      elem = <CustomOptions handleFilterClick={this.props.handleFilterClick} currentSelection={this.props.currentSelection}/>
+      elem = <CustomOptions userData={this.props.userData} handleFilterClick={this.props.handleFilterClick} currentSelection={this.props.currentSelection}/>
     }
 
     return (
       <div className="comparison-container">
-      <OptionDropdown filterData={this.props.filterData} currentSentence={this.props.currentSentence} handlePresetClick={this.props.handlePresetClick.bind(this, this.props.side)} handleCustomClick={this.props.handleCustomClick}/>
+      <OptionDropdown userData={this.props.userData} filterData={this.props.filterData} currentSentence={this.props.currentSentence} handlePresetClick={this.props.handlePresetClick.bind(this, this.props.side)} handleCustomClick={this.props.handleCustomClick}/>
       {elem}
       </div>
     )
