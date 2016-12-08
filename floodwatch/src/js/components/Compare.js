@@ -164,6 +164,8 @@ export class CompareContainer extends Component {
 
   changeCategoriesCustom(side, mouse, info, event) {
     var curInfo;
+    console.log(side, mouse, info, event)
+
     if (side == "left") {
       curInfo = _.cloneDeep(this.state.leftOptions)
     } else if (side == "right") {
@@ -173,8 +175,9 @@ export class CompareContainer extends Component {
     const checked = event.target.checked
     let found = false;
 
-
     curInfo.map((cur, i) => {
+      console.log(cur.name)
+      console.log(info.name)
       if (cur.name == info.name)  {
         if (checked == true) {
           curInfo[i].choices = _.union(cur.choices, [info.choices])
@@ -188,15 +191,19 @@ export class CompareContainer extends Component {
             found = true;
         }
       }
-
-
-
     })
 
     if (found == false) {
       info.choices = [info.choices]
       curInfo.push(info)
     }
+
+    // fixing something stupid
+    curInfo.map((info, i) => {
+      if (info.name == "data") {
+        curInfo.splice(i, 1)
+      }
+    })
 
     if (side == 'left') {
       this.setState({

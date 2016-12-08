@@ -38,7 +38,7 @@ export function shouldPresetBeDisabled(t, preset) {
 
         if (filter.name == "age") {
             if (ctx.props.userData.birth_year) {
-                // thisFilter.disabled = false
+                thisFilter.disabled = false
             }
         } else {
             const myKey = getCategoryKey(filter.name)
@@ -50,7 +50,6 @@ export function shouldPresetBeDisabled(t, preset) {
                 }
             })
         }
-
         matches.push(thisFilter)
     })
 
@@ -67,10 +66,21 @@ export function shouldPresetBeDisabled(t, preset) {
     }
 }
 
-export function shouldCustomBeDisabled(category) {
+export function shouldCustomBeDisabled(t, category, userData) {
     let disabled = true;
-    // find key of category
+    const ctx = t;
 
+    // age works a lil differently 
+    if (category == "age") {
+        if (ctx.props.userData.birth_year) {
+            return {
+                disabled: false,
+                name: "age"
+            }
+        }
+    }
+
+    // and now the rest
     const myKey = getCategoryKey(category)
     const userVal = getCategoryOfUserVal(myKey)
 

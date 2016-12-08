@@ -38,7 +38,7 @@ export class CustomOptions extends Component {
     let elems = []
     Filters.filters.map((item) => {
 
-        let shouldBeDisabled = shouldCustomBeDisabled(item.name);
+        let shouldBeDisabled = shouldCustomBeDisabled(this, item.name, this.props.userData);
         console.log(item.name, shouldBeDisabled)
 
         let thisCategorysSelection;
