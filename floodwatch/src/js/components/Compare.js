@@ -113,55 +113,6 @@ export class CompareContainer extends Component {
     })
   }
 
-  // changeCategoriesCustom(kind, side, info, event) {
-  //     var curInfo; 
-  //     if (side == 'left') {
-  //       curInfo = _.cloneDeep(this.state.leftOptions)
-  //     } else if (side == 'right') {
-  //       curInfo = _.cloneDeep(this.state.rightOptions)
-  //     }
-  //     var checked = event.target.checked // i think this is necessary bc the checked state doesn't actually change until it propagates back down
-
-  //     var found = false;
-  //     for (let i = 0; i < curInfo.length; i++) {
-  //       if (curInfo[i].name == info.name) {
-  //         if (checked == true) {
-  //           curInfo[i].choices = _.union(curInfo[i].choices, [info.choices])
-  //           curInfo[i].logic = info.logic
-  //           found = true;
-  //         } else {
-  //           _.remove(curInfo[i].choices, function(n) {
-  //             if (n == info.choices) { return true }
-  //             return false
-  //           })
-  //           found = true;
-  //         }
-  //       }
-  //     }
-  //     if (found == false) {
-  //       info.choices = [info.choices]
-  //       curInfo.push(info);        
-  //     }
-
-  //     // fixing something stupid
-  //     for (let i = curInfo.length - 1; i >= 0; i--) {
-  //       if (curInfo[i].name == 'data') {
-  //         curInfo.splice(i, 1)
-  //       }
-  //     }
-
-
-  //     if (side == 'left') {
-  //       this.setState({
-  //         leftOptions: curInfo
-  //       })
-  //     } else if (side == 'right') {
-  //       this.setState({
-  //         rightOptions: curInfo
-  //       })
-  //     }
-  // }
-
   changeCategoriesCustom(side, mouse, info, event) {
     var curInfo;
     console.log(side, mouse, info, event)
@@ -214,53 +165,6 @@ export class CompareContainer extends Component {
         rightOptions: curInfo
       })
     }
-
-
-      // if (side == 'left') {
-      //   curInfo = _.cloneDeep(this.state.leftOptions)
-      // } else if (side == 'right') {
-      //   curInfo = _.cloneDeep(this.state.rightOptions)
-      // }
-      // var checked = event.target.checked // i think this is necessary bc the checked state doesn't actually change until it propagates back down
-
-      // var found = false;
-      // for (let i = 0; i < curInfo.length; i++) {
-      //   if (curInfo[i].name == info.name) {
-      //     if (checked == true) {
-      //       curInfo[i].choices = _.union(curInfo[i].choices, [info.choices])
-      //       curInfo[i].logic = info.logic
-      //       found = true;
-      //     } else {
-      //       _.remove(curInfo[i].choices, function(n) {
-      //         if (n == info.choices) { return true }
-      //         return false
-      //       })
-      //       found = true;
-      //     }
-      //   }
-      // }
-      // if (found == false) {
-      //   info.choices = [info.choices]
-      //   curInfo.push(info);        
-      // }
-
-      // // fixing something stupid
-      // for (let i = curInfo.length - 1; i >= 0; i--) {
-      //   if (curInfo[i].name == 'data') {
-      //     curInfo.splice(i, 1)
-      //   }
-      // }
-
-
-      // if (side == 'left') {
-      //   this.setState({
-      //     leftOptions: curInfo
-      //   })
-      // } else if (side == 'right') {
-      //   this.setState({
-      //     rightOptions: curInfo
-      //   })
-      // }
   }
 
   changeCategoriesPreset(side, info) {
