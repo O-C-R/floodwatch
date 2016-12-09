@@ -74,7 +74,6 @@ export class CustomFilter extends Component {
       }
 
       let disabled = false;
-      console.log('disabled', this.props.shouldBeDisabled)
       if (this.props.shouldBeDisabled.disabled) {
         disabled = true
       }

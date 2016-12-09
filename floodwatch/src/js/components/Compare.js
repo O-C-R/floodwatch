@@ -207,8 +207,6 @@ export class CompareContainer extends Component {
     const rVal = this.state.rightData[this.state.currentTopic];
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
-    console.log(this.state.leftOptions)
-
     return (
       <Row className="main">
         <Col xs={12}>
