@@ -3,11 +3,13 @@
 import React, {Component} from 'react';
 import $ from 'jquery';
 import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+import { Button } from 'react-bootstrap';
 
 type PropType = {
-  handleFilterClick: (event: Event, obj: Filter) => void,
+  handleFilterClick: (event: Event, obj: Filter, checked: boolean) => void,
   filter: FilterJSON,
-  shouldBeDisabled: DisabledCheck
+  shouldBeDisabled: DisabledCheck,
+  mySelection: Filter
 };
 
 type StateType = {
@@ -68,6 +70,7 @@ export class CustomFilter extends Component {
       
       let checked = false;
       if (this.props.mySelection) {
+        console.log(this.props.mySelection)
         if ($.inArray(opt, this.props.mySelection.choices) > -1) {
           checked = true;
         }
@@ -80,15 +83,19 @@ export class CustomFilter extends Component {
       if (disabled) {
 
       } else {
-        elems.push(<div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
-                      <label>
-                        <input checked={checked} 
+        elems.push(
+                    <div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
+                      
+                        <Button href="#" active={checked}
                                 disabled={disabled} 
-                                onChange={this.props.handleFilterClick.bind(this, event, obj)} 
-                                name={this.props.filter.name} type="checkbox"/>
+                                onClick={this.props.handleFilterClick.bind(this, event, obj, !checked)} 
+                                name={this.props.filter.name}>
                         {opt}
-                      </label>
-                    </div>)
+                        </Button>
+                      
+                    </div>
+
+                  )
       }
 
       
@@ -148,7 +155,7 @@ export class CustomFilter extends Component {
 
     return (
       <div className="filter-option" /*style={{backgroundColor:bgTest}}*/>
-      <p>Filter by {this.props.filter.name}</p>
+      <h4>Filter by {this.props.filter.name}</h4>
       <div /*display={display}*/>
       {/*<p>Show me people who have {select}:</p>*/}
       {elems}

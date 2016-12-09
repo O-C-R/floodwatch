@@ -8,12 +8,14 @@ import type {Filter, Preset} from './filtertypes'
 import {createSentence} from './Compare'
 import type {PersonResponse} from '../api/types';
 
+import '../../css/ComparisonModal.css';
+
 type PropsType = {
   visible: boolean,
   currentSelectionLeft: Array<Filter>,
   currentSelectionRight: Array<Filter>,
   toggleModal: () => void,
-  changeCategoriesCustom: (side: string, mouse: Event, obj: Filter, event: any) => void,
+  changeCategoriesCustom: (side: string, mouse: Event, obj: Filter, checked: boolean, event: any) => void,
   changeCategoriesPreset: (side: string, obj: Preset) => void,
   userData: PersonResponse
 };
@@ -70,7 +72,7 @@ export class ComparisonModal extends Component {
 
   render() {
 
-    let sentence = createSentence(this.props.currentSelectionLeft) + " and " + createSentence(this.props.currentSelectionRight)
+    let sentence = `${createSentence(this.props.currentSelectionLeft)} compared to ${createSentence(this.props.currentSelectionRight)}.`
     return (
       <Modal show={this.props.visible} className="static-modal" bsSize="lg">
         <Modal.Header>

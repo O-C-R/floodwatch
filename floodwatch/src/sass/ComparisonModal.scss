@@ -1,0 +1,31 @@
+.btn-toolbar {
+    margin-bottom:10px;
+}
+
+.filter-option {
+    padding:5px;
+    margin-bottom:1px;
+}
+
+.filter-option h4 {
+
+}
+
+.custom-option label {
+    font-family: adelle-sans;
+    font-weight:lighter;
+}
+
+.custom-option .btn {
+    background-color:white!important;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+.custom-option .btn.active {
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: inset 0 3px 5px rgba(0,0,0,.125)!important;
+    box-shadow: inset 0 3px 5px rgba(0,0,0,.125)!important;
+    background-color:lightgray!important;
+}

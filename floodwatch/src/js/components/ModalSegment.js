@@ -12,7 +12,7 @@ type PropsType = {
   handlePresetClick: (side: string, info: Preset) => void,
   side: string,
   handleCustomClick: () => void,
-  handleFilterClick: (event: Event, obj: Filter) => void,
+  handleFilterClick: (event: Event, obj: Filter, checked: boolean) => void,
   currentSelection: Array<Filter>
 };
 
