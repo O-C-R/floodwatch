@@ -18,15 +18,15 @@ export type Filter = { // FilterType
 };
 
 export type FilterJSON = {
-name: string,
-options: Array<string>,
-question: string,
-type: string,
-why: string
+  name: string,
+  options: Array<string>,
+  question: string,
+  type: string,
+  why: string
 
 };
 
 export type DisabledCheck = {
-    disabled: boolean,
-    name: string
+  disabled: boolean,
+  name: string
 };
