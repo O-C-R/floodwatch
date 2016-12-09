@@ -69,7 +69,8 @@ export class ComparisonModal extends Component {
   }
 
   render() {
-    let sentence = 'hi'
+
+    let sentence = createSentence(this.props.currentSelectionLeft) + " and " + createSentence(this.props.currentSelectionRight)
     return (
       <Modal show={this.props.visible} className="static-modal" bsSize="lg">
         <Modal.Header>
