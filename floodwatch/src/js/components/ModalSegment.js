@@ -3,16 +3,16 @@
 import React, {Component} from 'react';
 import {RegularOptions, OptionDropdown, CustomOptions} from './Options'
 import type {PersonResponse} from '../api/types';
-import type {PresetsAndFilters, Filter} from './filtertypes';
+import type {PresetsAndFilters, Filter, Preset} from './filtertypes';
 
 type PropsType = {
     filterData: PresetsAndFilters,
     userData: PersonResponse,
     currentSentence: string,
-    handlePresetClick: Function,
+    handlePresetClick: (side: string, info: Preset) => void,
     side: string,
-    handleCustomClick: Function,
-    handleFilterClick: Function,
+    handleCustomClick: () => void,
+    handleFilterClick: (event: Event, obj: Filter) => void,
     currentSelection: Array<Filter>
 }
 
@@ -24,7 +24,6 @@ export class ModalSegment extends Component {
   }
 
   render() {
-    console.log('curSelection', this.props.currentSelection)
     var elem;
     if (!this.props.isCustom) {
       elem = <RegularOptions currentSentence={this.props.currentSentence}/>

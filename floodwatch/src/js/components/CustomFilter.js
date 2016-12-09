@@ -1,19 +1,48 @@
+// @flow
+
 import React, {Component} from 'react';
 import $ from 'jquery';
+import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+
+type PropType = {
+  handleFilterClick: (event: Event, obj: Filter) => void,
+  filter: FilterJSON,
+  shouldBeDisabled: DisabledCheck
+};
+
+type StateType = {
+  opened: boolean,
+  curSettings: {
+    name: string,
+    options: any
+  },
+  logic: string
+};
+
+
+function CustomFilterInitialState(name: string): Object {
+  return {
+    opened: false,
+    curSettings: {
+      name: name,
+      options: null
+    },
+    logic: 'OR'
+  }
+}
+
 
 export class CustomFilter extends Component {
-  constructor(props) {
+  props: PropType;
+  state: StateType;
+
+  constructor(props: PropType) {
     super(props);
-    this.state = {
-      opened: false,
-      curSettings: {
-        name: this.props.filter.name,
-        options: null
-      },
-      logic: 'OR'
-    }
+    this.state = CustomFilterInitialState(this.props.filter.name)
   }
 
+
+  // tk tk 
   // toggleOpened() {
   //   let newState = !this.state.opened;
   //   this.setState({
@@ -30,7 +59,7 @@ export class CustomFilter extends Component {
   render() {
     let elems = []
 
-    this.props.filter.options.map((opt) => {
+    this.props.filter.options.map((opt: string, i: number) => {
       const obj = {
         'name': this.props.filter.name,
         'choices': [opt],
@@ -45,18 +74,20 @@ export class CustomFilter extends Component {
       }
 
       let disabled = false;
+      console.log('disabled', this.props.shouldBeDisabled)
       if (this.props.shouldBeDisabled.disabled) {
         disabled = true
       }
       if (disabled) {
 
       } else {
-        elems.push(<div className="custom-option" /*style={{backgroundColor: backgroundColor}}*/><label><input checked={checked} disabled={disabled} onChange={this.props.handleFilterClick.bind(this, event, obj)} name={this.props.filter.name} type="checkbox"/>{opt}</label></div>)
+        elems.push(<div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/><label><input checked={checked} disabled={disabled} onChange={this.props.handleFilterClick.bind(this, event, obj)} name={this.props.filter.name} type="checkbox"/>{opt}</label></div>)
       }
 
       
     }) 
 
+    // tk tk
     // // first, check if this filter is enabled
     // if (this.props.shouldBeDisabled[0].disabled) {
     //   var myOverlay = <RequireOverlay requirements={this.props.shouldBeDisabled}/>

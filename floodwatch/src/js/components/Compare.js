@@ -106,7 +106,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  changeCategoriesCustom(side: string, mouse: MouseEvent, info: Filter, event: any): void {
+  changeCategoriesCustom(side: string, mouse: Event, info: Filter, event: any): void {
     let curInfo = [];
 
     if (side == 'left') {

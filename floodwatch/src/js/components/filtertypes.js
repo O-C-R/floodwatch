@@ -16,3 +16,17 @@ export type Filter = { // FilterType
   choices: Array<string>,
   logic: string
 };
+
+export type FilterJSON = {
+name: string,
+options: Array<string>,
+question: string,
+type: string,
+why: string
+
+};
+
+export type DisabledCheck = {
+    disabled: boolean,
+    name: string
+}

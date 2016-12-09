@@ -1,7 +1,8 @@
 // @flow
+
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import type {PersonResponse} from '../api/types';
-import type {Preset} from './filtertypes'
+import type {Preset, Filter, DisabledCheck} from './filtertypes'
 
 export function getCategoryKey(category: string): string {
   if (DemographicKeys.category_to_id[category] == undefined) {
@@ -38,7 +39,7 @@ export function shouldPresetBeDisabled(t: any, preset: Preset) {
 
   var matches = [];
 
-  preset.filters.map((filter) => {
+  preset.filters.map((filter: Filter) => {
     let thisFilter = {
       'name': filter.name,
       'disabled': true
@@ -51,8 +52,8 @@ export function shouldPresetBeDisabled(t: any, preset: Preset) {
     } else {
       const myKey = getCategoryKey(filter.name)
       const values = ctx.props.userData.demographic_ids
-      values.map((val) => {
-        const thisKey = getCategoryOfUserVal(val.toString())
+      values.map((val: number) => {
+        const thisKey = getCategoryOfUserVal(val)
         if (thisKey == myKey) {
           thisFilter.disabled = false
         }
@@ -62,7 +63,7 @@ export function shouldPresetBeDisabled(t: any, preset: Preset) {
   })
 
   let needed = []
-  matches.map((m) => {
+  matches.map((m: DisabledCheck) => {
     if (m.disabled) {
       needed.push(m)
     }

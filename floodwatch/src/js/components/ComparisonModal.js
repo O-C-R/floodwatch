@@ -4,17 +4,18 @@ import React, {Component} from 'react';
 import Filters from '../../stubbed_data/filter_response.json';
 import {Modal, Button, Row, Col } from 'react-bootstrap'
 import {ModalSegment} from './ModalSegment';
-import type {Filter} from './filtertypes'
+import type {Filter, Preset} from './filtertypes'
 import {createSentence} from './Compare'
+import type {PersonResponse} from '../api/types';
 
 type PropsType = {
   visible: boolean,
   currentSelectionLeft: Array<Filter>,
   currentSelectionRight: Array<Filter>,
-  toggleModal: Function,
-  changeCategoriesCustom: Function,
-  changeCategoriesPreset: Function,
-  userData: Object
+  toggleModal: () => void,
+  changeCategoriesCustom: (side: string, mouse: Event, obj: Filter, event: any) => void,
+  changeCategoriesPreset: (side: string, obj: Preset) => void,
+  userData: PersonResponse
 };
 
 type StateType = {
@@ -39,7 +40,7 @@ export class ComparisonModal extends Component {
     this.state = ComparisonModalInitialState()
   }
 
-  handleCustomClick(side: string) {
+  handleCustomClick(side: string): void {
     if (side == 'right') {
       const curState = this.state.rightIsCustom;
       this.setState({
@@ -53,7 +54,7 @@ export class ComparisonModal extends Component {
     }
   }
 
-  changeCategoriesPreset(side: string, obj: Object) { // specific
+  changeCategoriesPreset(side: string, obj: Preset): void { 
     if (side == 'right') {
       this.setState({
         rightIsCustom: false

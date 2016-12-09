@@ -1,10 +1,11 @@
 // @flow
+
 import React, {Component} from 'react';
 import { MenuItem, ButtonToolbar, DropdownButton } from 'react-bootstrap';
 import Filters from '../../stubbed_data/filter_response.json';
 import {CustomFilter} from './CustomFilter'
 import {getCategoryKey, getCategoryOfUserVal, shouldPresetBeDisabled, shouldCustomBeDisabled} from './FindInDemographics'
-import type {Filter, PresetsAndFilters} from './filtertypes.js'
+import type {Filter, Preset, PresetsAndFilters, FilterJSON} from './filtertypes.js'
 import type {PersonResponse} from '../api/types';
 
 
@@ -39,7 +40,7 @@ export class CustomOptions extends Component {
 
   render() {
     let elems = []
-    Filters.filters.map((item) => {
+    Filters.filters.map((item: FilterJSON, i: number) => {
       let shouldBeDisabled = shouldCustomBeDisabled(this, item.name, this.props.userData);
 
       let thisCategorysSelection;
@@ -47,7 +48,7 @@ export class CustomOptions extends Component {
       if (index > -1) {
         thisCategorysSelection = this.props.currentSelection[index]
       }
-      elems.push(<CustomFilter shouldBeDisabled={shouldBeDisabled} handleFilterClick={this.props.handleFilterClick} filter={item} mySelection={thisCategorysSelection}/>)
+      elems.push(<CustomFilter key={i} shouldBeDisabled={shouldBeDisabled} handleFilterClick={this.props.handleFilterClick} filter={item} mySelection={thisCategorysSelection}/>)
     })
 
     return (
@@ -61,8 +62,8 @@ export class CustomOptions extends Component {
 //-------------------------------------------------------------------------------------------------------------------
 type OptionDropdownProps = {
     side: string,
-    handlePresetClick: Function,
-    handleCustomClick: Function,
+    handlePresetClick: (item: Preset, side: string) => void,
+    handleCustomClick: () => void,
     currentSentence: string,
     filterData: PresetsAndFilters
 };
@@ -72,19 +73,19 @@ export class OptionDropdown extends Component {
 
   render() {
     let elems = [];
-    this.props.filterData.presets.map((item) => {
+    this.props.filterData.presets.map((item: Preset, i: number) => {
       let requirements = shouldPresetBeDisabled(this, item)
-
+        // tk
         // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
 
       if (requirements.disabled == false) {
-        elems.push(<MenuItem disabled={requirements.disabled} onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>)
+        elems.push(<MenuItem key={i} disabled={requirements.disabled} onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>)
       } else {
         elems.push(
-              // <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={myOverlay}>
-                <MenuItem disabled={requirements.disabled}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>
-              // </OverlayTrigger>
-            )
+          // <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={myOverlay}>
+            <MenuItem key={i} disabled={requirements.disabled}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>
+          // </OverlayTrigger>
+        )
       }
     })
     return (
