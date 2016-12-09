@@ -20,9 +20,9 @@ export class RegularOptions extends Component {
 
 //-------------------------------------------------------------------------------------------------------------------
 type CustomOptionsProps = {
-    currentSelection: Array<Filter>,
-    handleFilterClick: Function,
-    userData: PersonResponse
+  currentSelection: Array<Filter>,
+  handleFilterClick: Function,
+  userData: PersonResponse
 };
 
 
@@ -48,7 +48,11 @@ export class CustomOptions extends Component {
       if (index > -1) {
         thisCategorysSelection = this.props.currentSelection[index]
       }
-      elems.push(<CustomFilter key={i} shouldBeDisabled={shouldBeDisabled} handleFilterClick={this.props.handleFilterClick} filter={item} mySelection={thisCategorysSelection}/>)
+      elems.push(<CustomFilter key={i} 
+                                shouldBeDisabled={shouldBeDisabled} 
+                                handleFilterClick={this.props.handleFilterClick} 
+                                filter={item} 
+                                mySelection={thisCategorysSelection}/>)
     })
 
     return (
@@ -61,11 +65,11 @@ export class CustomOptions extends Component {
 
 //-------------------------------------------------------------------------------------------------------------------
 type OptionDropdownProps = {
-    side: string,
-    handlePresetClick: (item: Preset, side: string) => void,
-    handleCustomClick: () => void,
-    currentSentence: string,
-    filterData: PresetsAndFilters
+  side: string,
+  handlePresetClick: (item: Preset, side: string) => void,
+  handleCustomClick: () => void,
+  currentSentence: string,
+  filterData: PresetsAndFilters
 };
 
 export class OptionDropdown extends Component {
@@ -79,11 +83,18 @@ export class OptionDropdown extends Component {
         // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
 
       if (requirements.disabled == false) {
-        elems.push(<MenuItem key={i} disabled={requirements.disabled} onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>)
+        elems.push(<MenuItem key={i} 
+                                disabled={requirements.disabled} 
+                                onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>
+                                {item.name} {(requirements.disabled) ? '(Requires info)' : '' }
+                    </MenuItem>)
       } else {
         elems.push(
           // <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={myOverlay}>
-            <MenuItem key={i} disabled={requirements.disabled}>{item.name} {(requirements.disabled) ? '(Requires info)' : '' }</MenuItem>
+            <MenuItem key={i} 
+                      disabled={requirements.disabled}>
+                      {item.name} {(requirements.disabled) ? '(Requires info)' : '' }
+            </MenuItem>
           // </OverlayTrigger>
         )
       }

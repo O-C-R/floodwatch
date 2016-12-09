@@ -79,7 +79,7 @@ export function shouldCustomBeDisabled(t: any, category: string, userData: Perso
   let disabled = true;
   const ctx = t;
 
-    // age works a lil differently 
+  // age works a lil differently 
   if (category == 'age') {
     if (ctx.props.userData.birth_year) {
       return {
@@ -89,7 +89,7 @@ export function shouldCustomBeDisabled(t: any, category: string, userData: Perso
     }
   }
 
-    // and now the rest
+  // and now the rest
   const myKey = getCategoryKey(category)
   const userVal = getCategoryOfUserVal(parseInt(myKey))
 

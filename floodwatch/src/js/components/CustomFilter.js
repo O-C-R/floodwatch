@@ -80,7 +80,15 @@ export class CustomFilter extends Component {
       if (disabled) {
 
       } else {
-        elems.push(<div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/><label><input checked={checked} disabled={disabled} onChange={this.props.handleFilterClick.bind(this, event, obj)} name={this.props.filter.name} type="checkbox"/>{opt}</label></div>)
+        elems.push(<div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
+                      <label>
+                        <input checked={checked} 
+                                disabled={disabled} 
+                                onChange={this.props.handleFilterClick.bind(this, event, obj)} 
+                                name={this.props.filter.name} type="checkbox"/>
+                        {opt}
+                      </label>
+                    </div>)
       }
 
       
