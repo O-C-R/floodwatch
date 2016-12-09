@@ -7,14 +7,17 @@ import {FilterParent} from './FilterParent';
 import {ComparisonModal} from './ComparisonModal';
 import Filters from '../../stubbed_data/filter_response.json';
 import {FWApiClient} from '../api/api';
+import type {PersonResponse} from '../api/types';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import type {UnstackedData} from './FilterParent';
 import d3 from 'd3';
 import _ from 'lodash';
+import type {PresetsAndFilters, Preset, Filter} from './filtertypes'
 
 // import '../../Compare.css';
 
-export function createSentence(options: Object): string {
+
+export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
   if (options.length == 0) {
     sentence = 'All ' + sentence;
@@ -32,7 +35,7 @@ export function createSentence(options: Object): string {
       logic = ' Non-';
       choices = opt.choices.join(', non-')
     } else {
-        choices = opt.choices.join(', ')  
+      choices = opt.choices.join(', ')  
     }
     sentence = logic + choices + ' ' + sentence
   })
@@ -52,24 +55,14 @@ export class Compare extends Component {
   }
 }
 
-type FilterOptionsType = {
-  name: string,
-  filters: Array<FilterType>
-};
-
-type FilterType = {
-  name: string,
-  choices: Array<string>,
-  logic: string
-};
-
 type StateType = {
-  leftOptions: FilterOptionsType,
-  rightOptions: FilterOptionsType,
+  leftOptions: Array<Filter>,
+  rightOptions: Array<Filter>,
   leftData: UnstackedData,
   rightData: UnstackedData,
   currentTopic: string,
-  modalVisible: boolean
+  modalVisible: boolean,
+  userData: PersonResponse
 };
 
 function CompareContainerInitialState(): Object {
@@ -113,45 +106,41 @@ export class CompareContainer extends Component {
     })
   }
 
-  changeCategoriesCustom(side, mouse, info, event) {
-    var curInfo;
-    console.log(side, mouse, info, event)
+  changeCategoriesCustom(side: string, mouse: MouseEvent, info: Filter, event: any): void {
+    let curInfo = [];
 
-    if (side == "left") {
+    if (side == 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
-    } else if (side == "right") {
+    } else if (side == 'right') {
       curInfo = _.cloneDeep(this.state.rightOptions)
     }
 
     const checked = event.target.checked
     let found = false;
 
-    curInfo.map((cur, i) => {
-      console.log(cur.name)
-      console.log(info.name)
+    curInfo.map((cur: Filter, i: number) => {
       if (cur.name == info.name)  {
         if (checked == true) {
-          curInfo[i].choices = _.union(cur.choices, [info.choices])
+          curInfo[i].choices = _.union(cur.choices, info.choices)
           curInfo[i].logic = info.logic
           found = true;
         } else {
-           _.remove(curInfo[i].choices, function(n) {
-              if (n == info.choices) { return true }
-              return false
-            })
-            found = true;
+          _.remove(curInfo[i].choices, function(n) {
+            if (n == info.choices[0]) { return true }
+            return false
+          })
+          found = true;
         }
       }
     })
 
     if (found == false) {
-      info.choices = [info.choices]
       curInfo.push(info)
     }
 
-    // fixing something stupid
-    curInfo.map((info, i) => {
-      if (info.name == "data") {
+    // fixing something stupid for when the filter is You
+    curInfo.map((info: Filter, i: number) => {
+      if (info.name == 'data') {
         curInfo.splice(i, 1)
       }
     })
@@ -167,7 +156,7 @@ export class CompareContainer extends Component {
     }
   }
 
-  changeCategoriesPreset(side, info) {
+  changeCategoriesPreset(side: string, info: Preset): void {
     if (side == 'left') {
       this.setState({
         leftOptions: info.filters
@@ -217,6 +206,8 @@ export class CompareContainer extends Component {
     const lVal = this.state.leftData[this.state.currentTopic];
     const rVal = this.state.rightData[this.state.currentTopic];
     const sentence = this.generateDifferenceSentence(lVal, rVal)
+
+    console.log(this.state.leftOptions)
 
     return (
       <Row className="main">

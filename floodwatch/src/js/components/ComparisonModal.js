@@ -4,14 +4,17 @@ import React, {Component} from 'react';
 import Filters from '../../stubbed_data/filter_response.json';
 import {Modal, Button, Row, Col } from 'react-bootstrap'
 import {ModalSegment} from './ModalSegment';
-import type {FilterOptionsType} from './Compare'
+import type {Filter} from './filtertypes'
 import {createSentence} from './Compare'
 
 type PropsType = {
   visible: boolean,
-  currentSelectionLeft: FilterOptionsType,
-  currentSelectionRight: FilterOptionsType,
-  toggleModal: Function
+  currentSelectionLeft: Array<Filter>,
+  currentSelectionRight: Array<Filter>,
+  toggleModal: Function,
+  changeCategoriesCustom: Function,
+  changeCategoriesPreset: Function,
+  userData: Object
 };
 
 type StateType = {
@@ -28,18 +31,21 @@ function ComparisonModalInitialState(): Object {
 
 
 export class ComparisonModal extends Component {
+  state: StateType;
+  props: PropsType;
+
   constructor(props: PropsType){
     super(props);
     this.state = ComparisonModalInitialState()
   }
 
-  handleCustomClick(side) {
-    if (side == "right") {
+  handleCustomClick(side: string) {
+    if (side == 'right') {
       const curState = this.state.rightIsCustom;
       this.setState({
         rightIsCustom: true
       })
-    } else if (side == "left") {
+    } else if (side == 'left') {
       const curState = this.state.leftIsCustom;
       this.setState({
         leftIsCustom: true
@@ -47,12 +53,12 @@ export class ComparisonModal extends Component {
     }
   }
 
-  changeCategoriesPreset(side, obj) {
-    if (side == "right") {
+  changeCategoriesPreset(side: string, obj: Object) { // specific
+    if (side == 'right') {
       this.setState({
         rightIsCustom: false
       })
-    } else if (side == "left") {
+    } else if (side == 'left') {
       this.setState({
         leftIsCustom: false
       })
@@ -62,7 +68,7 @@ export class ComparisonModal extends Component {
   }
 
   render() {
-    let sentence = "hi"
+    let sentence = 'hi'
     return (
       <Modal show={this.props.visible} className="static-modal" bsSize="lg">
         <Modal.Header>
@@ -84,7 +90,7 @@ export class ComparisonModal extends Component {
             handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'left')}/>
             </Col>
             <Col xs={2}>
-          <div style={{textAlign:"center"}}>vs</div>
+          <div style={{textAlign:'center'}}>vs</div>
           </Col>
           <Col xs={5}>
           <ModalSegment side="right" 

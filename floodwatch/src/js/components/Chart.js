@@ -43,7 +43,7 @@ export class Chart extends Component {
     const keys = Object.keys(colors)
     keys.map((key: string): void => {
       let thisGradient = defs.append('linearGradient')
-        .attr('id', key.replace(/[\/\s,\-!]+/g, ""))
+        .attr('id', key.replace(/[\/\s,\-!]+/g, ''))
         .attr('x1', '0%')
         .attr('x2', '100%')
         .attr('y1', '0%')
@@ -102,12 +102,12 @@ export class Chart extends Component {
       .attr('class', 'stack ')
       .attr('width', '100%')
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ')'
       })
 
     layer.data(data)
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ')'
       })
 
     layer.exit().remove()

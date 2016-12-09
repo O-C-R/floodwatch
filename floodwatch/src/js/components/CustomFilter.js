@@ -33,7 +33,7 @@ export class CustomFilter extends Component {
     this.props.filter.options.map((opt) => {
       const obj = {
         'name': this.props.filter.name,
-        'choices': opt,
+        'choices': [opt],
         'logic': this.state.logic
       }
       
