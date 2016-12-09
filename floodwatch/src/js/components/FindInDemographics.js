@@ -15,7 +15,7 @@ type DemographicDictionary = {
   id: string,
   category_id: string,
   name: string
-}
+};
 
 export function getCategoryOfUserVal(key: number): string {
   let k = '';

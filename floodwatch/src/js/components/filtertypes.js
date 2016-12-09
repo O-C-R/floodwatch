@@ -29,4 +29,4 @@ why: string
 export type DisabledCheck = {
     disabled: boolean,
     name: string
-}
+};

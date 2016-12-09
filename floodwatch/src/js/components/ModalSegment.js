@@ -14,11 +14,11 @@ type PropsType = {
     handleCustomClick: () => void,
     handleFilterClick: (event: Event, obj: Filter) => void,
     currentSelection: Array<Filter>
-}
+};
 
 
 export class ModalSegment extends Component {
-    props: PropsType;
+  props: PropsType;
   constructor(){
     super();
   }

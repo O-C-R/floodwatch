@@ -69,7 +69,7 @@ type OptionDropdownProps = {
 };
 
 export class OptionDropdown extends Component {
-    props: OptionDropdownProps
+  props: OptionDropdownProps
 
   render() {
     let elems = [];
