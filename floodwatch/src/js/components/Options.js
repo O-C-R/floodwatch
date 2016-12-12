@@ -80,25 +80,21 @@ export class OptionDropdown extends Component {
   props: OptionDropdownProps
 
   render() {
-    console.log(this.props)
     let elems = this.props.filterData.presets.map((item: Preset, i: number) => {
       let requirements = shouldPresetBeDisabled(this.props.userData, item)
         // tk
         // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
-
-        console.log(requirements)
-
       if (requirements.disabled == false) {
-        return <MenuItem key={i} 
+        return  <MenuItem key={i} 
                                 disabled={requirements.disabled} 
                                 onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>
                                 {item.name}
-                    </MenuItem>
+                </MenuItem>
       } else {
-        return <MenuItem key={i} 
+        return  <MenuItem key={i} 
                       disabled={requirements.disabled}>
                       {item.name} (Requires info)
-            </MenuItem>
+                </MenuItem>
         
       }
     })

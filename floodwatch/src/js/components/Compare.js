@@ -116,8 +116,6 @@ export class CompareContainer extends Component {
 
     let found = false;
 
-    console.log(side, info, checked)
-
     for (let i = 0; i < curInfo.length; i++) {
       if (curInfo[i].name == info.name)  {
         if (checked == true) {
@@ -139,7 +137,7 @@ export class CompareContainer extends Component {
 
     // fixing something stupid for when the filter is You
     for (let [index: number, info: Filter] of curInfo.entries()) {
-      if (info.name == "data") {
+      if (info.name == 'data') {
         curInfo.splice(index, 1)
       }
     }
