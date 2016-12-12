@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/O-C-R/auth/id"
 	"github.com/aws/aws-sdk-go/aws"
@@ -33,7 +34,6 @@ func handleClassifierOutput(options *Options) {
 		}
 
 		for _, message := range response.Messages {
-
 			if _, ok := message.MessageAttributes["id"]; !ok {
 				log.Println("sqs message missing id")
 				continue
@@ -52,15 +52,8 @@ func handleClassifierOutput(options *Options) {
 				continue
 			}
 
-			adCategoryID, err := id.New()
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-
 			adCategoryName, _ := classificationResponse.MostProbableCategory()
 			adCategory := &data.AdCategory{
-				ID:   adCategoryID,
 				Name: adCategoryName,
 			}
 
@@ -71,6 +64,16 @@ func handleClassifierOutput(options *Options) {
 			}
 
 			if err := options.Backend.UpdateAdFromClassifier(adID, currentAdCategoryID, classificationOutput); err != nil {
+				log.Println(err)
+				continue
+			}
+
+			deleteMessageInput := &sqs.DeleteMessageInput{
+				QueueUrl:      aws.String(options.SQSClassifierOutputQueueURL),
+				ReceiptHandle: message.ReceiptHandle,
+			}
+
+			if _, err := sqsClient.DeleteMessage(deleteMessageInput); err != nil {
 				log.Println(err)
 			}
 		}
@@ -151,6 +154,12 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 		return
 	}
 
+	currentSiteIDVal, ok := currentSiteID.(id.ID)
+	if !ok {
+		adResponse.Error = "Bad ID"
+		return
+	}
+
 	impressionID, err := id.New()
 	if err != nil {
 		adResponse.Error = err.Error()
@@ -159,7 +168,7 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 
 	impression := &data.Impression{
 		ID:       impressionID,
-		SiteID:   currentSiteID,
+		SiteID:   currentSiteIDVal,
 		PersonID: personID,
 		LocalID:  adRequest.Ad.LocalID,
 		AdID:     adID,
@@ -168,6 +177,7 @@ func handleAdRequest(options *Options, s3Client *s3.S3, sqsClient *sqs.SQS, pers
 		CaptureType: adRequest.Capture.CaptureType,
 		MediaType:   adRequest.Ad.MediaType,
 		HTML:        adRequest.Ad.HTML,
+		Timestamp:   time.Now(),
 	}
 
 	if _, err := options.Backend.UpsertImpression(impression); err != nil {
@@ -240,5 +250,35 @@ func Ads(options *Options) http.Handler {
 		}
 
 		WriteJSON(w, adsResponse)
+	})
+}
+
+func FilteredAdStats(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+
+		var filterRequest data.FilterRequest
+		err := decoder.Decode(&filterRequest)
+		if err != nil {
+			Error(w, err, 500)
+		}
+		defer req.Body.Close()
+
+		resA, err := options.Backend.FilteredAds(filterRequest.FilterA)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		resB, err := options.Backend.FilteredAds(filterRequest.FilterB)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		res := data.FilterResponse{
+			FilterA: resA,
+			FilterB: resB,
+		}
+
+		WriteJSON(w, res)
 	})
 }

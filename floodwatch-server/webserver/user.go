@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
@@ -160,14 +161,84 @@ func PersonCurrent(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
 		if session == nil {
-			Error(w, nil, 500)
+			Error(w, nil, 401)
+			return
 		}
 
 		person, err := options.Backend.Person(session.UserID)
 		if err != nil {
 			Error(w, err, 500)
+			return
 		}
 
-		WriteJSON(w, person)
+		demographicIds, err := options.Backend.PersonDemographics(person.ID)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personResponse := person.NewPersonResponse(demographicIds)
+		WriteJSON(w, personResponse)
+	})
+}
+
+func UpdatePersonDemographics(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+
+		demographicRequest := data.PersonDemographicRequest{}
+		err := decoder.Decode(&demographicRequest)
+		if err != nil {
+			Error(w, err, 500)
+		}
+		defer req.Body.Close()
+
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
+			return
+		}
+
+		person, err := options.Backend.Person(session.UserID)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		didUpdatePerson := false
+		if demographicRequest.BirthYear != nil {
+			person.BirthYear = demographicRequest.BirthYear
+			didUpdatePerson = true
+		}
+
+		if demographicRequest.TwofishesID != nil {
+			countryCode, err := data.GetCountryCodeFromTwofishesID(options.TwofishesHost, *demographicRequest.TwofishesID)
+			if err != nil {
+				Error(w, err, 500)
+				return
+			}
+
+			person.TwofishesID = demographicRequest.TwofishesID
+			person.CountryCode = countryCode
+
+			didUpdatePerson = true
+		}
+
+		if didUpdatePerson {
+			if err := options.Backend.UpdatePerson(person); err != nil {
+				Error(w, err, 500)
+				return
+			}
+		}
+
+		if len(demographicRequest.DemographicIDs) > 0 {
+			err := options.Backend.UpdatePersonDemographics(person.ID, demographicRequest.DemographicIDs)
+			if err != nil {
+				Error(w, err, 500)
+				return
+			}
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 	})
 }

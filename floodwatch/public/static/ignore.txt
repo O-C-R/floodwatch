@@ -1,0 +1,6 @@
+! Google sites
+google.com
+*.google.com
+
+! Banking
+bankofamerica.com
