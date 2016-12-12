@@ -29,15 +29,6 @@ type CustomOptionsProps = {
 export class CustomOptions extends Component {
   props: CustomOptionsProps
 
-  getIndexOfName(name: string): number {
-    for (let i = 0; i < this.props.currentSelection.length; i++) {
-      if (this.props.currentSelection[i].name == name) {
-        return i
-      }
-    }
-    return -1
-  }
-
   render() {
     let elems = Filters.filters.map((item: FilterJSON, i: number) => {
       let shouldBeDisabled = shouldCustomBeDisabled(item.name, this.props.userData);
