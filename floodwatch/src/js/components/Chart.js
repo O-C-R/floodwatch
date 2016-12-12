@@ -39,26 +39,31 @@ export class Chart extends Component {
     const ctx = this;
     let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
     let defs = svg.append('defs')
+    console.log(ctx.props.side)
 
     const keys = Object.keys(colors)
+
     keys.map((key: string): void => {
+      const myStartColor = (ctx.props.side === 'left') ? colors[key][1] : colors[key][0]
+      const myEndColor = (ctx.props.side == 'left') ? colors[key][0]: colors[key][1]
+
       let thisGradient = defs.append('linearGradient')
-        .attr('id', key.replace(/[\/\s,\-!]+/g, ''))
+        .attr('id', key.replace(/[\/\s,\-!]+/g, '') + this.props.side)
         .attr('x1', '0%')
         .attr('x2', '100%')
         .attr('y1', '0%')
-        .attr('y2', '100%');
+        .attr('y2', '0%');
 
       thisGradient.append('stop')
         .attr('class', 'start')
-        .attr('offset', '0%')
-        .attr('stop-color', colors[key][1])
+        .attr('offset', '20%')
+        .attr('stop-color', myStartColor)
         .attr('stop-opacity', 1);
 
       thisGradient.append('stop')
         .attr('class', 'end')
         .attr('offset', '90%')
-        .attr('stop-color', colors[key][0])
+        .attr('stop-color', myEndColor)
         .attr('stop-opacity', 1);
 
     })
@@ -102,12 +107,12 @@ export class Chart extends Component {
       .attr('class', 'stack ')
       .attr('width', '100%')
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
       })
 
     layer.data(data)
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
       })
 
     layer.exit().remove()

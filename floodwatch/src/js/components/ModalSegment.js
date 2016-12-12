@@ -12,19 +12,19 @@ type PropsType = {
   handlePresetClick: (side: string, info: Preset) => void,
   side: string,
   handleCustomClick: () => void,
-  handleFilterClick: (event: Event, obj: Filter, checked: boolean) => void,
+  handleFilterClick: (obj: Filter, checked: boolean) => void,
   currentSelection: Array<Filter>
 };
 
 
 export class ModalSegment extends Component {
   props: PropsType;
-  constructor(){
-    super();
+  constructor(props: PropsType){
+    super(props);
   }
 
   render() {
-    var elem;
+    let elem;
     if (!this.props.isCustom) {
       elem = <RegularOptions currentSentence={this.props.currentSentence}/>
     } else {

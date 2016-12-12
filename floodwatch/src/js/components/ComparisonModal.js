@@ -15,7 +15,7 @@ type PropsType = {
   currentSelectionLeft: Array<Filter>,
   currentSelectionRight: Array<Filter>,
   toggleModal: () => void,
-  changeCategoriesCustom: (side: string, mouse: Event, obj: Filter, checked: boolean, event: any) => void,
+  changeCategoriesCustom: (side: string, obj: Filter, checked: boolean) => void,
   changeCategoriesPreset: (side: string, obj: Preset) => void,
   userData: PersonResponse
 };
@@ -25,7 +25,7 @@ type StateType = {
   rightIsCustom: boolean
 };
 
-function ComparisonModalInitialState(): Object {
+function ComparisonModalInitialState(): StateType {
   return {
     leftIsCustom: false,
     rightIsCustom: false
@@ -44,12 +44,10 @@ export class ComparisonModal extends Component {
 
   handleCustomClick(side: string): void {
     if (side == 'right') {
-      const curState = this.state.rightIsCustom;
       this.setState({
         rightIsCustom: true
       })
     } else if (side == 'left') {
-      const curState = this.state.leftIsCustom;
       this.setState({
         leftIsCustom: true
       })

@@ -6,7 +6,7 @@ import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
 import { Button } from 'react-bootstrap';
 
 type PropType = {
-  handleFilterClick: (event: Event, obj: Filter, checked: boolean) => void,
+  handleFilterClick: (obj: Filter, checked: boolean) => void,
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
   mySelection: Filter
@@ -59,9 +59,8 @@ export class CustomFilter extends Component {
   // }
 
   render() {
-    let elems = []
 
-    this.props.filter.options.map((opt: string, i: number) => {
+    let elems = this.props.filter.options.map((opt: string, i: number) => {
       const obj = {
         'name': this.props.filter.name,
         'choices': [opt],
@@ -70,7 +69,6 @@ export class CustomFilter extends Component {
       
       let checked = false;
       if (this.props.mySelection) {
-        console.log(this.props.mySelection)
         if ($.inArray(opt, this.props.mySelection.choices) > -1) {
           checked = true;
         }
@@ -81,21 +79,19 @@ export class CustomFilter extends Component {
         disabled = true
       }
       if (disabled) {
-
+        // tk
       } else {
-        elems.push(
-                    <div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
-                      
-                        <Button href="#" active={checked}
-                                disabled={disabled} 
-                                onClick={this.props.handleFilterClick.bind(this, event, obj, !checked)} 
-                                name={this.props.filter.name}>
-                        {opt}
-                        </Button>
-                      
-                    </div>
+        return <div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
+                    <Button href="#" active={checked}
+                            disabled={disabled} 
+                            onClick={this.props.handleFilterClick.bind(this, obj, !checked)} 
+                            name={this.props.filter.name}>
+                    {opt}
+                    </Button>
+                  
+                </div>
 
-                  )
+                  
       }
 
       

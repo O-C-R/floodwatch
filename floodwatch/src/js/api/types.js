@@ -1,7 +1,8 @@
 // @flow
 
 export type PersonResponse = {
-  username: string
+  username: string,
+  demographic_ids: Array<number>
 };
 
 export type DemographicFilterItem = {

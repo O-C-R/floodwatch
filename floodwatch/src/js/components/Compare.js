@@ -28,7 +28,7 @@ export function createSentence(options: Array<Filter>): string {
     return 'You'
   }
 
-  options.map((opt: Object): void => {
+  options.map((opt: Filter): void => {
     let logic = ''
     let choices = ''
     if (opt.logic == 'NOR') { 
@@ -84,7 +84,7 @@ export class CompareContainer extends Component {
     this.state = CompareContainerInitialState()
   }
 
-  async componentDidMount(): any {
+  async componentDidMount() {
     const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: {}, filterB: {} })
     const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
       return d3.descending(a.value, b.value);
@@ -106,7 +106,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  changeCategoriesCustom(side: string, mouse: Event, info: Filter, checked: boolean, event: any): void {
+  changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
     let curInfo = [];
     if (side == 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
@@ -116,32 +116,33 @@ export class CompareContainer extends Component {
 
     let found = false;
 
-    curInfo.map((cur: Filter, i: number) => {
-      if (cur.name == info.name)  {
+    console.log(side, info, checked)
+
+    for (let i = 0; i < curInfo.length; i++) {
+      if (curInfo[i].name == info.name)  {
         if (checked == true) {
-          curInfo[i].choices = _.union(cur.choices, info.choices)
+          curInfo[i].choices = _.union(curInfo[i].choices, info.choices)
           curInfo[i].logic = info.logic
           found = true;
         } else {
           _.remove(curInfo[i].choices, function(n: string) {
-            if (n == info.choices[0]) { return true }
-            return false
+            return n == info.choices[0]
           })
           found = true;
         }
       }
-    })
+    }
 
     if (found == false) {
       curInfo.push(info)
     }
 
     // fixing something stupid for when the filter is You
-    curInfo.map((info: Filter, i: number) => {
-      if (info.name == 'data') {
-        curInfo.splice(i, 1)
+    for (let [index: number, info: Filter] of curInfo.entries()) {
+      if (info.name == "data") {
+        curInfo.splice(index, 1)
       }
-    })
+    }
 
     if (side == 'left') {
       this.setState({
