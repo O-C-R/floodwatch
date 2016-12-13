@@ -6,7 +6,7 @@
                 {
                     "name":"data",
                     "choices": ["You"],
-                    "logic": "OR"
+                    "logic": "or"
                 }
             ],
             "always_available": true
@@ -22,7 +22,7 @@
                  {
                     "name": "gender",
                     "choices": ["Male"],
-                    "logic": "OR"
+                    "logic": "or"
                 }
             ]
         },
@@ -32,7 +32,7 @@
                  {
                     "name": "gender",
                     "choices": ["Female"],
-                    "logic": "OR"
+                    "logic": "or"
                 }
             ]
         },
@@ -42,12 +42,12 @@
                 {
                     "name": "race",
                     "choices": ["White"],
-                    "logic": "OR"
+                    "logic": "or"
                 },
                 {
                     "name": "religion",
                     "choices": ["Christian"],
-                    "logic": "OR"
+                    "logic": "or"
                 }
             ]
         },
@@ -57,12 +57,12 @@
                 {
                     "name": "gender",
                     "choices": ["Male"],
-                    "logic": "OR"
+                    "logic": "or"
                 },
                 {
                     "name": "age",
                     "choices": ["20-30"],
-                    "logic": "OR"
+                    "logic": "or"
                 }
             ]
         }

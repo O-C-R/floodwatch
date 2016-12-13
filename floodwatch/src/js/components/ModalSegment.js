@@ -13,6 +13,7 @@ type PropsType = {
   side: string,
   handleCustomClick: () => void,
   handleFilterClick: (obj: Filter, checked: boolean) => void,
+  updateSearchLogic: (logic: string, filtername: string) => void,
   currentSelection: Array<Filter>
 };
 
@@ -30,6 +31,7 @@ export class ModalSegment extends Component {
     } else {
       elem = <CustomOptions userData={this.props.userData} 
                             handleFilterClick={this.props.handleFilterClick} 
+                            updateSearchLogic={this.props.updateSearchLogic}
                             currentSelection={this.props.currentSelection}/>
     }
 

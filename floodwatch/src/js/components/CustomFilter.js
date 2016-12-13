@@ -2,39 +2,18 @@
 
 import React, {Component} from 'react';
 import $ from 'jquery';
-import { Button } from 'react-bootstrap';
+import { Button, FormGroup, Radio } from 'react-bootstrap';
 
 import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
 
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
+  updateSearchLogic: (logic: string, filtername: string) => void,
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
   mySelection: Filter
 };
-
-type StateType = {
-  opened: boolean,
-  curSettings: {
-    name: string,
-    options: any
-  },
-  logic: string
-};
-
-
-function CustomFilterInitialState(name: string): Object {
-  return {
-    opened: false,
-    curSettings: {
-      name: name,
-      options: null
-    },
-    logic: 'OR'
-  }
-}
-
 
 export class CustomFilter extends Component {
   props: PropType;
@@ -42,31 +21,19 @@ export class CustomFilter extends Component {
 
   constructor(props: PropType) {
     super(props);
-    this.state = CustomFilterInitialState(this.props.filter.name)
   }
 
-
-  // tk tk 
-  // toggleOpened() {
-  //   let newState = !this.state.opened;
-  //   this.setState({
-  //     opened: newState
-  //   })
-  // }
-
-  // updateSearchLogic(event) {
-  //   this.setState({
-  //     logic: event.target.value
-  //   })
-  // }
+  updateSearchLogic(event: any) {
+    console.log(event)
+    this.props.updateSearchLogic(event.target.value, event.target.name)
+  }
 
   render() {
-
     let elems = this.props.filter.options.map((opt: string, i: number) => {
       const obj = {
         'name': this.props.filter.name,
         'choices': [opt],
-        'logic': this.state.logic
+        'logic': (this.props.mySelection) ? this.props.mySelection.logic : "or"
       }
       
       let checked = false;
@@ -83,7 +50,7 @@ export class CustomFilter extends Component {
       if (disabled) {
         // tk
       } else {
-        return <div key={i} className="custom-option" /*style={{backgroundColor: backgroundColor}}*/>
+        return <div key={i} className="custom-option">
                     <Button href="#" active={checked}
                             disabled={disabled} 
                             onClick={this.props.handleFilterClick.bind(this, obj, !checked)} 
@@ -97,63 +64,19 @@ export class CustomFilter extends Component {
       }  
     }) 
 
-    // tk tk
-    // // first, check if this filter is enabled
-    // if (this.props.shouldBeDisabled[0].disabled) {
-    //   var myOverlay = <RequireOverlay requirements={this.props.shouldBeDisabled}/>
+    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : "or" 
 
-    //   elems.push(
-    //     <OverlayTrigger rootClose={true} trigger="click" placement="right" overlay={myOverlay}>
-    //       <p className="unlock-description">Unlock by adding your info</p>
-    //     </OverlayTrigger>
-    //     )
-    // } else {
-    //   for (let i = 0; i < this.props.filter.options.length; i++) {
-    //     var obj = {
-    //       'name': this.props.filter.name,
-    //       'choices': this.props.filter.options[i],
-    //       'logic': this.state.logic
-    //     }
-
-    //     var checked = false;
-        
-    //     // see if we've selected anything already
-    //     if (this.props.mySelection) {
-    //       if ($.inArray(this.props.filter.options[i], this.props.mySelection.choices) > -1) {
-    //         checked = true;
-    //       }
-    //     }
-
-    //     let backgroundColor = 'transparent';
-    //     if (checked) {
-    //       backgroundColor = 'lightyellow'
-    //     }
-
-    //     elems.push(<div className="custom-option" style={{backgroundColor: backgroundColor}}><label><input checked={checked} onChange={this.props.handleFilterClick.bind(event, obj)} name={this.props.filter.name} type="checkbox"/>{this.props.filter.options[i]}</label></div>)
-    //   }
-    // }
-
-
-    
-
-    // let select = <select onChange={this.updateSearchLogic.bind(this)}>
-    //                 <option value="OR">checked ONE OR MORE of the following</option>
-    //                 <option value="AND">checked ONLY the following</option>
-    //                 <option value="NOT">have NOT CHECKED ANY OF the following</option>
-    //             </select>
-
-    // let display = 'none';
-    // if (this.state.opened) {
-    //   display = 'block'
-    // }
-
-    // let bgTest = (this.props.shouldBeDisabled[0].disabled == false) ? 'white' : '#efefef'
+    let select = <FormGroup onChange={this.updateSearchLogic.bind(this)}>
+                    <Radio className="logic-option" checked={logicSelection == "or"} name={this.props.filter.name} inline value="or">Any of these</Radio>
+                    <Radio className="logic-option" checked={logicSelection == "and"} name={this.props.filter.name} inline value="and">All of these</Radio>
+                    <Radio className="logic-option" checked={logicSelection == "nor"} name={this.props.filter.name} inline value="nor">None of these</Radio>
+                  </FormGroup>
 
     return (
-      <div className="filter-option" /*style={{backgroundColor:bgTest}}*/>
+      <div className="filter-option">
       <h4>Filter by {this.props.filter.name}</h4>
-      <div /*display={display}*/>
-      {/*<p>Show me people who have {select}:</p>*/}
+      <div>
+      <p>Show me people who chose {select}</p>
       {elems}
       </div>
       </div>
