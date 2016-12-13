@@ -28,7 +28,7 @@ export function createSentence(options: Array<Filter>): string {
     return 'You'
   }
 
-  options.map((opt: Filter): void => {
+  _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
     if (opt.logic == 'NOR') { 

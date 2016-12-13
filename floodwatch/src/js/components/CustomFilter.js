@@ -92,9 +92,7 @@ export class CustomFilter extends Component {
                 </div>
 
                   
-      }
-
-      
+      }  
     }) 
 
     // tk tk

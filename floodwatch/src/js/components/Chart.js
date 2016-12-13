@@ -43,7 +43,7 @@ export class Chart extends Component {
 
     const keys = Object.keys(colors)
 
-    keys.map((key: string): void => {
+    _.forEach(keys, (key: string) => {
       const myStartColor = (ctx.props.side === 'left') ? colors[key][1] : colors[key][0]
       const myEndColor = (ctx.props.side == 'left') ? colors[key][0]: colors[key][1]
 

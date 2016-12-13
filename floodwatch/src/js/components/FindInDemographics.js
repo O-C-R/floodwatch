@@ -3,30 +3,13 @@
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import type {PersonResponse} from '../api/types';
 import type {Preset, Filter, DisabledCheck} from './filtertypes'
-
-export function getCategoryKey(category: string): number {
-  if (DemographicKeys.category_to_id[category] == undefined) {
-    return -1
-  }
-  return DemographicKeys.category_to_id[category]
-}
+import _ from 'lodash';
 
 type DemographicDictionary = {
   id: number,
   category_id: number,
   name: string
 };
-
-export function getCategoryOfUserVal(key: number): number {
-  let k = -1;
-
-  DemographicKeys.demographic_keys.map((demo: DemographicDictionary) => {
-    if (key == demo.id) {
-      k = demo.category_id
-    }
-  })
-  return k
-}
 
 export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset) {
   if (preset.always_available) {
@@ -47,13 +30,12 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
         thisFilter.disabled = false
       }
     } else {
-      const myKey = getCategoryKey(filter.name)
-      const values = userData.demographic_ids
-      for (let val of values) {
-        const thisKey = getCategoryOfUserVal(val)
-        if (thisKey == myKey && myKey != -1) {
-          thisFilter.disabled = false
-        }
+      const myKey = DemographicKeys.category_to_id[filter.name];
+      const thisKey = _.find(DemographicKeys.demographic_keys, function(dk) {
+        return dk.category_id == myKey
+      })
+      if (thisKey) {
+        thisFilter.disabled = false;
       }
     }
     return thisFilter
@@ -85,10 +67,15 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
   }
 
   // and now the rest
-  const myKey = getCategoryKey(category)
-  const userVal = getCategoryOfUserVal(myKey)
+  const myKey = DemographicKeys.category_to_id[category]
 
-  if (userVal > -1 && myKey > -1) {
+  const userVal = _.forEach(DemographicKeys.demographic_keys, function(dk) {
+    if (dk.category_id == myKey) {
+      return dk.category_id
+    }
+  })
+
+  if (userVal && myKey) {
     disabled = false
   }
 
