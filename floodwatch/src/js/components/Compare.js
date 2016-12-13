@@ -135,8 +135,6 @@ export class CompareContainer extends Component {
       curInfo.push({name: filtername, logic: logic, choices: []})
     }
 
-    console.log(filtername)
-
     if (side == 'left') {
       this.updateData(curInfo, this.state.rightOptions)
     } else if (side == 'right') {
@@ -214,16 +212,20 @@ export class CompareContainer extends Component {
 
     for (let i = 0; i < curInfo.length; i++) {
       if (curInfo[i].name == info.name)  {
-        if (checked == true) {
-          curInfo[i].choices = _.union(curInfo[i].choices, info.choices)
-          curInfo[i].logic = info.logic
-          found = true;
-        } else {
-          _.remove(curInfo[i].choices, function(n: string) {
-            return n == info.choices[0]
-          })
-          found = true;
-        }
+          if (checked == true) {
+            if (info.name == "age") { // special case for age
+              curInfo[i].choices = info.choices // treat it like a radio button: only 1 choice allowed
+            } else {
+              curInfo[i].choices = _.union(curInfo[i].choices, info.choices)
+              curInfo[i].logic = info.logic
+            }
+            found = true;
+          } else {
+            _.remove(curInfo[i].choices, function(n: string) {
+              return n == info.choices[0]
+            })
+            found = true;
+          }
       }
     }
 
