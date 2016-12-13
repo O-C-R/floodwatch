@@ -92,7 +92,10 @@ export class CompareContainer extends Component {
     const filterA = this.generateFilterRequestItem(this.state.leftOptions)
     const filterB = this.generateFilterRequestItem(this.state.rightOptions)
 
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: filterA, filterB: filterB })
+    const cleanedFilterA = this.cleanFilterRequest(filterA)
+    const cleanedFilterB = this.cleanFilterRequest(filterB)
+
+    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
     const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
       return d3.descending(a.value, b.value);
     })[0]
@@ -113,9 +116,38 @@ export class CompareContainer extends Component {
     })
   }
 
+  updateSearchLogic(side: string, logic: string, filtername: string) {
+    let curInfo = []
+    if (side == 'left') {
+      curInfo = _.cloneDeep(this.state.leftOptions)
+    } else if (side == 'right') {
+      curInfo = _.cloneDeep(this.state.rightOptions)
+    }
+
+    let found = false;
+    for (let i = 0; i < curInfo.length; i++) {
+      if (curInfo[i].name == filtername)  {
+        curInfo[i].logic = logic
+        found = true;
+      }
+    }
+    if (found == false) {
+      curInfo.push({name: filtername, logic: logic, choices: []})
+    }
+
+    console.log(filtername)
+
+    if (side == 'left') {
+      this.updateData(curInfo, this.state.rightOptions)
+    } else if (side == 'right') {
+      this.updateData(this.state.leftOptions, curInfo)
+    }
+  }
+
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
     let obj = {
-      demographics: []
+      demographics: [],
+      age: {}
     };
     _.forEach(filter, (f: Filter) => {
       if (f.name != 'age' && f.name != 'country') {
@@ -132,8 +164,42 @@ export class CompareContainer extends Component {
           values: arr
         })
       }
+
+      if (f.name == 'age') {
+        if (f.choices[0]) {
+          const min = parseInt(f.choices[0].split('-')[0])
+          const max = parseInt(f.choices[0].split('-')[1])
+          obj.age = {
+            min: min,
+            max: max
+          }
+        }
+      }
+
+      if (f.name == 'country') {
+        // tk
+      }
     })
+
     return obj
+  }
+
+  cleanFilterRequest(filter: FilterRequestItem): FilterRequestItem {
+    if (!filter.demographics) {
+      return filter
+    }
+
+    if (filter.demographics.length == 0) {
+      return filter
+    }
+
+    for (let i = filter.demographics.length - 1; i >= 0; i--) {
+      if (filter.demographics[i].values.length == 0) {
+        filter.demographics.splice(i, 1)
+      }
+    }
+    return filter
+
   }
 
   changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
@@ -225,8 +291,11 @@ export class CompareContainer extends Component {
   async updateData(left: Array<Filter>, right: Array<Filter>) {
     const filterA = this.generateFilterRequestItem(left)
     const filterB = this.generateFilterRequestItem(right)
+   
+    const cleanedFilterA = this.cleanFilterRequest(filterA)
+    const cleanedFilterB = this.cleanFilterRequest(filterB)
 
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: filterA, filterB: filterB })
+    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
 
     this.setState({
       leftData: (AdBreakdown.filterA.totalCount > 0) ? AdBreakdown.filterA.categories : {},
@@ -284,6 +353,7 @@ export class CompareContainer extends Component {
           currentSelectionRight={this.state.rightOptions}
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
+          updateSearchLogic={this.updateSearchLogic.bind(this)}
           userData={this.state.userData}/>
       </Row>
     )

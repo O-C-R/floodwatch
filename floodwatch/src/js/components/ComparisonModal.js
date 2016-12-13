@@ -20,6 +20,7 @@ type PropsType = {
   toggleModal: () => void,
   changeCategoriesCustom: (side: string, obj: Filter, checked: boolean) => void,
   changeCategoriesPreset: (side: string, obj: Preset) => void,
+  updateSearchLogic: (logic: string, filtername: string, side: string) => void,
   userData: PersonResponse
 };
 
@@ -92,7 +93,8 @@ export class ComparisonModal extends Component {
             currentSentence={createSentence(this.props.currentSelectionLeft)}
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
             handleCustomClick={this.handleCustomClick.bind(this, 'left')} 
-            handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'left')}/>
+            handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'left')}
+            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'left')}/>
             </Col>
             <Col xs={2}>
           <div style={{textAlign:'center'}}>vs</div>
@@ -106,7 +108,8 @@ export class ComparisonModal extends Component {
             currentSentence={createSentence(this.props.currentSelectionRight)}
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
             handleCustomClick={this.handleCustomClick.bind(this, 'right')} 
-            handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'right')}/>
+            handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'right')}
+            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'right')}/>
             </Col>
           </Row>
         </Modal.Body>

@@ -25,7 +25,9 @@ export class RegularOptions extends Component {
 type CustomOptionsProps = {
   currentSelection: Array<Filter>,
   handleFilterClick: (obj: Filter, checked: boolean) => void,
-  userData: PersonResponse
+  updateSearchLogic: (logic: string, filtername: string) => void,
+  userData: PersonResponse,
+  side: string
 };
 
 
@@ -46,7 +48,9 @@ export class CustomOptions extends Component {
         thisCategorysSelection = this.props.currentSelection[index]
       }
       return <CustomFilter key={i} 
+                                side={this.props.side}
                                 shouldBeDisabled={shouldBeDisabled} 
+                                updateSearchLogic={this.props.updateSearchLogic}
                                 handleFilterClick={this.props.handleFilterClick} 
                                 filter={item} 
                                 mySelection={thisCategorysSelection}/>
