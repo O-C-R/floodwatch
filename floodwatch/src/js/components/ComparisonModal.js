@@ -1,12 +1,15 @@
 // @flow
 
 import React, {Component} from 'react';
-import Filters from '../../stubbed_data/filter_response.json';
 import {Modal, Button, Row, Col } from 'react-bootstrap'
-import {ModalSegment} from './ModalSegment';
-import type {Filter, Preset} from './filtertypes'
+
 import {createSentence} from './Compare'
+import {ModalSegment} from './ModalSegment';
+
+import type {Filter, Preset} from './filtertypes'
 import type {PersonResponse} from '../api/types';
+
+import Filters from '../../stubbed_data/filter_response.json';
 
 import '../../css/ComparisonModal.css';
 

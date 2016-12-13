@@ -27,12 +27,12 @@
             ]
         },
         {
-            "name": "Non-white users",
+            "name": "Women",
             "filters": [
-                {
-                    "name": "race",
-                    "choices": ["white"],
-                    "logic": "NOR"
+                 {
+                    "name": "gender",
+                    "choices": ["Female"],
+                    "logic": "OR"
                 }
             ]
         },

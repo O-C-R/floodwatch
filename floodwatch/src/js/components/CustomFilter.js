@@ -2,8 +2,10 @@
 
 import React, {Component} from 'react';
 import $ from 'jquery';
-import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
 import { Button } from 'react-bootstrap';
+
+import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,

@@ -7,23 +7,23 @@
     "demographic_keys": [{
         "id":  1,
         "category_id": 1,
-        "name": "Islam"
+        "name": "Muslim"
     }, {
         "id":  2,
         "category_id": 1,
-        "name": "Judaism"
+        "name": "Jewish"
     }, {
         "id":  3,
         "category_id": 1,
-        "name": "Buddhism"
+        "name": "Buddhist"
     }, {
         "id":  4,
         "category_id": 1,
-        "name": "Christianity"
+        "name": "Christian"
     }, {
         "id":  5,
         "category_id": 1,
-        "name": "Hinduism"
+        "name": "Hindu"
     }, {
         "id": 6,
         "category_id": 1,

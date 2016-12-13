@@ -2,12 +2,15 @@
 
 import React, {Component} from 'react';
 import { MenuItem, ButtonToolbar, DropdownButton } from 'react-bootstrap';
-import Filters from '../../stubbed_data/filter_response.json';
+import _ from 'lodash';
+
 import {CustomFilter} from './CustomFilter'
 import {shouldPresetBeDisabled, shouldCustomBeDisabled} from './FindInDemographics'
+
 import type {Filter, Preset, PresetsAndFilters, FilterJSON} from './filtertypes.js'
 import type {PersonResponse} from '../api/types';
-import _ from 'lodash';
+
+import Filters from '../../stubbed_data/filter_response.json';
 
 //-------------------------------------------------------------------------------------------------------------------
 export class RegularOptions extends Component {

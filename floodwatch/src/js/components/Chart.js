@@ -4,8 +4,10 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import * as d3 from 'd3';
 import _ from 'lodash';
+
 import colors from './colors'
 import type {StackedData} from './FilterParent'
+
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 type PropsType = {
@@ -76,6 +78,10 @@ export class Chart extends Component {
 
   drawRects(svg: any, mydata: Array<Array<StackedData>>): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
+
+    if (mydata.length == 0) {
+      return
+    }
 
     const data = _.cloneDeep(mydata)
     let ctx = this;
@@ -269,8 +275,16 @@ export class Chart extends Component {
   }
 
   render() {
+    let pDisplay = (this.props.barData.length > 0) ? 'none' : 'block';
+    let chartDisplay = (this.props.barData.length > 0) ? 'block' : 'none';
+
+
+
     return  (
-      <div className={'chart_svg svg-' + this.props.side}>
+      <div>
+      <p style={{display: pDisplay}}>Not enough results for this demographic. Please try another category.</p>
+      <div style={{display:chartDisplay}} className={'chart_svg svg-' + this.props.side}>
+      </div>
       </div>
     )
   }

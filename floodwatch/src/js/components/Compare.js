@@ -3,16 +3,20 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
-import {FilterParent} from './FilterParent';
-import {ComparisonModal} from './ComparisonModal';
-import Filters from '../../stubbed_data/filter_response.json';
-import {FWApiClient} from '../api/api';
-import type {PersonResponse} from '../api/types';
-import TopicKeys from '../../stubbed_data/topic_keys.json';
-import type {UnstackedData} from './FilterParent';
 import d3 from 'd3';
 import _ from 'lodash';
+
+import {FilterParent} from './FilterParent';
+import {ComparisonModal} from './ComparisonModal';
+import {FWApiClient} from '../api/api';
+
+import type {UnstackedData} from './FilterParent';
 import type {PresetsAndFilters, Preset, Filter} from './filtertypes'
+import type {PersonResponse, FilterRequest, FilterRequestItem} from '../api/types';
+
+import DemographicKeys from '../../stubbed_data/demographic_keys.json';
+import Filters from '../../stubbed_data/filter_response.json';
+import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 // import '../../Compare.css';
 
@@ -67,8 +71,8 @@ type StateType = {
 
 function CompareContainerInitialState(): Object {
   return {
-    leftOptions: Filters.presets[0].filters,
-    rightOptions: Filters.presets[1].filters,
+    leftOptions: Filters.presets[1].filters,
+    rightOptions: Filters.presets[3].filters,
     leftData: {},
     rightData: {},
     currentTopic: '1',
@@ -85,7 +89,10 @@ export class CompareContainer extends Component {
   }
 
   async componentDidMount() {
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: {}, filterB: {} })
+    const filterA = this.generateFilterRequestItem(this.state.leftOptions)
+    const filterB = this.generateFilterRequestItem(this.state.rightOptions)
+
+    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: filterA, filterB: filterB })
     const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
       return d3.descending(a.value, b.value);
     })[0]
@@ -104,6 +111,29 @@ export class CompareContainer extends Component {
     this.setState({
       currentTopic: newTopic
     })
+  }
+
+  generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
+    let obj = {
+      demographics: []
+    };
+    _.forEach(filter, (f: Filter) => {
+      if (f.name != 'age' && f.name != 'country') {
+        let arr = []
+        _.forEach(f.choices, (choice) => {
+          for (let key of DemographicKeys.demographic_keys) {
+            if (key.name == choice) {
+              arr.push(key.id)
+            }
+          }
+        })
+        obj.demographics.push({
+          operator: f.logic.toLowerCase(),
+          values: arr
+        })
+      }
+    })
+    return obj
   }
 
   changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
@@ -142,26 +172,19 @@ export class CompareContainer extends Component {
       }
     }
 
+
     if (side == 'left') {
-      this.setState({
-        leftOptions: curInfo
-      })
+      this.updateData(curInfo, this.state.rightOptions)
     } else if (side == 'right') {
-      this.setState({
-        rightOptions: curInfo
-      })
+      this.updateData(this.state.leftOptions, curInfo)
     }
   }
 
   changeCategoriesPreset(side: string, info: Preset): void {
     if (side == 'left') {
-      this.setState({
-        leftOptions: info.filters
-      })      
+      this.updateData(info.filters, this.state.rightOptions)
     } else if (side == 'right') {
-      this.setState({
-        rightOptions: info.filters
-      })
+      this.updateData(this.state.leftOptions, info.filters)
     }
   }
 
@@ -178,15 +201,15 @@ export class CompareContainer extends Component {
 
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
-      sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}`
+      sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}.`
     } else if (prc == 100) {
-      sentence = `On average, ${createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.leftOptions)}`
+      sentence = `On average, ${createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.leftOptions)}.`
     } else if (prc < 0) {
-      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
     } else if (prc > 0) {
-      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}`;
+      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
     } else if (prc == 0) {
-      sentence = `${createSentence(this.state.leftOptions)} and ${createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads`;
+      sentence = `${createSentence(this.state.leftOptions)} and ${createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads.`;
     }
 
     return sentence;
@@ -196,6 +219,20 @@ export class CompareContainer extends Component {
     const curState = this.state.modalVisible;
     this.setState({
       modalVisible: !curState
+    })
+  }
+
+  async updateData(left: Array<Filter>, right: Array<Filter>) {
+    const filterA = this.generateFilterRequestItem(left)
+    const filterB = this.generateFilterRequestItem(right)
+
+    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: filterA, filterB: filterB })
+
+    this.setState({
+      leftData: (AdBreakdown.filterA.totalCount > 0) ? AdBreakdown.filterA.categories : {},
+      rightData: (AdBreakdown.filterB.totalCount > 0) ? AdBreakdown.filterB.categories : {},
+      leftOptions: left,
+      rightOptions: right
     })
   }
 
@@ -230,7 +267,7 @@ export class CompareContainer extends Component {
           </Row>
           <Row>
             <Col xs={12}>
-            <p className="centered"><h3>{sentence}.</h3></p>
+            <p className="centered"><h3>{sentence}</h3></p>
             </Col>
           </Row>
           <Row>

@@ -1,9 +1,10 @@
 // @flow
+import _ from 'lodash';
 
-import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import type {PersonResponse} from '../api/types';
 import type {Preset, Filter, DisabledCheck} from './filtertypes'
-import _ from 'lodash';
+
+import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
 type DemographicDictionary = {
   id: number,
