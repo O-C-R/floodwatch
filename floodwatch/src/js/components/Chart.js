@@ -4,8 +4,10 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import * as d3 from 'd3';
 import _ from 'lodash';
+
 import colors from './colors'
 import type {StackedData} from './FilterParent'
+
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 type PropsType = {
@@ -39,26 +41,31 @@ export class Chart extends Component {
     const ctx = this;
     let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
     let defs = svg.append('defs')
+    console.log(ctx.props.side)
 
     const keys = Object.keys(colors)
-    keys.map((key: string): void => {
+
+    _.forEach(keys, (key: string) => {
+      const myStartColor = (ctx.props.side === 'left') ? colors[key][1] : colors[key][0]
+      const myEndColor = (ctx.props.side == 'left') ? colors[key][0]: colors[key][1]
+
       let thisGradient = defs.append('linearGradient')
-        .attr('id', key.replace(/[\/\s,\-!]+/g, ""))
+        .attr('id', key.replace(/[\/\s,\-!]+/g, '') + this.props.side)
         .attr('x1', '0%')
         .attr('x2', '100%')
         .attr('y1', '0%')
-        .attr('y2', '100%');
+        .attr('y2', '0%');
 
       thisGradient.append('stop')
         .attr('class', 'start')
-        .attr('offset', '0%')
-        .attr('stop-color', colors[key][1])
+        .attr('offset', '20%')
+        .attr('stop-color', myStartColor)
         .attr('stop-opacity', 1);
 
       thisGradient.append('stop')
         .attr('class', 'end')
         .attr('offset', '90%')
-        .attr('stop-color', colors[key][0])
+        .attr('stop-color', myEndColor)
         .attr('stop-opacity', 1);
 
     })
@@ -71,6 +78,10 @@ export class Chart extends Component {
 
   drawRects(svg: any, mydata: Array<Array<StackedData>>): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
+
+    if (mydata.length == 0) {
+      return
+    }
 
     const data = _.cloneDeep(mydata)
     let ctx = this;
@@ -102,12 +113,12 @@ export class Chart extends Component {
       .attr('class', 'stack ')
       .attr('width', '100%')
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
       })
 
     layer.data(data)
       .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, "") + ')'
+        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
       })
 
     layer.exit().remove()
@@ -264,8 +275,16 @@ export class Chart extends Component {
   }
 
   render() {
+    let pDisplay = (this.props.barData.length > 0) ? 'none' : 'block';
+    let chartDisplay = (this.props.barData.length > 0) ? 'block' : 'none';
+
+
+
     return  (
-      <div className={'chart_svg svg-' + this.props.side}>
+      <div>
+      <p style={{display: pDisplay}}>Not enough results for this demographic. Please try another category.</p>
+      <div style={{display:chartDisplay}} className={'chart_svg svg-' + this.props.side}>
+      </div>
       </div>
     )
   }

@@ -32,7 +32,7 @@ export type StackedData = {
 
 export type UnstackedData = {
   [key: string]: number
-}
+};
 
 export class FilterParent extends Component {
   props: PropsType;
@@ -45,9 +45,13 @@ export class FilterParent extends Component {
 
   stackData(data: Object): Array<Array<StackedData>> {
     const topics = Object.keys(data);
-    const intermediate = topics.map((key: string): Array<StackedData> => {
+    let intermediate = topics.map((key: string): Array<StackedData> => {
       const dTemp = data[key]
       return [{x: 0, y: dTemp, name: key}]
+    })
+
+    intermediate.sort(function(a: Array<StackedData>, b: Array<StackedData>) {
+      return d3.ascending(a[0].y, b[0].y);
     })
 
     const stack = this.state.dataStackLayout(intermediate)

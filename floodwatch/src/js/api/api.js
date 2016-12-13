@@ -6,8 +6,8 @@ import log from 'loglevel';
 import {BaseError} from '../common/util';
 import type {PersonResponse, FilterRequest, FilterResponse} from './types';
 
-export class APIError extends BaseError {};
-export class AuthenticationError extends APIError {};
+export class APIError extends BaseError {}
+export class AuthenticationError extends APIError {}
 
 export class APIClient {
   baseUrl: string;

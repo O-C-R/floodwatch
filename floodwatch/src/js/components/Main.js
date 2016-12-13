@@ -9,8 +9,8 @@ import history from '../common/history';
 import {FWApiClient} from '../api/api';
 
 type AppNavigationProps = {
-  navs: any;
-}
+  navs: any
+};
 
 type AppNavigationState = {
   selectedKey: ?string

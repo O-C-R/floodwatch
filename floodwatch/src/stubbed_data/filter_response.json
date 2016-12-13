@@ -27,12 +27,12 @@
             ]
         },
         {
-            "name": "Non-white users",
+            "name": "Women",
             "filters": [
-                {
-                    "name": "race",
-                    "choices": ["white", "black"],
-                    "logic": "NOT"
+                 {
+                    "name": "gender",
+                    "choices": ["Female"],
+                    "logic": "OR"
                 }
             ]
         },
@@ -47,6 +47,21 @@
                 {
                     "name": "religion",
                     "choices": ["Christian"],
+                    "logic": "OR"
+                }
+            ]
+        },
+        {
+            "name": "Male 20-30",
+            "filters": [
+                {
+                    "name": "gender",
+                    "choices": ["Male"],
+                    "logic": "OR"
+                },
+                {
+                    "name": "age",
+                    "choices": ["20-30"],
                     "logic": "OR"
                 }
             ]
