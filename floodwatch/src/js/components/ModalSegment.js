@@ -29,7 +29,8 @@ export class ModalSegment extends Component {
     if (!this.props.isCustom) {
       elem = <RegularOptions currentSentence={this.props.currentSentence}/>
     } else {
-      elem = <CustomOptions userData={this.props.userData} 
+      elem = <CustomOptions side={this.props.side}
+                            userData={this.props.userData} 
                             handleFilterClick={this.props.handleFilterClick} 
                             updateSearchLogic={this.props.updateSearchLogic}
                             currentSelection={this.props.currentSelection}/>

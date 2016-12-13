@@ -135,6 +135,8 @@ export class CompareContainer extends Component {
       curInfo.push({name: filtername, logic: logic, choices: []})
     }
 
+    console.log(filtername)
+
     if (side == 'left') {
       this.updateData(curInfo, this.state.rightOptions)
     } else if (side == 'right') {
@@ -163,10 +165,10 @@ export class CompareContainer extends Component {
         })
       }
 
-      if (f.name == "age") {
+      if (f.name == 'age') {
         if (f.choices[0]) {
-          const min = parseInt(f.choices[0].split("-")[0])
-          const max = parseInt(f.choices[0].split("-")[1])
+          const min = parseInt(f.choices[0].split('-')[0])
+          const max = parseInt(f.choices[0].split('-')[1])
           obj.age = {
             min: min,
             max: max
@@ -174,7 +176,7 @@ export class CompareContainer extends Component {
         }
       }
 
-      if (f.name == "country") {
+      if (f.name == 'country') {
         // tk
       }
     })

@@ -12,7 +12,8 @@ type PropType = {
   updateSearchLogic: (logic: string, filtername: string) => void,
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
-  mySelection: Filter
+  mySelection: Filter,
+  side: string
 };
 
 export class CustomFilter extends Component {
@@ -24,8 +25,7 @@ export class CustomFilter extends Component {
   }
 
   updateSearchLogic(event: any) {
-    console.log(event)
-    this.props.updateSearchLogic(event.target.value, event.target.name)
+    this.props.updateSearchLogic(event.target.value, event.target.name.split(this.props.side)[1])
   }
 
   render() {
@@ -33,7 +33,7 @@ export class CustomFilter extends Component {
       const obj = {
         'name': this.props.filter.name,
         'choices': [opt],
-        'logic': (this.props.mySelection) ? this.props.mySelection.logic : "or"
+        'logic': (this.props.mySelection) ? this.props.mySelection.logic : 'or'
       }
       
       let checked = false;
@@ -64,12 +64,13 @@ export class CustomFilter extends Component {
       }  
     }) 
 
-    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : "or" 
+    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or' 
+    console.log(this.props.mySelection)
 
     let select = <FormGroup onChange={this.updateSearchLogic.bind(this)}>
-                    <Radio className="logic-option" checked={logicSelection == "or"} name={this.props.filter.name} inline value="or">Any of these</Radio>
-                    <Radio className="logic-option" checked={logicSelection == "and"} name={this.props.filter.name} inline value="and">All of these</Radio>
-                    <Radio className="logic-option" checked={logicSelection == "nor"} name={this.props.filter.name} inline value="nor">None of these</Radio>
+                    <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline value="or">Any of these</Radio>
+                    <Radio className="logic-option" checked={logicSelection == 'and'} name={this.props.side + this.props.filter.name} inline value="and">All of these</Radio>
+                    <Radio className="logic-option" checked={logicSelection == 'nor'} name={this.props.side + this.props.filter.name} inline value="nor">None of these</Radio>
                   </FormGroup>
 
     return (
