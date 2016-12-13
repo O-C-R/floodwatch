@@ -1,3 +1,44 @@
+body {
+  font-family: adelle-sans;
+}
+
+html, #root, body {
+  background-color:#fafafa!important;
+}
+
+h1,h2,h3,h4,h5 {
+  font-family: fira-sans-2;
+}
+
 .nav {
-  margin-bottom: 2em;
+  margin-bottom: 1em;
+}
+
+.navbar {
+  min-height:78px;
+  background-color:white;
+  border-bottom:none;
+  font-family: fira-sans-2;
+  letter-spacing:2px;
+}
+
+.navbar-nav {
+  line-height:100%;
+}
+
+.active a[role="button"] {
+  background-color:transparent!important;
+  border-top:3px solid black;
+  padding-top:12px;
+
+}
+
+.active a p {
+  font-weight:bold;
+  color:black!important;
+}
+
+.custom-option {
+  display:inline-block;
+  margin-bottom:20px;
 }

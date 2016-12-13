@@ -3,20 +3,20 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
 import history from '../common/history';
 
 type Props = {
   showMessage: Function,
   loginChanged: Function,
   user: ?Object
-}
+};
 
 type State = {
-  username: string;
-  password: string;
-  error: ?string;
-}
+  username: string,
+  password: string,
+  error: ?string
+};
 
 export class Login extends Component {
   props: Props;
@@ -49,10 +49,10 @@ export class Login extends Component {
   }
 
   async handleSubmit(e: Event) {
-  	e.preventDefault();
+    e.preventDefault();
 
     try {
-      await auth.login(this.state.username, this.state.password);
+      await FWApiClient.get().login(this.state.username, this.state.password);
       this.props.showMessage('Logged in!');
       this.props.loginChanged();
 
@@ -81,20 +81,18 @@ export class Login extends Component {
           <p></p>
         </div>
         <div className="col-md-12">
-          <div className="container">
-	          <form onSubmit={this.handleSubmit.bind(this)}>
-	            <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: "none"}}>
-	              <strong>Login failed.</strong> {this.state.error}
-	            </div>
-	            <div className="form-group">
-	              <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
-	            </div>
-	            <div className="form-group">
-	              <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
-	            </div>
-	            <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
-	          </form>
-	        </div>
+            <form onSubmit={this.handleSubmit.bind(this)}>
+              <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: 'none'}}>
+                <strong>Login failed.</strong> {this.state.error}
+              </div>
+              <div className="form-group">
+                <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
+              </div>
+              <div className="form-group">
+                <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
+              </div>
+              <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
+            </form>
         </div>
       </div>
     )

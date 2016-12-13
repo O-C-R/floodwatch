@@ -1,44 +1,78 @@
 // @flow
-
 import React, {Component} from 'react';
 import {Link} from 'react-router';
+import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
 
 import '../../css/App.css';
 
 import history from '../common/history';
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
+
+type AppNavigationProps = {
+  navs: any
+};
+
+type AppNavigationState = {
+  selectedKey: ?string
+};
 
 export class AppNavigation extends Component {
+  props: AppNavigationProps;
+  state: AppNavigationState;
+
+  constructor(props: AppNavigationProps) {
+    super(props);
+
+    let curPath = window.location.pathname;
+    let selectedKey = null;
+    this.props.navs.map((nav, key) => {
+      if (nav.to === curPath) {
+        selectedKey = key;
+      }
+    })
+
+    this.state = { selectedKey }
+  }
+
+  handleSelect(selectedKey: string) {
+    this.setState({
+      selectedKey: selectedKey
+    })
+  }
+
   render() {
     return (
-      <div className="row">
-        <div className="col-md-12">
-          <ul className="nav nav-tabs">
+      <Navbar collapseOnSelect>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <Navbar.Link href="#"><Navbar.Text>Floodwatch</Navbar.Text></Navbar.Link>
+          </Navbar.Brand>
+          <Navbar.Toggle/>
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav pullRight onSelect={this.handleSelect.bind(this)} activeKey={this.state.selectedKey}>
             {this.props.navs.map((nav, key) => {
               return (
-                <li className="nav-item" key={key}>
-                  <Link to={nav.to} className="nav-link" activeClassName="nav-link active">{nav.name}</Link>
-                </li>
-              )
+                    <NavItem eventKey={key} key={key}><Link to={nav.to}><Navbar.Text>{nav.name}</Navbar.Text></Link></NavItem>
+                )
             })}
-          </ul>
-        </div>
-      </div>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
     );
   }
 }
 
 type MainState = {
-  user: ?Object;
-  message: ?string;
-}
+  user: ?Object,
+  message: ?string
+};
 
 export class Main extends Component {
   state: MainState;
 
   constructor() {
     super();
-
     this.state = {
       user: null,
       message: null
@@ -48,7 +82,7 @@ export class Main extends Component {
   }
 
   loadUserFromServer() {
-    return auth.get('/api/person/current', null)
+    return FWApiClient.get().getCurrentPerson()
       .then((user) => {
         this.setState({ user: user });
       })
@@ -63,46 +97,51 @@ export class Main extends Component {
   }
 
   async handleLogout() {
-    await auth.logout();
+    await FWApiClient.get().logout();
     this.setState({ user: null });
     history.push('/login');
   }
 
   loggedInHeader(user: Object) {
     return (
-      <div>
-        <div className="row">
-          <div className="col-md-12">
-            <small>
-              User <strong>{user.username}</strong> logged in. <a href="#" onClick={this.handleLogout.bind(this)}>Log out</a>.
-            </small>
-             <hr />
-          </div>
-        </div>
-        <AppNavigation navs={[{name:"User", to:"/user"},{name:"Upload", to:"/upload"}]} />
-      </div>
+      <Row>
+        <Col>
+        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
+        </Col>
+      </Row>
     );
   }
 
   loggedOutHeader() {
     return (
-      <AppNavigation navs={[{name:"Register", to:"/register"}, {name:"Login", to:"/login"}]} />
+      <Row>
+      <Col>
+      <AppNavigation navs={[{name:'Register', to:'/register'}, {name:'Login', to:'/login'}]} />
+      </Col>
+      </Row>
     );
   }
 
   render() {
     return (
-      <div className="container">
-        {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
+      <Grid fluid style={{position:'relative'}}>
+        <Row>
+
+                {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
         {this.state.user && this.loggedInHeader(this.state.user)}
         {!this.state.user && this.loggedOutHeader()}
+        </Row>
+        <Row>
+        <Col xs={8} xsOffset={2}>
 
         {this.props.children && React.cloneElement(this.props.children, {
           showMessage: this.showMessage.bind(this),
           loginChanged: this.loadUserFromServer.bind(this),
           user: this.state.user
         })}
-      </div>
+        </Col>
+        </Row>
+      </Grid>
     );
   }
 }
