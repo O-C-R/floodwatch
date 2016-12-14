@@ -114,7 +114,9 @@ export class DemographicContainer extends Component {
 
   render() {
     let elems = Filters.filters.map((filter) => {
-      return <DemographicOption updateYear={this.updateYear.bind(this)} handleClick={this.handleClick.bind(this)} userData={this.state.userData} filter={filter}/>
+      return <DemographicOption updateYear={this.updateYear.bind(this)} 
+                                handleClick={this.handleClick.bind(this)} 
+                                userData={this.state.userData} filter={filter}/>
     })
 
     const displayGroup = (this.state.curStatus == '') ? 'none' : 'block'
