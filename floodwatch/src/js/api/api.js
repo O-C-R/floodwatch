@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 import log from 'loglevel';
 
 import {BaseError} from '../common/util';
-import type {PersonResponse, FilterRequest, FilterResponse} from './types';
+import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographicRequest} from './types';
 
 export class APIError extends BaseError {}
 export class AuthenticationError extends APIError {}
@@ -94,7 +94,10 @@ export class APIClient {
 
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
-    return res.json();
+    if (res.status == 204) {
+      return null
+    }
+    return res.json();    
   }
 
   async getText(path: string, params?: Object): Promise<string> {
@@ -188,7 +191,7 @@ export class FWApiClient extends APIClient {
     return res;
   }
 
-  async updatePersonDemographics(options: PersonResponse): Promise<void> {
+  async updatePersonDemographics(options: PersonDemographicRequest): Promise<void> {
     return this.postJSON('/api/person/demographics', options);
   }
 

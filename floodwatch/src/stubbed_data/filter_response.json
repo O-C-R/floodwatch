@@ -100,23 +100,8 @@
                 "Other"
             ]
             
-        }, {
-            "name": "country", 
-            "type": "checkbox",
-            "aka": "country_code",
-            "question": "Where are you from? Please choose all that apply.",
-            "why": "In the USA, national origin is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of where they're from.",
-            "options": [
-                "US",
-                "North America",
-                "South America",
-                "Africa",
-                "Asia",
-                "Australia",
-                "Europe"
-            ]
-            
-        }, {
+        }, 
+        {
             "name": "race",
             "type": "checkbox",
             "question": "What is your race/ethnicity? Please choose all that apply.",
