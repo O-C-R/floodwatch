@@ -10,6 +10,7 @@ import {Main} from './components/Main';
 import {Register} from './components/Register';
 import {Login} from './components/Login';
 import Person from './components/Person';
+import {Profile} from './components/Profile';
 import {Faq} from './components/Faq';
 import {Compare} from './components/Compare';
 
@@ -43,6 +44,7 @@ export class App extends Component {
           <Route path="person" component={Person} onEnter={requireAuth} />
           <Route path="faq" component={Faq} />
           <Route path="compare" component={Compare} />
+          <Route path="profile" component={Profile} onEnter={requireAuth} />
           <Route path="login" component={Login} />
           <Route path="register" component={Register} />
         </Route>

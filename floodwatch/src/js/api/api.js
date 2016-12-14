@@ -188,6 +188,10 @@ export class FWApiClient extends APIClient {
     return res;
   }
 
+  async updatePersonDemographics(options: PersonResponse): Promise<void> {
+    return this.postJSON('/api/person/demographics', options);
+  }
+
   async register(username: string, email: ?string, password: string): Promise<void> {
     await this.postForm('/api/register', { username, email, password });
   }
