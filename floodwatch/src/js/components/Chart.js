@@ -163,10 +163,10 @@ export class Chart extends Component {
         return x(d.x);
       })
       .attr('y', (d: Object): number => {
-        return y(d.y + d.y0) 
+        return y(d.y + d.y0);
       })
       .attr('height', (d: Object): number => {
-        return y(d.y0) - y(d.y + d.y0);
+        return y(d.y0) - y(d.y + d.y0) - 1;
       })
       .attr('width', '100%')
       .attr('stroke', (d: Object): string => {
