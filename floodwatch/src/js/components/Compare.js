@@ -18,7 +18,8 @@ import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import Filters from '../../stubbed_data/filter_response.json';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
-// import '../../Compare.css';
+import '../../css/App.css';
+import '../../css/pages/compare.css';
 
 
 export function createSentence(options: Array<Filter>): string {
@@ -50,11 +51,11 @@ export function createSentence(options: Array<Filter>): string {
 export class Compare extends Component {
   render() {
     return (
-      <Row>
+      <div className="container">
         <Col xs={12}>
         <CompareContainer/>
         </Col>
-      </Row>
+      </div>
     )
   }
 }

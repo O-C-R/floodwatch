@@ -1,0 +1,62 @@
+/**
+ *
+ * Assets
+ *
+ */
+
+// Fonts
+$font-title  : sans-serif;
+$font-text   : sans-serif;
+$font-accent : '';
+
+// Colors
+$color-accent-1 : #ef283f;
+$color-accent-2 : #ef283f;
+
+$color-dark : #091628;
+$color-light : #fff;
+
+$color-neutral-95 : #162233;
+$color-neutral-40 : #9da2a9;
+$color-neutral-15 : #dadcdf;
+$color-neutral-10 : #e6e7e9;
+$color-neutral-5  : #f2f3f4;
+$color-neutral-3  : #f7f8f8;
+
+
+
+/**
+ *
+ * Breack Points
+ *
+ */
+
+$screen-xs-min : 480px;
+$screen-sm-min : 768px;
+$screen-md-min : 960px;
+$screen-lg-min : 1224px;
+
+
+
+/**
+ *
+ * Defaults
+ *
+ */
+
+$default-font       : $font-text;
+$default-font-size  : 14px;
+$default-font-color : $color-dark;
+$default-font-lh    : 1.5;
+
+$default-background : $color-neutral-3;
+
+
+
+/**
+ *
+ * Cubic-Bezier
+ *
+ */
+
+$bezier-expOut : cubic-bezier(0.19, 1, 0.22, 1);

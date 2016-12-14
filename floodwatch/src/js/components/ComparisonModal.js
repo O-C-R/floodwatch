@@ -11,7 +11,7 @@ import type {PersonResponse} from '../api/types';
 
 import Filters from '../../stubbed_data/filter_response.json';
 
-import '../../css/ComparisonModal.css';
+//import '../../css/ComparisonModal.css';
 
 type PropsType = {
   visible: boolean,

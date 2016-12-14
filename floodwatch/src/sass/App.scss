@@ -1,44 +1,53 @@
+@import 'base/variables';
+@import 'base/extendables';
+@import 'base/reset';
+
+@import 'components/nav';
+
+* {
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	font-weight: inherit;
+	text-rendering: optimizeLegibility;
+	box-sizing: border-box;
+}
+
 body {
-  font-family: adelle-sans;
+	background: $default-background;
+	font-size: $default-font-size;
+	line-height: $default-font-lh;
+	font-family: $default-font;
+	color: $default-font-color;
 }
 
-html, #root, body {
-  background-color:#fafafa!important;
+.container {
+	width: 100%;
+	padding: 50px 40px;
+	margin: 0 auto;
+	max-width: 1000px;
+
+	@include clearfix;
 }
 
-h1,h2,h3,h4,h5 {
-  font-family: fira-sans-2;
+@media (min-width: $screen-sm-min) {
+	.container {
+		width: #{$screen-sm-min - 20};
+	}
 }
 
-.nav {
-  margin-bottom: 1em;
+@media (min-width: $screen-md-min) {
+	.container {
+		width: #{$screen-md-min - 20};
+	}
 }
 
-.navbar {
-  min-height:78px;
-  background-color:white;
-  border-bottom:none;
-  font-family: fira-sans-2;
-  letter-spacing:2px;
+@media (min-width: $screen-lg-min) {
+	.container {
+		width: #{$screen-lg-min - 20};
+	}
 }
 
-.navbar-nav {
-  line-height:100%;
-}
-
-.active a[role="button"] {
-  background-color:transparent!important;
-  border-top:3px solid black;
-  padding-top:12px;
-
-}
-
-.active a p {
-  font-weight:bold;
-  color:black!important;
-}
-
-.custom-option {
-  display:inline-block;
-  margin-bottom:20px;
+a:hover {
+	font-style: underline;
 }

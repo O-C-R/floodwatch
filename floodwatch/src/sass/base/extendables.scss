@@ -1,0 +1,289 @@
+@import 'variables';
+
+/*============================
+=            Form            =
+============================*/
+
+.btn  {
+	display: inline-block;
+
+	margin: 10px 20px;
+	padding: 10px 25px;
+
+	border: 1px solid $color-neutral-10;
+	border-radius: 3px;
+	box-shadow: 0px 0px 17px rgba($color-dark, 0.07);
+	outline: none;
+	
+	font-family: $font-title;
+	font-weight: bold;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-size: 12px;
+	color: $color-dark;
+	background: $color-light;
+	cursor: pointer;
+
+	transition: background 0.3s ease-in-out;
+
+	&:hover {
+		background: $color-neutral-3;
+	}
+}
+
+.input {
+	display: inline-block;
+
+	margin: 5px 0px;
+	padding: 10px 15px;
+
+	border: 1px solid $color-neutral-10;
+	border-radius: 3px;
+	outline: none;
+	
+	font-family: $font-title;
+	line-height: 1;
+	font-size: 14px;
+
+	background: $color-light;
+}
+
+/*=====  End of Form  ======*/
+
+
+
+
+
+/*=============================
+=            Fonts            =
+=============================*/
+
+.font-h1, .font-h2, .font-h3, .font-l1, .font-l2, .font-l3, .font-p, .font-pl {
+	color: $color-dark;
+}
+
+.font-h1, .font-h2, .font-h3, .font-l1, .font-l2, .font-l3, .font-l4 {
+	font-family: "Adelle Sans", sans-setif;
+}
+
+.font-p, .font-little {
+	font-family: "Fira Sans", sans-setif;
+}
+
+.font-h1 {
+	font-size: 45px;
+	font-weight: bold;
+	text-align: center;
+	margin-bottom: 20px;
+	margin-top: 60px;
+
+	&:first-child {
+		margin-top: 0px;
+	}
+}
+
+.font-h2 {
+	font-size: 25px;
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 30px;
+}
+
+.font-h3 {
+	font-size: 20px;
+	margin-bottom: 10px;
+	margin-top: 30px;
+}
+
+.font-h4 {
+	font-size: 14px;
+	margin-bottom: 5px;
+	margin-top: 10px;
+}
+
+.font-l1 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.font-l2 {
+	font-size: 14px;
+}
+
+.font-l3 {
+	font-size: 14px;
+	opacity: 0.8;
+}
+
+.font-p {
+	padding: 7px 0;
+	font-size: 14px;
+	opacity: 0.8;
+	line-height: 1.8;
+}
+
+.font-pl {
+	font-size: 10px;
+	opacity: 0.6;
+}
+
+.font-list {
+	margin: 20px 0px;
+	padding-left: 40px;
+}
+
+.font-list-item {
+	@extend .font-p;
+	padding-left: 5px;
+	list-style-type: square;
+}
+
+/*=====  End of Fonts  ======*/
+
+
+
+
+
+/*===============================
+=            Loading            =
+===============================*/
+
+.loading {
+	height: 60px;
+	width: 100%;
+
+	@extend .alignXY;
+
+	&-container {
+		margin: 30px auto;
+		width: 100%;
+		position: relative;
+	}
+
+	&::before, &::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -15px;
+		margin-left: -15px;
+
+		height: 30px;
+		width: 30px;
+
+		border-radius: 50%;
+	}
+
+	&::before {
+		border: 2px solid $color-neutral-10;
+	}
+
+	&::after {
+		border: 2px solid transparent;
+		border-top: 2px solid $color-dark;
+
+		animation: spin 1s infinite linear;
+
+		transform-origin: center;
+	}
+}
+
+@keyframes spin {
+ 	from {
+ 		transform: rotate(0deg);
+ 	}
+
+ 	from {
+ 		transform: rotate(-360deg);
+ 	}
+}
+
+/*=====  End of Loading  ======*/
+
+
+
+
+
+/*=======================================
+=            Error / Success            =
+=======================================*/
+
+.success, .error {
+	width: 100%;
+	border-radius: 0px;
+	color: $color-light;
+	padding: 15px 20px;
+	text-align: center;
+}
+
+.success {
+	background: 1px #7BCA2B;
+	background: #7BCA2B;
+	background: -moz-linear-gradient(right,  #7BCA2B 0%, #03C556 100%);
+	background: -webkit-linear-gradient(right,  #7BCA2B 0%,#03C556 100%);
+	background: linear-gradient(to left,  #7BCA2B 0%,#03C556 100%);
+}
+
+.error {
+	background: 1px #F12B41;
+	background: #F12B41;
+	background: -moz-linear-gradient(right,  #F12B41 0%, #C90118 100%);
+	background: -webkit-linear-gradient(right,  #F12B41 0%,#C90118 100%);
+	background: linear-gradient(to left,  #F12B41 0%,#C90118 100%);
+}
+
+/*=====  End of Error / Success  ======*/
+
+
+
+
+
+/*=================================
+=            ABS Align            =
+=================================*/
+
+.alignXY {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.alignX {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.alignY {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/*=====  End of ABS Align  ======*/
+
+
+
+
+/*================================
+=            Clearfix            =
+================================*/
+
+@mixin clearfix() {
+	&::before,
+	&::after {
+		content: " ";
+		display: table;
+	}
+
+	&::after {
+		clear: both;
+	}
+}
+
+.clearfix {
+	@include clearfix;
+}
+
+/*=====  End of Clearfix  ======*/

@@ -10,6 +10,8 @@ import type {StackedData} from './FilterParent'
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
+import '../../css/components/chart.css';
+
 type PropsType = {
   barData: Array<Array<StackedData>>,
   currentTopic: string,

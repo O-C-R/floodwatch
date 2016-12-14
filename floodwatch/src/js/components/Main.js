@@ -42,23 +42,19 @@ export class AppNavigation extends Component {
 
   render() {
     return (
-      <Navbar collapseOnSelect>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <Navbar.Link href="#"><Navbar.Text>Floodwatch</Navbar.Text></Navbar.Link>
-          </Navbar.Brand>
-          <Navbar.Toggle/>
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav pullRight onSelect={this.handleSelect.bind(this)} activeKey={this.state.selectedKey}>
-            {this.props.navs.map((nav, key) => {
-              return (
-                    <NavItem eventKey={key} key={key}><Link to={nav.to}><Navbar.Text>{nav.name}</Navbar.Text></Link></NavItem>
-                )
-            })}
-          </Nav>
-        </Navbar.Collapse>
-      </Navbar>
+      <nav className="navigation">
+
+        <Link className="navigation_logo" to="/"><p>Floodwatch</p></Link>
+
+        <ul className="navigation_items">
+          {this.props.navs.map((nav, key) => {
+            return (
+              <li className="navigation_item" eventKey={key} key={key}><Link className="navigation_item_link" to={nav.to}>{nav.name}</Link></li>
+            )
+          })}
+        </ul>
+
+      </nav>
     );
   }
 }

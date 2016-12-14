@@ -1,0 +1,40 @@
+@import "../base/variables";
+@import "../base/extendables";
+
+.navigation {
+	background: $color-light;
+	height: 90px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	padding: 0 60px;
+
+	z-index: 100;
+
+	&_item {
+		display: inline-block;
+
+		&_link {
+			@extend .font-l1;
+			font-weight: normal;
+
+			display: block;
+
+			border-bottom: solid 2px transparent;
+			margin: 0 30px;
+			opacity: 0.6;
+			text-transform: capitalize;
+
+			transition: all 0.3s ease-in-out;
+
+			&:hover {
+				opacity: 1;				
+			}
+
+			&.active {
+				border-bottom-color: $color-dark;
+			}
+		}
+	}
+}

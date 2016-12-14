@@ -1,0 +1,23 @@
+@import '../base/extendables';
+
+.faq {
+	h1 {
+		@extend .font-h1;
+	}
+
+	h2 {
+		@extend .font-h3;
+	}
+
+	p {
+		@extend .font-p;
+	}
+
+	ul {
+		@extend .font-list;
+
+		li {
+			@extend .font-list-item;
+		}
+	}
+}
