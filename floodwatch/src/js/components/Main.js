@@ -100,44 +100,29 @@ export class Main extends Component {
 
   loggedInHeader(user: Object) {
     return (
-      <Row>
-        <Col>
-        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
-        </Col>
-      </Row>
+      <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
     );
   }
 
   loggedOutHeader() {
     return (
-      <Row>
-      <Col>
       <AppNavigation navs={[{name:'Register', to:'/register'}, {name:'Login', to:'/login'}]} />
-      </Col>
-      </Row>
     );
   }
 
   render() {
     return (
-      <Grid fluid style={{position:'relative'}}>
-        <Row>
-
-                {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
+      <div>
+        {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
         {this.state.user && this.loggedInHeader(this.state.user)}
         {!this.state.user && this.loggedOutHeader()}
-        </Row>
-        <Row>
-        <Col xs={8} xsOffset={2}>
 
         {this.props.children && React.cloneElement(this.props.children, {
           showMessage: this.showMessage.bind(this),
           loginChanged: this.loadUserFromServer.bind(this),
           user: this.state.user
         })}
-        </Col>
-        </Row>
-      </Grid>
+      </div>
     );
   }
 }

@@ -23,9 +23,7 @@ export class GraphParent extends Component {
 
   render() {
     return (
-      <div className="chart_chart">
-        <Chart barData={this.props.data} currentTopic={this.props.currentTopic} side={this.props.side} updateMouseOver={this.props.updateMouseOver}/>
-      </div>
+      <Chart barData={this.props.data} currentTopic={this.props.currentTopic} side={this.props.side} updateMouseOver={this.props.updateMouseOver}/>
     )
   }
 }

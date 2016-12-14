@@ -68,11 +68,9 @@ export class FilterParent extends Component {
   render() {
     const data = this.stackData(this.props.data)
     return (
-      <Row>
-        <Col xs={12}>
-          <GraphParent data={data} side={this.props.side} currentTopic={this.props.currentTopic} updateMouseOver={this.props.updateMouseOver}/>
-        </Col>
-      </Row>
+      <div className="chart">
+        <GraphParent data={data} side={this.props.side} currentTopic={this.props.currentTopic} updateMouseOver={this.props.updateMouseOver}/>
+      </div>
     )
   }
 }

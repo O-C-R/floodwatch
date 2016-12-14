@@ -2,5 +2,29 @@
 @import "../base/extendables";
 
 .chart {
+	&-container {
+		display: flex;
+	}
 
+	&-sentense {
+		@extend .font-h2;
+		margin-top: 20px;
+	}
+
+	&-actions {
+		margin: 20px 0;
+		text-align: center;
+	}
+}
+
+.chart {
+	flex-grow: 1;
+
+	&:first-child {
+		margin-right: 5px;
+	}
+
+	&:last-child {
+		margin-left: 5px;
+	}
 }

@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
 import $ from 'jquery';
 import d3 from 'd3';
 import _ from 'lodash';
@@ -20,6 +19,7 @@ import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 import '../../css/App.css';
 import '../../css/pages/compare.css';
+import '../../css/components/chart.css';
 
 
 export function createSentence(options: Array<Filter>): string {
@@ -52,9 +52,8 @@ export class Compare extends Component {
   render() {
     return (
       <div className="container">
-        <Col xs={12}>
         <CompareContainer/>
-        </Col>
+  
       </div>
     )
   }
@@ -243,42 +242,30 @@ export class CompareContainer extends Component {
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
     return (
-      <Row className="main">
-        <Col xs={12}>
-          <Row>
-            <Col xs={5} xsOffset={1}>
-              <FilterParent 
-                className="chart" 
+      <div>
+        <div className="chart-container">
+          <FilterParent 
                 side="left" 
                 data={this.state.leftData} 
                 currentSelection={this.state.leftOptions} 
                 currentTopic={this.state.currentTopic} 
-                updateMouseOver={this.updateMouseOver.bind(this)}/>
-            </Col>
-
-            <Col xs={5}>
-              <FilterParent 
-                className="chart" 
+                updateMouseOver={this.updateMouseOver.bind(this)}/>    
+          <FilterParent 
                 side="right" 
                 data={this.state.rightData} 
                 currentSelection={this.state.rightOptions} 
                 currentTopic={this.state.currentTopic} 
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12}>
-            <p className="centered"><h3>{sentence}</h3></p>
-            </Col>
-          </Row>
-          <Row>
-            <p className="centered">
+        </div>
+
+        <p className="chart-sentense">{sentence}</p>
+
+        <div className="chart-actions">
               <button className="btn btn-default button">Share finding</button>
               <button className="btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
-            </p>
-          </Row>
-        </Col>
-        <ComparisonModal 
+        </div>
+        
+        <ComparisonModal
           visible={this.state.modalVisible} 
           toggleModal={this.toggleComparisonModal.bind(this)}
           currentSelectionLeft={this.state.leftOptions} 
@@ -286,7 +273,7 @@ export class CompareContainer extends Component {
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
           userData={this.state.userData}/>
-      </Row>
+      </div>
     )
   }
 }
