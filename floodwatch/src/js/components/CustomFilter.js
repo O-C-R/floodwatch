@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import $ from 'jquery';
 import { Button, FormGroup, Radio } from 'react-bootstrap';
-import _ from "lodash"
+import _ from 'lodash'
 
 import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
 
@@ -87,10 +87,10 @@ export class CustomFilter extends Component {
     const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or' 
     
     let or, and, nor;
-    or = <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline value="or">Any of these</Radio>;
-    if (this.props.filter.name != "age") {
-      and = <Radio className="logic-option" checked={logicSelection == 'and'} name={this.props.side + this.props.filter.name} inline value="and">All of these</Radio>
-      nor = <Radio className="logic-option" checked={logicSelection == 'nor'} name={this.props.side + this.props.filter.name} inline value="nor">None of these</Radio>
+    or = <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
+    if (this.props.filter.name != 'age') {
+      and = <Radio className="logic-option" checked={logicSelection == 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of these</Radio>
+      nor = <Radio className="logic-option" checked={logicSelection == 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of these</Radio>
     }
 
     let select = <div>
