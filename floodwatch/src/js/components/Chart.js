@@ -199,6 +199,9 @@ export class Chart extends Component {
       })
       .attr('class', 'text-label')
       .attr('text-anchor', 'middle')
+      .on('click', (d: Object): void => {
+        this.props.updateMouseOver(d.name)
+      })
 
 
     text.exit()
