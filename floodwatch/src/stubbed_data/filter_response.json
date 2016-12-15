@@ -85,12 +85,12 @@
             ]
             
         },
-
         {
             "name": "gender",  
             "type": "checkbox",          
             "question": "What is your gender identity? Please choose all that apply.",
             "why": "A CMU study found that simulated male profiles received ads that were associated with $200,000 jobs six times more often than the simulated female profiles.",
+            "category_id": 3,
             "options": [
                 "Trans",
                 "Male",
@@ -106,6 +106,7 @@
             "type": "checkbox",
             "question": "What is your race/ethnicity? Please choose all that apply.",
             "why": "See Latanya Sweeney's analysis of racial discrimination in online advertising.",
+            "category_id": 2,
             "options": [
                 "American Indian or Alaska Native",
                 "Hispanic, Latino, or Spanish origin",
@@ -114,15 +115,15 @@
                 "Middle Eastern or North American",
                 "Black or African American",
                 "Native Hawaiian or Other Pacific Islander",
-                "Another race or ethnicity not listed here"
-            ]
-            
+                "Other"
+            ]  
         },
         {
             "name": "religion",
             "question": "What is your religion? Please choose all that apply.",
             "why": "In the USA, religion is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of their faith.",
             "type": "checkbox",
+            "category_id": 1,
             "options": [
                 "Muslim",
                 "Hindu",
@@ -130,18 +131,17 @@
                 "Jewish",
                 "Buddhist",
                 "Agnostic",
-                "Atheist"
+                "Atheist",
+                "Other"
             ]
-            
         },
         {
             "name": "country", 
             "type": "dropdown",
             "aka": "country_code",
-            "question": "Where are you from?",
+            "question": "Where do you live?",
             "why": "In the USA, national origin is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of where they're from.",
             "options": []
         }
-
     ]
 }
