@@ -21,7 +21,7 @@ type TwofishesGeocodeResponse struct {
 }
 
 func GetCountryCodeFromTwofishesID(twofishesHost string, twofishesId string) (*string, error) {
-	url := fmt.Sprintf("%s/?slug=%s", twofishesHost, twofishesId)
+	url := fmt.Sprintf("%s?slug=%s", twofishesHost, twofishesId)
 
 	res := TwofishesGeocodeResponse{}
 	if err := GetJson(url, &res); err != nil {
