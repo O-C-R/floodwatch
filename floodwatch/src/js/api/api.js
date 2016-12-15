@@ -94,9 +94,9 @@ export class APIClient {
 
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
-    if (res.status == 204) {
-      return null
-    }
+    // if (res.status == 204) {
+    //   return null
+    // }
     return res.json();    
   }
 
@@ -191,8 +191,7 @@ export class FWApiClient extends APIClient {
     return res;
   }
 
-  async updatePersonDemographics(options: PersonDemographics): Promise<void> {
-    console.log(options)
+  async updatePersonDemographics(options: PersonDemographics): Promise<PersonResponse> {
     return this.postJSON('/api/person/demographics', options);
   }
 
@@ -205,12 +204,12 @@ export class FWApiClient extends APIClient {
     await this.postForm('/api/login', { username, password });
   }
 
-  async getLocationOptions(options) {
-    const res = this.getJSON('/api/twofishes?query=' + options + "&maxInterpretations=5")
+  async getLocationOptions(place: string) {
+    const res = this.getJSON('/api/twofishes?query=' + place + '&maxInterpretations=5')
     return res
   }
 
-  async getDecodedLocation(id) {
+  async getDecodedLocation(id: string) {
     const res = this.getJSON('/api/twofishes?slug=' + id)
     return res 
   }
