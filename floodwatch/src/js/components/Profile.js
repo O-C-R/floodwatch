@@ -1,20 +1,19 @@
 // @flow
 
 import React, { Component } from 'react';
+import Autocomplete from 'react-autocomplete';
 import { Row, Col, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 import _ from 'lodash'
 import Filters from '../../stubbed_data/filter_response.json';
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import type {DemographicDictionary} from './FindInDemographics'
+//@flow
 
 import {FWApiClient} from '../api/api';
-import type {PersonDemographicRequest} from '../api/types';
+import type {PersonDemographics} from '../api/types';
+import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions'
 
-type StateType = {
-  userData?: PersonDemographicRequest,
-  toPick: Array<string>,
-  curStatus: string
-};
+const ToPick = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
 export class Profile extends Component {
   render() {
@@ -35,20 +34,28 @@ export class Profile extends Component {
 
 }
 
+type StateType = {
+  userData?: PersonDemographics,
+  curStatus: null | "success" | "error"
+};
+
+function setInitialState() {
+  return {
+    curStatus: null
+  }
+}
+
 export class DemographicContainer extends Component {
   state: StateType
 
   constructor() {
     super();
-    this.state = {
-      toPick: ['birth_year', 'twofishes_id', 'demographic_ids'],
-      curStatus: ''
-    }
+    this.state = setInitialState();
   }
 
   async componentDidMount() {
     const UserData = await FWApiClient.get().getCurrentPerson()
-    let filteredUserData = _.pick(UserData, this.state.toPick)
+    let filteredUserData = _.pick(UserData, ToPick)
 
     this.setState({
       userData: filteredUserData
@@ -62,7 +69,6 @@ export class DemographicContainer extends Component {
     })
 
     if (event.target.name != 'age' && event.target.name != 'country_code') {
-      console.log(checked)
       if (checked) {
         this.addToDemographicIds(demo_id.id)
       } else {
@@ -81,24 +87,16 @@ export class DemographicContainer extends Component {
     }
   }
 
-
-
   addToDemographicIds(id: number): void {
     let userData = _.cloneDeep(this.state.userData);
     userData.demographic_ids.push(id)
-    this.setState({
-      userData: userData,
-      curStatus: (this.state.curStatus != 'error') ? '' : 'error'
-    })
+    this.updateStateAndMessages(userData)
   }
 
   updateYear(event: any): void {
     let userData = _.cloneDeep(this.state.userData);
     userData.birth_year = parseInt(event.target.value);
-    this.setState({
-      userData: userData,
-      curStatus: (this.state.curStatus != 'error') ? '' : 'error'
-    })
+    this.updateStateAndMessages(userData)
   }
 
   removeFromDemographicIds(id: number): void {
@@ -106,20 +104,44 @@ export class DemographicContainer extends Component {
     userData.demographic_ids = _.filter(userData.demographic_ids, (o) => {
       return o != id
     })
+    this.updateStateAndMessages(userData)
+  }
+
+  updateLocation(loc) {
+    let userData = _.cloneDeep(this.state.userData)
+    userData.twofishes_id = loc
+    this.updateStateAndMessages(userData)
+  }
+
+  updateStateAndMessages(userData) {
     this.setState({
       userData: userData,
-      curStatus: (this.state.curStatus != 'error') ? '' : 'error'
+      curStatus: (this.state.curStatus != 'error') ? null : 'error'
     })
   }
 
   render() {
     let elems = Filters.filters.map((filter) => {
-      return <DemographicOption updateYear={this.updateYear.bind(this)} 
-                                handleClick={this.handleClick.bind(this)} 
-                                userData={this.state.userData} filter={filter}/>
+      if (filter.name == 'age') {
+        return <AgeOption updateYear={this.updateYear.bind(this)}
+                          handleClick={this.handleClick.bind(this)} 
+                          userData={this.state.userData} filter={filter}/>
+
+      } else if (filter.name == 'country') {
+        return <LocationOption
+                          updateLocation={this.updateLocation.bind(this)}
+                          handleClick={this.handleClick.bind(this)} 
+                          userData={this.state.userData} filter={filter}/>
+      } else {
+        return <DefaultOption  
+                          handleClick={this.handleClick.bind(this)} 
+                          userData={this.state.userData} filter={filter}/>        
+      }
+
+
     })
 
-    const displayGroup = (this.state.curStatus == '') ? 'none' : 'block'
+    const displayGroup = (this.state.curStatus == null) ? 'none' : 'block'
 
     return (
       <Row style={{border:'1px solid #e9e9e9', borderRadius:'10px', padding:'20px'}}> 
@@ -129,14 +151,16 @@ export class DemographicContainer extends Component {
         <Col xs={12}>
         <Button onClick={this.updateUserInfo.bind(this)} style={{backgroundColor:'lightblue', width:'100%'}}>Submit</Button>
         <ListGroup style={{display: displayGroup, textAlign:'center'}}>
-          <ListGroupItem bsStyle="success" 
-                    style={{display: (this.state.curStatus == 'success') ? 'block' : 'none'}}>
-                    Successfully saved changes!
-                    </ListGroupItem>
-          <ListGroupItem bsStyle="danger" 
-                    style={{display: (this.state.curStatus == 'error') ? 'block' : 'none'}}>
-                    Error while trying to save changes. Please check your connection.
-                    </ListGroupItem>
+          { this.state.curStatus == 'success' &&
+            <ListGroupItem bsStyle="success">
+              Successfully saved changes!
+            </ListGroupItem> 
+          }
+          { this.state.curStatus == 'error' &&
+            <ListGroupItem bsStyle="danger">
+              Error while trying to save changes. Please check your connection.
+            </ListGroupItem> 
+          }
         </ListGroup>
         </Col>
       </Row>
@@ -144,49 +168,7 @@ export class DemographicContainer extends Component {
   }
 }
 
-export class DemographicOption extends Component {
-  render() {
-    let elems;
-    if (this.props.userData) {
-      if (this.props.filter.name == 'age') {
-        let value = this.props.userData.birth_year
-        elems = <input onChange={this.props.updateYear} value={value} type="number"/> // can we use type="number"?
-      } else if (this.props.filter.name == 'country') {
-        //tk
-      } else {
-        elems = this.props.filter.options.map((opt: string, key: number) => {
-          let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-            return o.name == opt
-          })
 
-          let checked = false;
-          if (val) {
-            checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
-          }
-
-          return <div key={key} className="custom-option">
-                      <Button href="#" 
-                      active={checked}
-                      name={this.props.filter.name}
-                      onClick={this.props.handleClick.bind(this, !checked)}>
-                      {opt}
-                      </Button>
-                  </div>
-        })
-      }
-    }
-
-    return (
-      <Row>
-        <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          {elems}
-        </Col>
-      </Row>
-    )
-  }
-
-}
 
 export class AccountOptionsContainer extends Component {
   render() {

@@ -5,7 +5,7 @@ export type PersonResponse = {
   demographic_ids: Array<number>
 };
 
-export type PersonDemographicRequest = {
+export type PersonDemographics = {
   birth_year: number,
   twofishes_id: string,
   demographic_ids: Array<number>

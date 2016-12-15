@@ -43,7 +43,7 @@ export class App extends Component {
 
           <Route path="person" component={Person} onEnter={requireAuth} />
           <Route path="faq" component={Faq} />
-          <Route path="compare" component={Compare} />
+          <Route path="compare" component={Compare} onEnter={requireAuth} />
           <Route path="profile" component={Profile} onEnter={requireAuth} />
           <Route path="login" component={Login} />
           <Route path="register" component={Register} />

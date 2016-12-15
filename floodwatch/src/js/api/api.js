@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 import log from 'loglevel';
 
 import {BaseError} from '../common/util';
-import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographicRequest} from './types';
+import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographics} from './types';
 
 export class APIError extends BaseError {}
 export class AuthenticationError extends APIError {}
@@ -191,7 +191,8 @@ export class FWApiClient extends APIClient {
     return res;
   }
 
-  async updatePersonDemographics(options: PersonDemographicRequest): Promise<void> {
+  async updatePersonDemographics(options: PersonDemographics): Promise<void> {
+    console.log(options)
     return this.postJSON('/api/person/demographics', options);
   }
 
@@ -202,6 +203,16 @@ export class FWApiClient extends APIClient {
   async login(username: string, password: string): Promise<void> {
     // response has no content, so any non-error means success
     await this.postForm('/api/login', { username, password });
+  }
+
+  async getLocationOptions(options) {
+    const res = this.getJSON('/api/twofishes?query=' + options + "&maxInterpretations=5")
+    return res
+  }
+
+  async getDecodedLocation(id) {
+    const res = this.getJSON('/api/twofishes?slug=' + id)
+    return res 
   }
 
   async logout(): Promise<void> {

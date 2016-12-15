@@ -100,7 +100,7 @@
                 "Other"
             ]
             
-        }, 
+        },
         {
             "name": "race",
             "type": "checkbox",
@@ -133,6 +133,14 @@
                 "Atheist"
             ]
             
+        },
+        {
+            "name": "country", 
+            "type": "dropdown",
+            "aka": "country_code",
+            "question": "Where are you from?",
+            "why": "In the USA, national origin is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of where they're from.",
+            "options": []
         }
 
     ]
