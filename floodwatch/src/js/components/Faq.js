@@ -3,8 +3,6 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import '../../css/Faq.css';
-
 export class Faq extends Component {
   render() {
     return (
