@@ -5,6 +5,12 @@ export type PersonResponse = {
   demographic_ids: Array<number>
 };
 
+export type PersonDemographics = {
+  birth_year: number,
+  twofishes_id: string,
+  demographic_ids: Array<number>
+};
+
 export type DemographicFilterItem = {
   operator: 'nor' | 'and' | 'or',
   values: Array<number>

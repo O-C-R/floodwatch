@@ -6,7 +6,7 @@ import type {Preset, Filter, DisabledCheck} from './filtertypes'
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
-type DemographicDictionary = {
+export type DemographicDictionary = {
   id: number,
   category_id: number,
   name: string

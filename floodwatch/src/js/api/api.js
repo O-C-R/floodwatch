@@ -4,7 +4,7 @@ import 'whatwg-fetch';
 import log from 'loglevel';
 
 import {BaseError} from '../common/util';
-import type {PersonResponse, FilterRequest, FilterResponse} from './types';
+import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographics} from './types';
 
 export class APIError extends BaseError {}
 export class AuthenticationError extends APIError {}
@@ -94,7 +94,10 @@ export class APIClient {
 
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
-    return res.json();
+    if (res.status == 204) {
+      return null
+    }
+    return res.json();    
   }
 
   async getText(path: string, params?: Object): Promise<string> {
@@ -188,6 +191,10 @@ export class FWApiClient extends APIClient {
     return res;
   }
 
+  async updatePersonDemographics(options: PersonDemographics): Promise<PersonResponse> {
+    return this.postJSON('/api/person/demographics', options);
+  }
+
   async register(username: string, email: ?string, password: string): Promise<void> {
     await this.postForm('/api/register', { username, email, password });
   }
@@ -195,6 +202,16 @@ export class FWApiClient extends APIClient {
   async login(username: string, password: string): Promise<void> {
     // response has no content, so any non-error means success
     await this.postForm('/api/login', { username, password });
+  }
+
+  async getLocationOptions(place: string) {
+    const res = this.getJSON('/api/twofishes?query=' + place + '&maxInterpretations=5')
+    return res
+  }
+
+  async getDecodedLocation(id: string) {
+    const res = this.getJSON('/api/twofishes?slug=' + id)
+    return res 
   }
 
   async logout(): Promise<void> {
