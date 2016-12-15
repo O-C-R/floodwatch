@@ -48,7 +48,7 @@ export class AgeOption extends Component {
 
   render() {
     let value = (this.props.userData) ? this.props.userData.birth_year : ''
-    let elem = <input onChange={this.props.updateYear} value={value} type="number"/>
+    let elem = <input min="0" onChange={this.props.updateYear} value={value} type="number"/>
     return (
       <Row className="demographic-category">
         <Col xs={12}>
@@ -212,23 +212,26 @@ export class DefaultOption extends Component {
 
   render() {
     let elems;
-    if (this.props.userData) {      
-      elems = this.props.filter.options.map((opt: string, key: number) => {
+    if (this.props.userData) {
+      let myOptions = _.filter(DemographicKeys.demographic_keys, (key) => {
+        return key.category_id == this.props.filter.category_id
+      })
+      elems = myOptions.map((opt: string, key: number) => {
         let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-          return o.name == opt
+          return o.id == opt.id
         })
 
         let checked = false;
         if (val) {
           checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
         }
-
+        
         return <div key={key} className="custom-option">
                     <Button
                     active={checked}
                     name={this.props.filter.name}
-                    onClick={this.props.handleClick.bind(this, !checked)}>
-                    {opt}
+                    onClick={this.props.handleClick.bind(this, !checked, opt.id)}>
+                    {opt.name}
                     </Button>
                 </div>
       })

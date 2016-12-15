@@ -100,17 +100,12 @@ export class DemographicContainer extends Component {
     }
   }
 
-  handleClick(checked: boolean, event: any): void {
-    let demo = event.target.textContent;
-    let demo_id = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-      return o.name == demo
-    })
-
+  handleClick(checked: boolean, id: number, event: any): void {
     if (event.target.name != 'age' && event.target.name != 'country_code') {
       if (checked) {
-        this.addToDemographicIds(demo_id.id)
+        this.addToDemographicIds(id)
       } else {
-        this.removeFromDemographicIds(demo_id.id)
+        this.removeFromDemographicIds(id)
       }
     }
   }
