@@ -58,11 +58,11 @@ export class AgeOption extends Component {
           </div>
           <br/>
           <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          <p style={{
-            display: (this.state.isDescriptionOpen)? 'block' : 'none'
-          }}>
+          { this.state.isDescriptionOpen &&
+          <p>
             <Well bsSize="small">{this.props.filter.why}</Well>
           </p>
+          }
         </Col>
       </Row>
     )
@@ -172,11 +172,11 @@ export class LocationOption extends Component {
           </div>
           <br/>
           <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          <p style={{
-            display: (this.state.isDescriptionOpen)? 'block' : 'none'
-          }}>
-            <Well bsSize="small">{this.props.filter.why}</Well>
-          </p>
+          { this.state.isDescriptionOpen &&
+            <p>
+              <Well bsSize="small">{this.props.filter.why}</Well>
+            </p>
+          }
         </Col>
       </Row>
     )
@@ -212,33 +212,27 @@ export class DefaultOption extends Component {
 
   render() {
     let elems;
-    if (this.props.userData) {
-      if (this.props.filter.name == 'age') {
-        let value = this.props.userData.birth_year
-        elems = <input onChange={this.props.updateYear} value={value} type="number"/> // can we use type="number"?
-      } else if (this.props.filter.name == 'country') {
-        //tk
-      } else {
-        elems = this.props.filter.options.map((opt: string, key: number) => {
-          let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-            return o.name == opt
-          })
-
-          let checked = false;
-          if (val) {
-            checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
-          }
-
-          return <div key={key} className="custom-option">
-                      <Button
-                      active={checked}
-                      name={this.props.filter.name}
-                      onClick={this.props.handleClick.bind(this, !checked)}>
-                      {opt}
-                      </Button>
-                  </div>
+    if (this.props.userData) {      
+      elems = this.props.filter.options.map((opt: string, key: number) => {
+        let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
+          return o.name == opt
         })
-      }
+
+        let checked = false;
+        if (val) {
+          checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
+        }
+
+        return <div key={key} className="custom-option">
+                    <Button
+                    active={checked}
+                    name={this.props.filter.name}
+                    onClick={this.props.handleClick.bind(this, !checked)}>
+                    {opt}
+                    </Button>
+                </div>
+      })
+    
     }
 
     return (
@@ -249,11 +243,11 @@ export class DefaultOption extends Component {
 
           <br/>
           <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          <p style={{
-            display: (this.state.isDescriptionOpen)? 'block' : 'none'
-          }}>
-            <Well bsSize="small">{this.props.filter.why}</Well>
-          </p>
+          { this.state.isDescriptionOpen &&
+            <p>
+              <Well bsSize="small">{this.props.filter.why}</Well>
+            </p>
+          }
         </Col>
       </Row>
     )

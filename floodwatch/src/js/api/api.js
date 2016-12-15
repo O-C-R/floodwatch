@@ -94,9 +94,9 @@ export class APIClient {
 
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
-    // if (res.status == 204) {
-    //   return null
-    // }
+    if (res.status == 204) {
+      return null
+    }
     return res.json();    
   }
 

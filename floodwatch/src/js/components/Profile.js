@@ -12,7 +12,7 @@ import {FWApiClient} from '../api/api';
 import type {PersonDemographics} from '../api/types';
 import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions'
 
-const ToPick = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
+const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
 
 type ProfileStateType = {
@@ -48,14 +48,14 @@ export class Profile extends Component {
           <h3>My Profile</h3>
           <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
           <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
-          <p style={{
-            display: (this.state.isDescriptionOpen)? 'block' : 'none'
-          }}>
-            <Well bsSize="small">
-              <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
-              <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
-            </Well>
-          </p>
+          { this.state.isDescriptionOpen &&
+            <p>
+              <Well bsSize="small">
+                <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
+                <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
+              </Well>
+            </p>
+          }
         </Col>
         <Col xs={12}>
         <hr/>
@@ -90,7 +90,7 @@ export class DemographicContainer extends Component {
   async componentDidMount() {
     try {
       const UserData = await FWApiClient.get().getCurrentPerson()
-      let filteredUserData = _.pick(UserData, ToPick)
+      let filteredUserData = _.pick(UserData, TO_PICK)
       this.setState({
         userData: filteredUserData,
       })  
@@ -118,7 +118,7 @@ export class DemographicContainer extends Component {
   async updateUserInfo() {
     try {
       const reply = await FWApiClient.get().updatePersonDemographics(this.state.userData)  
-      let filteredUserData = _.pick(reply, ToPick)
+      let filteredUserData = _.pick(reply, TO_PICK)
       this.setState({
         userData: filteredUserData,
         curStatus: 'success'
