@@ -2,6 +2,8 @@
 Description=floodwatch-server
 
 [Service]
+ExecStartPre=-/usr/bin/docker kill floodwatch-server
+ExecStartPre=-/usr/bin/docker rm floodwatch-server
 ExecStart=/usr/bin/docker run --name=floodwatch-server --rm --read-only --env-file=/etc/floodwatch-server/floodwatch-server.env -v /usr/share/ca-certificates/:/etc/ssl/certs:ro -p 80:80 ocrnyc/floodwatch-server
 ExecStop=/usr/bin/docker stop floodwatch-server
 Restart=always
