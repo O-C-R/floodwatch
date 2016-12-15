@@ -157,6 +157,21 @@ func Register(options *Options) http.Handler {
 	})
 }
 
+func FetchPersonResponse(b *backend.Backend, userId id.ID) (*data.PersonResponse, error) {
+	person, err := b.Person(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	demographicIds, err := b.PersonDemographics(person.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	personResponse := person.NewPersonResponse(demographicIds)
+	return &personResponse, nil
+}
+
 func PersonCurrent(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
@@ -165,19 +180,12 @@ func PersonCurrent(options *Options) http.Handler {
 			return
 		}
 
-		person, err := options.Backend.Person(session.UserID)
+		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 			return
 		}
 
-		demographicIds, err := options.Backend.PersonDemographics(person.ID)
-		if err != nil {
-			Error(w, err, 500)
-			return
-		}
-
-		personResponse := person.NewPersonResponse(demographicIds)
 		WriteJSON(w, personResponse)
 	})
 }
@@ -239,6 +247,12 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 			}
 		}
 
-		w.WriteHeader(http.StatusNoContent)
+		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		WriteJSON(w, personResponse)
 	})
 }
