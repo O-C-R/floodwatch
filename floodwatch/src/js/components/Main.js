@@ -106,7 +106,7 @@ export class Main extends Component {
     return (
       <Row>
         <Col>
-        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/user'}]} />
+        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/profile'}]} />
         </Col>
       </Row>
     );

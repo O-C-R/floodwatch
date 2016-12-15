@@ -19,6 +19,7 @@
     "lodash": "^4.17.2",
     "loglevel": "^1.4.1",
     "react": "^15.3.2",
+    "react-autocomplete": "^1.4.0",
     "react-bootstrap": "^0.30.6",
     "react-dom": "^15.3.2",
     "react-router": "^2.8.1",

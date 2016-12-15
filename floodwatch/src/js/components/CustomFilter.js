@@ -19,7 +19,6 @@ type PropType = {
 
 export class CustomFilter extends Component {
   props: PropType;
-  state: StateType;
 
   constructor(props: PropType) {
     super(props);
