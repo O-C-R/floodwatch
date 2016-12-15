@@ -336,8 +336,8 @@ export class CompareContainer extends Component {
             </Col>
           </Row>
           <Row>
-            <Col xs={12}>
-            <p className="centered"><h3>{sentence}</h3></p>
+            <Col xs={10} xsOffset={1}>
+              <p className="centered"><h3>{sentence}</h3></p>
             </Col>
           </Row>
           <Row>

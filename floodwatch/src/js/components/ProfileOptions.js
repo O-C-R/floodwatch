@@ -10,8 +10,6 @@ import type {DemographicDictionary} from './FindInDemographics'
 import type {PersonDemographics} from '../api/types';
 import type {FilterJSON} from './filtertypes'
 
-import '../../css/Profile.css';
-
 // age ------------------------------------------------------------------------------------------------------------------------
 
 type AgePropsType = {
