@@ -15,6 +15,7 @@ type LocationFilter struct {
 }
 
 type PersonFilter struct {
+	Personal     *bool               `json:"personal"`
 	Age          *RangeFilter        `json:"age"`
 	Location     *LocationFilter     `json:"location"`
 	Demographics []DemographicFilter `json:"demographics"`
