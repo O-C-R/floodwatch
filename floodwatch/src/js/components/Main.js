@@ -2,6 +2,7 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 
 import '../../css/app.css';
 
@@ -43,21 +44,25 @@ export class AppNavigation extends Component {
   render() {
     return (
       <Navbar collapseOnSelect>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <Navbar.Link href="#"><Navbar.Text>Floodwatch</Navbar.Text></Navbar.Link>
-          </Navbar.Brand>
-          <Navbar.Toggle/>
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav pullRight onSelect={this.handleSelect.bind(this)} activeKey={this.state.selectedKey}>
-            {this.props.navs.map((nav, key) => {
-              return (
-                    <NavItem eventKey={key} key={key}><Link to={nav.to}><Navbar.Text>{nav.name}</Navbar.Text></Link></NavItem>
-                )
-            })}
-          </Nav>
-        </Navbar.Collapse>
+        <div className="container">
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#">Floodwatch</a>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+          </Navbar.Header>
+          <Navbar.Collapse>
+            <Nav pullRight>
+              {this.props.navs.map((nav, key) => {
+                return (
+                      <LinkContainer to={nav.to}>
+                        <NavItem eventKey={key} key={key}>{nav.name}</NavItem>
+                      </LinkContainer>
+                  )
+              })}
+            </Nav>
+          </Navbar.Collapse>
+        </div>
       </Navbar>
     );
   }

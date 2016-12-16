@@ -50,17 +50,11 @@ export class AgeOption extends Component {
     return (
       <Row className="demographic-category">
         <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          <div className="input-wrapper">
-          {elem}
-          </div>
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
+          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
           { this.state.isDescriptionOpen &&
-          <p>
             <Well bsSize="small">{this.props.filter.why}</Well>
-          </p>
           }
+          <div className="input-wrapper">{elem}</div>
         </Col>
       </Row>
     )
@@ -142,7 +136,10 @@ export class LocationOption extends Component {
     return (
       <Row className="demographic-category">
         <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
+          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
+          { this.state.isDescriptionOpen &&
+            <Well bsSize="small">{this.props.filter.why}</Well>
+          }
           <div className="input-wrapper">
           <Autocomplete
             menuStyle={{zIndex: 1000}}
@@ -168,13 +165,6 @@ export class LocationOption extends Component {
             )}
           />
           </div>
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">{this.props.filter.why}</Well>
-            </p>
-          }
         </Col>
       </Row>
     )
@@ -224,14 +214,17 @@ export class DefaultOption extends Component {
           checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
         }
         
-        return <div key={key} className="custom-option">
-                    <Button
-                    active={checked}
-                    name={this.props.filter.name}
-                    onClick={this.props.handleClick.bind(this, !checked, opt.id)}>
-                    {opt.name}
-                    </Button>
-                </div>
+        return (
+            <div key={key} className={"custom-option checkbox " + (checked && "checked")}>
+              <label>
+                <input
+                type="checkbox"
+                checked={checked}
+                name={this.props.filter.name}
+                onClick={this.props.handleClick.bind(this, !checked, opt.id)} /> {opt.name}
+              </label>
+            </div>
+          )
       })
     
     }
@@ -239,16 +232,12 @@ export class DefaultOption extends Component {
     return (
       <Row className="demographic-category">
         <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          {elems}
-
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
+          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
           { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">{this.props.filter.why}</Well>
-            </p>
+            <Well bsSize="small">{this.props.filter.why}</Well>
           }
+
+          {elems}
         </Col>
       </Row>
     )

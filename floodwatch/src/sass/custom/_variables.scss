@@ -22,6 +22,12 @@ $brand-warning:         #f0ad4e;
 $brand-danger:          #d9534f;
 
 
+//== Drop shadow
+//
+//## Gray and brand colors for use across Bootstrap
+
+$drop-shadow: 0px 0px 15px rgba($gray-base, 0.1);
+
 //== Scaffolding
 //
 //## Settings for some of the most global styles.
@@ -61,7 +67,7 @@ $font-size-h5:            $font-size-base;
 $font-size-h6:            ceil(($font-size-base * 0.85)); // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        1.6; // 20/14
+$line-height-base:        1.8; // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-computed:    floor(($font-size-base * $line-height-base)); // ~20px
 
@@ -107,7 +113,7 @@ $padding-xs-horizontal:     5px;
 $line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5;
 
-$border-radius-base:        4px;
+$border-radius-base:        0px;
 $border-radius-large:       6px;
 $border-radius-small:       3px;
 
@@ -149,9 +155,9 @@ $table-border-color:            #ddd;
 
 $btn-font-weight:                normal;
 
-$btn-default-color:              #333;
+$btn-default-color:              $gray-base;
 $btn-default-bg:                 #fff;
-$btn-default-border:             #ccc;
+$btn-default-border:             $gray-lighter;
 
 $btn-primary-color:              #fff;
 $btn-primary-bg:                 $brand-primary;
@@ -198,11 +204,11 @@ $input-border:                   #ccc;
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
-$input-border-radius:            $border-radius-base;
+$input-border-radius:            0;
 //** Large `.form-control` border radius
-$input-border-radius-large:      $border-radius-large;
+$input-border-radius-large:      0;
 //** Small `.form-control` border radius
-$input-border-radius-small:      $border-radius-small;
+$input-border-radius-small:      0;
 
 //** Border color for inputs on focus
 $input-border-focus:             #66afe9;
@@ -765,8 +771,8 @@ $thumbnail-caption-padding:   9px;
 //
 //##
 
-$well-bg:                     #f5f5f5;
-$well-border:                 darken($well-bg, 7%);
+$well-bg:                     $gray-lighter;
+$well-border:                 $gray-light;
 
 
 //== Badges

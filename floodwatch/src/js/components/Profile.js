@@ -45,7 +45,7 @@ export class Profile extends Component {
     return (
       <Row className="profile-page panel">
         <Col xs={12} id="profile-explanation" className="panel-body">
-          <h3>My Profile</h3>
+          <h1>My Profile</h1>
           <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
           <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
           { this.state.isDescriptionOpen &&
