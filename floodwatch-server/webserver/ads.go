@@ -255,8 +255,13 @@ func Ads(options *Options) http.Handler {
 
 func FilteredAdStats(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		decoder := json.NewDecoder(req.Body)
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
+			return
+		}
 
+		decoder := json.NewDecoder(req.Body)
 		var filterRequest data.FilterRequest
 		err := decoder.Decode(&filterRequest)
 		if err != nil {
@@ -264,12 +269,12 @@ func FilteredAdStats(options *Options) http.Handler {
 		}
 		defer req.Body.Close()
 
-		resA, err := options.Backend.FilteredAds(filterRequest.FilterA)
+		resA, err := options.Backend.FilteredAds(filterRequest.FilterA, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 		}
 
-		resB, err := options.Backend.FilteredAds(filterRequest.FilterB)
+		resB, err := options.Backend.FilteredAds(filterRequest.FilterB, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 		}

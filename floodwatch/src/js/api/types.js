@@ -16,7 +16,9 @@ export type DemographicFilterItem = {
   values: Array<number>
 };
 
+// Set either personal: true, or some set of the other options.
 export type FilterRequestItem = {
+  personal?: boolean,
   age?: {
     min?: number,
     max?: number
