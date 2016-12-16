@@ -6,6 +6,11 @@ import $ from 'jquery';
 import {GraphParent} from './GraphParent';
 import _ from 'lodash';
 import d3 from 'd3'
+import TopicKeys from '../../stubbed_data/topic_keys.json';
+
+const UNKNOWN = _.findKey(TopicKeys, (topic) => {
+  return (topic == 'Unknown')
+})
 
 type StateType = {
   dataStackLayout: (data: Array<Array<StackedData>>) => Array<Array<StackedData>>
@@ -45,6 +50,9 @@ export class FilterParent extends Component {
 
   stackData(data: Object): Array<Array<StackedData>> {
     const topics = Object.keys(data);
+
+    console.log(data)
+
     let intermediate = topics.map((key: string): Array<StackedData> => {
       const dTemp = data[key]
       return [{x: 0, y: dTemp, name: key}]
@@ -53,6 +61,12 @@ export class FilterParent extends Component {
     intermediate.sort(function(a: Array<StackedData>, b: Array<StackedData>) {
       return d3.ascending(a[0].y, b[0].y);
     })
+
+    let unknown = _.remove(intermediate, (topic) => {
+      return topic[0].name == UNKNOWN
+    })
+
+    intermediate = _.concat(unknown, intermediate)
 
     const stack = this.state.dataStackLayout(intermediate)
     return stack;

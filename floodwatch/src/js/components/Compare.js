@@ -20,6 +20,9 @@ import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 // import '../../Compare.css';
 
+const UNKNOWN = _.findKey(TopicKeys, (topic) => {
+  return (topic == 'Unknown')
+})
 
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
@@ -145,7 +148,7 @@ export class CompareContainer extends Component {
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
     let isPersonal = false;
     _.forEach(filter, (f) => {
-      if (f.name == "data" && f.choices[0] == "You") {
+      if (f.name == 'data' && f.choices[0] == 'You') {
         isPersonal = true;
       }
     })
@@ -286,6 +289,10 @@ export class CompareContainer extends Component {
   generateDifferenceSentence(lVal: number, rVal: number): string {
     let sentence = '';
     const prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
+
+    if (this.state.currentTopic == UNKNOWN) {
+      return sentence
+    }
 
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
