@@ -149,42 +149,16 @@ export class CompareContainer extends Component {
   }
 
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
-    let isPersonal = false;
-    _.forEach(filter, (f) => {
-      if (f.name == 'data' && f.choices[0] == 'You') {
-        isPersonal = true;
-      }
-    })
-
+    const isPersonal = _.find(filter, f => f.name == 'data' && f.choices[0] == 'You');
     if (isPersonal) {
-      return {
-        personal: true
-      }
+      return { personal: true };
     }
 
-    let obj = {
-      demographics: [],
-      age: {}
+    const obj: FilterRequestItem = {
+      demographics: []
     };
-    _.forEach(filter, (f: Filter) => {
-      if (f.name != 'age' && f.name != 'country') {
-        let arr = []
 
-        const myCategoryId = DemographicKeys.category_to_id[f.name];
-
-        _.forEach(f.choices, (choice: string) => {
-          for (let key of DemographicKeys.demographic_keys) {
-            if (key.name == choice && key.category_id == myCategoryId) {
-              arr.push(key.id)
-            }
-          }
-        })
-        obj.demographics.push({
-          operator: f.logic,
-          values: arr
-        })
-      }
-
+    for (const f of filter) {
       if (f.name == 'age') {
         if (f.choices[0]) {
           const min = parseInt(f.choices[0].split('-')[0])
@@ -194,12 +168,23 @@ export class CompareContainer extends Component {
             max: max
           }
         }
+      } else if (f.name == 'country') {
+        // TK
+      } else {
+        const arr = [];
+        const myCategoryId = DemographicKeys.category_to_id[f.name];
+        for (const choice of f.choices) {
+          for (const key of DemographicKeys.demographic_keys) {
+            if (key.name == choice && key.category_id == myCategoryId) {
+              arr.push(key.id)
+            }
+          }
+        }
+        if (obj.demographics) {
+          obj.demographics.push({ operator: f.logic, values: arr });
+        }
       }
-
-      if (f.name == 'country') {
-        // tk
-      }
-    })
+    }
 
     return obj
   }
