@@ -71,8 +71,8 @@ type StateType = {
 
 function CompareContainerInitialState(): Object {
   return {
-    leftOptions: Filters.presets[1].filters,
-    rightOptions: Filters.presets[3].filters,
+    leftOptions: Filters.presets[0].filters,
+    rightOptions: Filters.presets[1].filters,
     leftData: {},
     rightData: {},
     currentTopic: '1',
@@ -143,6 +143,19 @@ export class CompareContainer extends Component {
   }
 
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
+    let isPersonal = false;
+    _.forEach(filter, (f) => {
+      if (f.name == "data" && f.choices[0] == "You") {
+        isPersonal = true;
+      }
+    })
+
+    if (isPersonal) {
+      return {
+        personal: true
+      }
+    }
+
     let obj = {
       demographics: [],
       age: {}
