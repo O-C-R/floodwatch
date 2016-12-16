@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router';
 import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
 
-import '../../css/App.css';
+import '../../css/app.css';
 
 import history from '../common/history';
 import {FWApiClient} from '../api/api';
