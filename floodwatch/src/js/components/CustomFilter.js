@@ -41,9 +41,9 @@ export class CustomFilter extends Component {
       })
     }
 
-    if (this.props.filter.name == "age") { // age has a slightly different structure
+    if (this.props.filter.name == 'age') { // age has a slightly different structure
       const age = _.filter(FilterResponse.filters, (opt: FilterJSON) => {
-        return opt.name == "age"
+        return opt.name == 'age'
       })
       myOptions = _.map(age[0].options, (opt: string) => {
         return {
