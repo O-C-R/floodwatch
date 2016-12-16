@@ -6,6 +6,7 @@ import { Button, FormGroup, Radio } from 'react-bootstrap';
 import _ from 'lodash'
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
+import FilterResponse from '../../stubbed_data/filter_response.json';
 
 import type {FilterJSON, DisabledCheck, Filter, FilterLogic} from './filtertypes.js'
 import type {DemographicDictionary} from './FindInDemographics'
@@ -40,7 +41,19 @@ export class CustomFilter extends Component {
       })
     }
 
+    if (this.props.filter.name == "age") { // age has a slightly different structure
+      const age = _.filter(FilterResponse.filters, (opt: FilterJSON) => {
+        return opt.name == "age"
+      })
+      myOptions = _.map(age[0].options, (opt: string) => {
+        return {
+          name: opt,
+        }
+      })
+    }
+
     _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {
+
       const obj = {
         'name': this.props.filter.name,
         'choices': [opt.name],
