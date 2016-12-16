@@ -356,7 +356,7 @@ func (b *Backend) FilteredAds(f data.PersonFilter, contextPersonId id.ID) (*data
 	whereClauses := make([]string, 0)
 	params := make(map[string]interface{})
 
-	if f.Personal != nil {
+	if f.Personal != nil && *f.Personal {
 		whereClauses = append(whereClauses, "person.id = :personId")
 		params["personId"] = contextPersonId
 	} else {
