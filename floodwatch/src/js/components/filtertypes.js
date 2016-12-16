@@ -11,10 +11,12 @@ export type Preset = { // FilterOptionsType
   always_available?: boolean
 };
 
+export type FilterLogic = 'or' | 'nor' | 'and';
+
 export type Filter = { // FilterType
   name: string,
   choices: Array<string>,
-  logic: string
+  logic: FilterLogic
 };
 
 export type FilterJSON = {
@@ -22,8 +24,8 @@ export type FilterJSON = {
   options: Array<string>,
   question: string,
   type: string,
-  why: string
-
+  why: string,
+  category_id?: number
 };
 
 export type DisabledCheck = {

@@ -7,12 +7,12 @@ import _ from 'lodash'
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
-import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+import type {FilterJSON, DisabledCheck, Filter, FilterLogic} from './filtertypes.js'
 import type {DemographicDictionary} from './FindInDemographics'
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
-  updateSearchLogic: (logic: string, filtername: string) => void,
+  updateSearchLogic: (logic: FilterLogic, filtername: string) => void,
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
   mySelection: Filter,
@@ -61,12 +61,12 @@ export class CustomFilter extends Component {
       if (!disabled) {
         elems.push(<div key={i} className="custom-option">
                     <Button href="#" active={checked}
-                            disabled={disabled} 
-                            onClick={this.props.handleFilterClick.bind(this, obj, !checked)} 
+                            disabled={disabled}
+                            onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
                             name={this.props.filter.name}>
                     {opt.name}
                     </Button>
-                  
+
                 </div>)
       }
     })
@@ -90,9 +90,9 @@ export class CustomFilter extends Component {
 
   }
 
-  generateLogicSelectors(): Element {
-    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or' 
-    
+  generateLogicSelectors(): React$Element<*> {
+    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or'
+
     let or, and, nor;
     or = <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
     if (this.props.filter.name != 'age') {

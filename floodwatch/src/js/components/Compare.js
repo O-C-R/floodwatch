@@ -11,7 +11,7 @@ import {ComparisonModal} from './ComparisonModal';
 import {FWApiClient} from '../api/api';
 
 import type {UnstackedData} from './FilterParent';
-import type {PresetsAndFilters, Preset, Filter} from './filtertypes'
+import type {PresetsAndFilters, Preset, Filter, FilterLogic} from './filtertypes'
 import type {PersonResponse, FilterRequest, FilterRequestItem} from '../api/types';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
@@ -38,11 +38,11 @@ export function createSentence(options: Array<Filter>): string {
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
-    if (opt.logic == 'NOR') { 
+    if (opt.logic == 'NOR') {
       logic = ' Non-';
       choices = opt.choices.join(', non-')
     } else {
-      choices = opt.choices.join(', ')  
+      choices = opt.choices.join(', ')
     }
     sentence = logic + choices + ' ' + sentence
   })
@@ -91,26 +91,29 @@ export class CompareContainer extends Component {
     this.state = CompareContainerInitialState()
   }
 
-  async componentDidMount() {
-    const filterA = this.generateFilterRequestItem(this.state.leftOptions)
-    const filterB = this.generateFilterRequestItem(this.state.rightOptions)
+  componentDidMount() {
+    const init = async () => {
+      const filterA = this.generateFilterRequestItem(this.state.leftOptions)
+      const filterB = this.generateFilterRequestItem(this.state.rightOptions)
 
-    const cleanedFilterA = this.cleanFilterRequest(filterA)
-    const cleanedFilterB = this.cleanFilterRequest(filterB)
+      const cleanedFilterA = this.cleanFilterRequest(filterA)
+      const cleanedFilterB = this.cleanFilterRequest(filterB)
 
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
-    const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
-      return d3.descending(a.value, b.value);
-    })[0]
+      const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
+      const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
+        return d3.descending(a.value, b.value);
+      })[0]
 
-    const UserData = await FWApiClient.get().getCurrentPerson()
+      const UserData = await FWApiClient.get().getCurrentPerson()
 
-    this.setState({
-      leftData: AdBreakdown.filterA.categories,
-      rightData: AdBreakdown.filterB.categories,
-      currentTopic: FilterATopic.key,
-      userData: UserData
-    })
+      this.setState({
+        leftData: AdBreakdown.filterA.categories,
+        rightData: AdBreakdown.filterB.categories,
+        currentTopic: FilterATopic.key,
+        userData: UserData
+      })
+    }
+    init();
   }
 
   updateMouseOver(newTopic: string): void {
@@ -119,7 +122,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  updateSearchLogic(side: string, logic: string, filtername: string) {
+  updateSearchLogic(side: string, logic: FilterLogic, filtername: string) {
     let curInfo = []
     if (side == 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
@@ -177,7 +180,7 @@ export class CompareContainer extends Component {
           }
         })
         obj.demographics.push({
-          operator: f.logic.toLowerCase(),
+          operator: f.logic,
           values: arr
         })
       }
@@ -320,7 +323,7 @@ export class CompareContainer extends Component {
   async updateData(left: Array<Filter>, right: Array<Filter>) {
     const filterA = this.generateFilterRequestItem(left)
     const filterB = this.generateFilterRequestItem(right)
-   
+
     const cleanedFilterA = this.cleanFilterRequest(filterA)
     const cleanedFilterB = this.cleanFilterRequest(filterB)
 
@@ -344,22 +347,22 @@ export class CompareContainer extends Component {
         <Col xs={12}>
           <Row>
             <Col xs={5} xsOffset={1}>
-              <FilterParent 
-                className="chart" 
-                side="left" 
-                data={this.state.leftData} 
-                currentSelection={this.state.leftOptions} 
-                currentTopic={this.state.currentTopic} 
+              <FilterParent
+                className="chart"
+                side="left"
+                data={this.state.leftData}
+                currentSelection={this.state.leftOptions}
+                currentTopic={this.state.currentTopic}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
 
             <Col xs={5}>
-              <FilterParent 
-                className="chart" 
-                side="right" 
-                data={this.state.rightData} 
-                currentSelection={this.state.rightOptions} 
-                currentTopic={this.state.currentTopic} 
+              <FilterParent
+                className="chart"
+                side="right"
+                data={this.state.rightData}
+                currentSelection={this.state.rightOptions}
+                currentTopic={this.state.currentTopic}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
           </Row>
@@ -375,10 +378,10 @@ export class CompareContainer extends Component {
             </p>
           </Row>
         </Col>
-        <ComparisonModal 
-          visible={this.state.modalVisible} 
+        <ComparisonModal
+          visible={this.state.modalVisible}
           toggleModal={this.toggleComparisonModal.bind(this)}
-          currentSelectionLeft={this.state.leftOptions} 
+          currentSelectionLeft={this.state.leftOptions}
           currentSelectionRight={this.state.rightOptions}
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}

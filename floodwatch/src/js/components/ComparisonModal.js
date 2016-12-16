@@ -6,7 +6,7 @@ import {Modal, Button, Row, Col } from 'react-bootstrap'
 import {createSentence} from './Compare'
 import {ModalSegment} from './ModalSegment';
 
-import type {Filter, Preset} from './filtertypes'
+import type {Filter, Preset, FilterLogic} from './filtertypes'
 import type {PersonResponse} from '../api/types';
 
 import Filters from '../../stubbed_data/filter_response.json';
@@ -18,7 +18,7 @@ type PropsType = {
   toggleModal: () => void,
   changeCategoriesCustom: (side: string, obj: Filter, checked: boolean) => void,
   changeCategoriesPreset: (side: string, obj: Preset) => void,
-  updateSearchLogic: (logic: string, filtername: string, side: string) => void,
+  updateSearchLogic: (logic: string, filtername: FilterLogic, side: string) => void,
   userData: PersonResponse
 };
 
@@ -56,7 +56,7 @@ export class ComparisonModal extends Component {
     }
   }
 
-  changeCategoriesPreset(side: string, obj: Preset): void { 
+  changeCategoriesPreset(side: string, obj: Preset): void {
     if (side == 'right') {
       this.setState({
         rightIsCustom: false
@@ -83,14 +83,14 @@ export class ComparisonModal extends Component {
         <Modal.Body>
           <Row>
           <Col xs={5}>
-          <ModalSegment userData={this.props.userData} 
-            side="left" 
-            currentSelection={this.props.currentSelectionLeft} 
-            isCustom={this.state.leftIsCustom} 
+          <ModalSegment userData={this.props.userData}
+            side="left"
+            currentSelection={this.props.currentSelectionLeft}
+            isCustom={this.state.leftIsCustom}
             filterData={Filters}
             currentSentence={createSentence(this.props.currentSelectionLeft)}
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
-            handleCustomClick={this.handleCustomClick.bind(this, 'left')} 
+            handleCustomClick={this.handleCustomClick.bind(this, 'left')}
             handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'left')}
             updateSearchLogic={this.props.updateSearchLogic.bind(this, 'left')}/>
             </Col>
@@ -98,14 +98,14 @@ export class ComparisonModal extends Component {
           <div style={{textAlign:'center'}}>vs</div>
           </Col>
           <Col xs={5}>
-          <ModalSegment side="right" 
+          <ModalSegment side="right"
             userData={this.props.userData}
-            currentSelection={this.props.currentSelectionRight} 
-            isCustom={this.state.rightIsCustom} 
+            currentSelection={this.props.currentSelectionRight}
+            isCustom={this.state.rightIsCustom}
             filterData={Filters}
             currentSentence={createSentence(this.props.currentSelectionRight)}
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
-            handleCustomClick={this.handleCustomClick.bind(this, 'right')} 
+            handleCustomClick={this.handleCustomClick.bind(this, 'right')}
             handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'right')}
             updateSearchLogic={this.props.updateSearchLogic.bind(this, 'right')}/>
             </Col>
