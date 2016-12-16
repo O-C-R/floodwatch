@@ -5,12 +5,14 @@ import $ from 'jquery';
 import { Button, FormGroup, Radio } from 'react-bootstrap';
 import _ from 'lodash'
 
-import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
+import type {FilterJSON, DisabledCheck, Filter, FilterLogic} from './filtertypes.js'
+import type {DemographicDictionary} from './FindInDemographics'
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
-  updateSearchLogic: (logic: string, filtername: string) => void,
+  updateSearchLogic: (logic: FilterLogic, filtername: string) => void,
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
   mySelection: Filter,
@@ -30,17 +32,24 @@ export class CustomFilter extends Component {
 
   render() {
     let elems = [];
+    let myOptions;
 
-    _.forEach(this.props.filter.options, (opt: string, i: number) => {
+    if (this.props.filter.category_id) {
+      myOptions = _.filter(DemographicKeys.demographic_keys, (opt: DemographicDictionary) => {
+        return opt.category_id == this.props.filter.category_id
+      })
+    }
+
+    _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {
       const obj = {
         'name': this.props.filter.name,
-        'choices': [opt],
+        'choices': [opt.name],
         'logic': (this.props.mySelection) ? this.props.mySelection.logic : 'or'
       }
-      
+
       let checked = false;
       if (this.props.mySelection) {
-        if ($.inArray(opt, this.props.mySelection.choices) > -1) {
+        if ($.inArray(opt.name, this.props.mySelection.choices) > -1) {
           checked = true;
         }
       }
@@ -52,16 +61,15 @@ export class CustomFilter extends Component {
       if (!disabled) {
         elems.push(<div key={i} className="custom-option">
                     <Button href="#" active={checked}
-                            disabled={disabled} 
-                            onClick={this.props.handleFilterClick.bind(this, obj, !checked)} 
+                            disabled={disabled}
+                            onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
                             name={this.props.filter.name}>
-                    {opt}
+                    {opt.name}
                     </Button>
-                  
+
                 </div>)
       }
-      return
-    }) 
+    })
 
     let select = this.generateLogicSelectors();
 
@@ -82,9 +90,9 @@ export class CustomFilter extends Component {
 
   }
 
-  generateLogicSelectors(): Element {
-    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or' 
-    
+  generateLogicSelectors(): React$Element<*> {
+    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or'
+
     let or, and, nor;
     or = <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
     if (this.props.filter.name != 'age') {

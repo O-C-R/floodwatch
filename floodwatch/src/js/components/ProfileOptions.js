@@ -204,7 +204,7 @@ export class DefaultOption extends Component {
       let myOptions = _.filter(DemographicKeys.demographic_keys, (key) => {
         return key.category_id == this.props.filter.category_id
       })
-      elems = myOptions.map((opt: string, key: number) => {
+      elems = myOptions.map((opt: DemographicDictionary, key: number) => {
         let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
           return o.id == opt.id
         })

@@ -11,7 +11,7 @@ import {ComparisonModal} from './ComparisonModal';
 import {FWApiClient} from '../api/api';
 
 import type {UnstackedData} from './FilterParent';
-import type {PresetsAndFilters, Preset, Filter} from './filtertypes'
+import type {PresetsAndFilters, Preset, Filter, FilterLogic} from './filtertypes'
 import type {PersonResponse, FilterRequest, FilterRequestItem} from '../api/types';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
@@ -20,6 +20,9 @@ import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 // import '../../Compare.css';
 
+const UNKNOWN = _.findKey(TopicKeys, (topic) => {
+  return (topic == 'Unknown')
+})
 
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
@@ -35,11 +38,11 @@ export function createSentence(options: Array<Filter>): string {
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
-    if (opt.logic == 'NOR') { 
+    if (opt.logic == 'NOR') {
       logic = ' Non-';
       choices = opt.choices.join(', non-')
     } else {
-      choices = opt.choices.join(', ')  
+      choices = opt.choices.join(', ')
     }
     sentence = logic + choices + ' ' + sentence
   })
@@ -71,8 +74,8 @@ type StateType = {
 
 function CompareContainerInitialState(): Object {
   return {
-    leftOptions: Filters.presets[1].filters,
-    rightOptions: Filters.presets[3].filters,
+    leftOptions: Filters.presets[0].filters,
+    rightOptions: Filters.presets[1].filters,
     leftData: {},
     rightData: {},
     currentTopic: '1',
@@ -88,26 +91,29 @@ export class CompareContainer extends Component {
     this.state = CompareContainerInitialState()
   }
 
-  async componentDidMount() {
-    const filterA = this.generateFilterRequestItem(this.state.leftOptions)
-    const filterB = this.generateFilterRequestItem(this.state.rightOptions)
+  componentDidMount() {
+    const init = async () => {
+      const filterA = this.generateFilterRequestItem(this.state.leftOptions)
+      const filterB = this.generateFilterRequestItem(this.state.rightOptions)
 
-    const cleanedFilterA = this.cleanFilterRequest(filterA)
-    const cleanedFilterB = this.cleanFilterRequest(filterB)
+      const cleanedFilterA = this.cleanFilterRequest(filterA)
+      const cleanedFilterB = this.cleanFilterRequest(filterB)
 
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
-    const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
-      return d3.descending(a.value, b.value);
-    })[0]
+      const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
+      const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
+        return d3.descending(a.value, b.value);
+      })[0]
 
-    const UserData = await FWApiClient.get().getCurrentPerson()
+      const UserData = await FWApiClient.get().getCurrentPerson()
 
-    this.setState({
-      leftData: AdBreakdown.filterA.categories,
-      rightData: AdBreakdown.filterB.categories,
-      currentTopic: FilterATopic.key,
-      userData: UserData
-    })
+      this.setState({
+        leftData: AdBreakdown.filterA.categories,
+        rightData: AdBreakdown.filterB.categories,
+        currentTopic: FilterATopic.key,
+        userData: UserData
+      })
+    }
+    init();
   }
 
   updateMouseOver(newTopic: string): void {
@@ -116,7 +122,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  updateSearchLogic(side: string, logic: string, filtername: string) {
+  updateSearchLogic(side: string, logic: FilterLogic, filtername: string) {
     let curInfo = []
     if (side == 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
@@ -143,26 +149,16 @@ export class CompareContainer extends Component {
   }
 
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
-    let obj = {
-      demographics: [],
-      age: {}
-    };
-    _.forEach(filter, (f: Filter) => {
-      if (f.name != 'age' && f.name != 'country') {
-        let arr = []
-        _.forEach(f.choices, (choice) => {
-          for (let key of DemographicKeys.demographic_keys) {
-            if (key.name == choice) {
-              arr.push(key.id)
-            }
-          }
-        })
-        obj.demographics.push({
-          operator: f.logic.toLowerCase(),
-          values: arr
-        })
-      }
+    const isPersonal = _.find(filter, f => f.name == 'data' && f.choices[0] == 'You');
+    if (isPersonal) {
+      return { personal: true };
+    }
 
+    const obj: FilterRequestItem = {
+      demographics: []
+    };
+
+    for (const f of filter) {
       if (f.name == 'age') {
         if (f.choices[0]) {
           const min = parseInt(f.choices[0].split('-')[0])
@@ -172,12 +168,23 @@ export class CompareContainer extends Component {
             max: max
           }
         }
+      } else if (f.name == 'country') {
+        // TK
+      } else {
+        const arr = [];
+        const myCategoryId = DemographicKeys.category_to_id[f.name];
+        for (const choice of f.choices) {
+          for (const key of DemographicKeys.demographic_keys) {
+            if (key.name == choice && key.category_id == myCategoryId) {
+              arr.push(key.id)
+            }
+          }
+        }
+        if (obj.demographics) {
+          obj.demographics.push({ operator: f.logic, values: arr });
+        }
       }
-
-      if (f.name == 'country') {
-        // tk
-      }
-    })
+    }
 
     return obj
   }
@@ -224,11 +231,12 @@ export class CompareContainer extends Component {
             return n != info.choices[0]
           })
         }
+
         found = true;
       }
     }
 
-    if (found == false) {
+    if (!found && checked) {
       curInfo.push(info)
     }
 
@@ -236,8 +244,12 @@ export class CompareContainer extends Component {
     for (let [index: number, info: Filter] of curInfo.entries()) {
       if (info.name == 'data') {
         curInfo.splice(index, 1)
+      } else if (info.choices.length == 0) { // this feels like it should be handled by the above _.filter but it's not...
+        curInfo.splice(index, 1)
       }
     }
+
+    console.log(curInfo)
 
 
     if (side == 'left') {
@@ -266,6 +278,10 @@ export class CompareContainer extends Component {
     let sentence = '';
     const prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
 
+    if (this.state.currentTopic == UNKNOWN) {
+      return sentence
+    }
+
     // Math.sign isn't supported on Chromium fwiw
     if (prc == -Infinity) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}.`
@@ -292,7 +308,7 @@ export class CompareContainer extends Component {
   async updateData(left: Array<Filter>, right: Array<Filter>) {
     const filterA = this.generateFilterRequestItem(left)
     const filterB = this.generateFilterRequestItem(right)
-   
+
     const cleanedFilterA = this.cleanFilterRequest(filterA)
     const cleanedFilterB = this.cleanFilterRequest(filterB)
 
@@ -316,22 +332,22 @@ export class CompareContainer extends Component {
         <Col xs={12}>
           <Row>
             <Col xs={5} xsOffset={1}>
-              <FilterParent 
-                className="chart" 
-                side="left" 
-                data={this.state.leftData} 
-                currentSelection={this.state.leftOptions} 
-                currentTopic={this.state.currentTopic} 
+              <FilterParent
+                className="chart"
+                side="left"
+                data={this.state.leftData}
+                currentSelection={this.state.leftOptions}
+                currentTopic={this.state.currentTopic}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
 
             <Col xs={5}>
-              <FilterParent 
-                className="chart" 
-                side="right" 
-                data={this.state.rightData} 
-                currentSelection={this.state.rightOptions} 
-                currentTopic={this.state.currentTopic} 
+              <FilterParent
+                className="chart"
+                side="right"
+                data={this.state.rightData}
+                currentSelection={this.state.rightOptions}
+                currentTopic={this.state.currentTopic}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
           </Row>
@@ -347,10 +363,10 @@ export class CompareContainer extends Component {
             </p>
           </Row>
         </Col>
-        <ComparisonModal 
-          visible={this.state.modalVisible} 
+        <ComparisonModal
+          visible={this.state.modalVisible}
           toggleModal={this.toggleComparisonModal.bind(this)}
-          currentSelectionLeft={this.state.leftOptions} 
+          currentSelectionLeft={this.state.leftOptions}
           currentSelectionRight={this.state.rightOptions}
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}

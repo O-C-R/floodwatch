@@ -85,17 +85,20 @@ export class DemographicContainer extends Component {
     this.state = setInitialStateDemographicContainer();
   }
 
-  async componentDidMount() {
-    try {
-      const UserData = await FWApiClient.get().getCurrentPerson()
-      let filteredUserData = _.pick(UserData, TO_PICK)
-      this.setState({
-        userData: filteredUserData,
-      })  
-    } catch (e) {
-      this.setState({curStatus: 'error'})
-      console.error(e)
-    }
+  componentDidMount() {
+    const init = async () => {
+      try {
+        const UserData = await FWApiClient.get().getCurrentPerson()
+        let filteredUserData = _.pick(UserData, TO_PICK)
+        this.setState({
+          userData: filteredUserData,
+        })
+      } catch (e) {
+        this.setState({curStatus: 'error'})
+        console.error(e)
+      }
+    };
+    init();
   }
 
   handleClick(checked: boolean, id: number, event: any): void {
@@ -110,12 +113,17 @@ export class DemographicContainer extends Component {
 
   async updateUserInfo() {
     try {
-      const reply = await FWApiClient.get().updatePersonDemographics(this.state.userData)  
-      let filteredUserData = _.pick(reply, TO_PICK)
-      this.setState({
-        userData: filteredUserData,
-        curStatus: 'success'
-      })  
+      if (this.state.userData) {
+        const userData = this.state.userData;
+        const reply = await FWApiClient.get().updatePersonDemographics(userData);
+        let filteredUserData = _.pick(reply, TO_PICK)
+        this.setState({
+          userData: filteredUserData,
+          curStatus: 'success'
+        })
+      } else {
+        this.setState({curStatus: 'error'});
+      }
     } catch (e) {
       console.error(e)
       this.setState({curStatus: 'error'})
@@ -159,13 +167,13 @@ export class DemographicContainer extends Component {
     let elems = Filters.filters.map((filter) => {
       if (filter.name == 'age') {
         return <AgeOption updateYear={this.updateYear.bind(this)}
-                          handleClick={this.handleClick.bind(this)} 
+                          handleClick={this.handleClick.bind(this)}
                           userData={this.state.userData} filter={filter}/>
 
       } else if (filter.name == 'country') {
         return <LocationOption
                           updateLocation={this.updateLocation.bind(this)}
-                          handleClick={this.handleClick.bind(this)} 
+                          handleClick={this.handleClick.bind(this)}
                           userData={this.state.userData} filter={filter}/>
       } else {
         return <DefaultOption
@@ -179,7 +187,7 @@ export class DemographicContainer extends Component {
     const displayGroup = (this.state.curStatus == null) ? 'none' : 'block'
 
     return (
-      <Row> 
+      <Row>
         <Col xs={12}>
         {elems}
         </Col>
@@ -189,12 +197,12 @@ export class DemographicContainer extends Component {
           { this.state.curStatus == 'success' &&
             <ListGroupItem bsStyle="success">
               Successfully saved changes!
-            </ListGroupItem> 
+            </ListGroupItem>
           }
           { this.state.curStatus == 'error' &&
             <ListGroupItem bsStyle="danger">
               Error while trying to save changes. Please check your connection.
-            </ListGroupItem> 
+            </ListGroupItem>
           }
         </ListGroup>
         </Col>
