@@ -43,8 +43,8 @@ export class Profile extends Component {
 
   render() {
     return (
-      <Row id="profile">
-        <Col xs={12} id="profile-explanation" >
+      <Row className="profile-page panel">
+        <Col xs={12} id="profile-explanation" className="panel-body">
           <h3>My Profile</h3>
           <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
           <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
@@ -56,14 +56,12 @@ export class Profile extends Component {
               </Well>
             </p>
           }
-        </Col>
-        <Col xs={12}>
         <hr/>
         <DemographicContainer/>
         <AccountOptionsContainer/>
         </Col>
       </Row>
-    )   
+    );
   }
 
 }
@@ -170,9 +168,9 @@ export class DemographicContainer extends Component {
                           handleClick={this.handleClick.bind(this)} 
                           userData={this.state.userData} filter={filter}/>
       } else {
-        return <DefaultOption  
-                          handleClick={this.handleClick.bind(this)} 
-                          userData={this.state.userData} filter={filter}/>        
+        return <DefaultOption
+                          handleClick={this.handleClick.bind(this)}
+                          userData={this.state.userData} filter={filter}/>
       }
 
 

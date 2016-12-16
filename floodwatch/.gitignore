@@ -1,5 +1,6 @@
 # CSS is output of SASS in this project
 *.css
+.sass-cache
 
 # dependencies
 node_modules

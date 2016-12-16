@@ -30,7 +30,7 @@
     "build": "yarn sass-build && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "sass-watch": "node-sass --watch --recursive src/sass -o src/css",
-    "sass-build": "node-sass --recursive src/sass -o src/css"
+    "sass-watch": "node-sass --watch src/sass/App.scss > src/css/app.css",
+    "sass-build": "node-sass src/sass/App.scss > src/css/app.css"
   }
 }
