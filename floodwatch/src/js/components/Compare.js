@@ -150,9 +150,12 @@ export class CompareContainer extends Component {
     _.forEach(filter, (f: Filter) => {
       if (f.name != 'age' && f.name != 'country') {
         let arr = []
-        _.forEach(f.choices, (choice) => {
+
+        const myCategoryId = DemographicKeys.category_to_id[f.name];
+
+        _.forEach(f.choices, (choice: string) => {
           for (let key of DemographicKeys.demographic_keys) {
-            if (key.name == choice) {
+            if (key.name == choice && key.category_id == myCategoryId) {
               arr.push(key.id)
             }
           }
@@ -224,11 +227,12 @@ export class CompareContainer extends Component {
             return n != info.choices[0]
           })
         }
+
         found = true;
       }
     }
 
-    if (found == false) {
+    if (!found && checked) {
       curInfo.push(info)
     }
 
@@ -236,8 +240,12 @@ export class CompareContainer extends Component {
     for (let [index: number, info: Filter] of curInfo.entries()) {
       if (info.name == 'data') {
         curInfo.splice(index, 1)
+      } else if (info.choices.length == 0) { // this feels like it should be handled by the above _.filter but it's not...
+        curInfo.splice(index, 1)
       }
     }
+
+    console.log(curInfo)
 
 
     if (side == 'left') {

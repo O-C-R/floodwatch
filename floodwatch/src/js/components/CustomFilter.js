@@ -5,8 +5,10 @@ import $ from 'jquery';
 import { Button, FormGroup, Radio } from 'react-bootstrap';
 import _ from 'lodash'
 
-import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
+import type {FilterJSON, DisabledCheck, Filter} from './filtertypes.js'
+import type {DemographicDictionary} from './FindInDemographics'
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
@@ -30,17 +32,24 @@ export class CustomFilter extends Component {
 
   render() {
     let elems = [];
+    let myOptions;
 
-    _.forEach(this.props.filter.options, (opt: string, i: number) => {
+    if (this.props.filter.category_id) {
+      myOptions = _.filter(DemographicKeys.demographic_keys, (opt: DemographicDictionary) => {
+        return opt.category_id == this.props.filter.category_id
+      })
+    }
+
+    _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {
       const obj = {
         'name': this.props.filter.name,
-        'choices': [opt],
+        'choices': [opt.name],
         'logic': (this.props.mySelection) ? this.props.mySelection.logic : 'or'
       }
-      
+
       let checked = false;
       if (this.props.mySelection) {
-        if ($.inArray(opt, this.props.mySelection.choices) > -1) {
+        if ($.inArray(opt.name, this.props.mySelection.choices) > -1) {
           checked = true;
         }
       }
@@ -55,13 +64,12 @@ export class CustomFilter extends Component {
                             disabled={disabled} 
                             onClick={this.props.handleFilterClick.bind(this, obj, !checked)} 
                             name={this.props.filter.name}>
-                    {opt}
+                    {opt.name}
                     </Button>
                   
                 </div>)
       }
-      return
-    }) 
+    })
 
     let select = this.generateLogicSelectors();
 
