@@ -10,18 +10,24 @@ import type {DemographicDictionary} from './FindInDemographics'
 
 import {FWApiClient} from '../api/api';
 import type {PersonDemographics} from '../api/types';
-import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions'
+import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions';
+import scrollTo from 'scroll-to';
 
 const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
 
 type ProfileStateType = {
-  isDescriptionOpen: boolean
+  isDescriptionOpen: boolean,
+  success: string,
+  errors: string,
+  status: string
 };
 
 function setInitialStateProfile() {
   return {
-    isDescriptionOpen: false
+    isDescriptionOpen: false,
+    success : null,
+    errors : null
   }
 }
 
@@ -41,26 +47,57 @@ export class Profile extends Component {
     })
   }
 
+  statusHandler(status, message){
+
+    scrollTo(0, 0, {
+      ease: 'linear',
+      duration: 200
+    });
+
+    let success = (status === 'success' ? message : null)
+    let errors = (status === 'error' ? message : null)
+
+    this.setState({
+      errors,
+      success
+    })
+  }
+
   render() {
     return (
-      <Row className="profile-page panel">
-        <Col xs={12} id="profile-explanation" className="panel-body">
-          <h1>My Profile</h1>
-          <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
-          <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
-          { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">
-                <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
-                <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
-              </Well>
-            </p>
-          }
-        <hr/>
-        <DemographicContainer/>
-        <AccountOptionsContainer/>
-        </Col>
-      </Row>
+      <div>
+
+        {(this.state.success || this.state.success) &&
+          <ListGroup>
+            {(this.state.success &&
+              <ListGroupItem bsStyle="success">{this.state.success}</ListGroupItem>
+            )}
+            {(this.state.erros &&
+              <ListGroupItem bsStyle="danger">{this.state.erros}</ListGroupItem>
+            )}
+          </ListGroup>
+        }
+      
+        <div className="profile-page panel">
+          <div className="panel-body">
+            <h1>My Profile</h1>
+            <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
+            <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
+            { this.state.isDescriptionOpen &&
+              <p>
+                <Well bsSize="small">
+                  <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
+                  <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
+                </Well>
+              </p>
+            }
+          </div>
+
+          <DemographicContainer statusHandler={this.statusHandler.bind(this)}/>
+          <AccountOptionsContainer/>
+        </div>
+
+      </div>
     );
   }
 
@@ -118,15 +155,16 @@ export class DemographicContainer extends Component {
         const reply = await FWApiClient.get().updatePersonDemographics(userData);
         let filteredUserData = _.pick(reply, TO_PICK)
         this.setState({
-          userData: filteredUserData,
-          curStatus: 'success'
+          userData: filteredUserData
         })
+
+        this.props.statusHandler("success","Successfully saved changes!")
+
       } else {
-        this.setState({curStatus: 'error'});
+        this.setState({curStatus: "error"});
       }
     } catch (e) {
-      console.error(e)
-      this.setState({curStatus: 'error'})
+      this.props.statusHandler("danger", "Error while trying to save changes. Please check your connection.")
     }
   }
 
@@ -184,29 +222,16 @@ export class DemographicContainer extends Component {
 
     })
 
-    const displayGroup = (this.state.curStatus == null) ? 'none' : 'block'
-
     return (
-      <Row>
-        <Col xs={12}>
+      <div>
+        <div>
         {elems}
-        </Col>
-        <Col xs={12}>
-        <Button onClick={this.updateUserInfo.bind(this)} id="submit-button">Submit</Button>
-        <ListGroup style={{display: displayGroup, textAlign:'center'}}>
-          { this.state.curStatus == 'success' &&
-            <ListGroupItem bsStyle="success">
-              Successfully saved changes!
-            </ListGroupItem>
-          }
-          { this.state.curStatus == 'error' &&
-            <ListGroupItem bsStyle="danger">
-              Error while trying to save changes. Please check your connection.
-            </ListGroupItem>
-          }
-        </ListGroup>
-        </Col>
-      </Row>
+        </div>
+
+        <div className="profile-page_actions">
+          <Button className="profile-page_actions_submit" bsSize="large" bsStyle="primary" onClick={this.updateUserInfo.bind(this)} id="submit-button">Save</Button>
+        </div>
+      </div>
     )
   }
 }
@@ -214,12 +239,9 @@ export class DemographicContainer extends Component {
 export class AccountOptionsContainer extends Component {
   render() {
     return (
-      <Row style={{padding:'20px'}}>
-        <hr/>
-        <Col xs={12} >
-          <p>If you would like to download your data, reset your password, or delete your account, please email us at floodwatch@ocr.nyc.</p>
-        </Col>
-      </Row>
+      <div className="panel-body">
+        <p>If you would like to download your data, reset your password, or delete your account, please email us at <a href="mailto:floodwatch@ocr.nyc">floodwatch@ocr.nyc</a></p>
+      </div>
     )
   }
 

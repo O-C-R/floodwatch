@@ -46,17 +46,20 @@ export class AgeOption extends Component {
 
   render() {
     let value = (this.props.userData) ? this.props.userData.birth_year : ''
-    let elem = <input min="0" onChange={this.props.updateYear} value={value} type="number"/>
+    let elem = <input min="0" className="form-control text-center" onChange={this.props.updateYear} value={value} placeholder="YYYY" type="number"/>
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
+          }
           { this.state.isDescriptionOpen &&
             <Well bsSize="small">{this.props.filter.why}</Well>
           }
-          <div className="input-wrapper">{elem}</div>
-        </Col>
-      </Row>
+        </div>
+        {elem}
+      </div>
     )
   }
 }
@@ -134,39 +137,41 @@ export class LocationOption extends Component {
 
   render() {
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
+          }
           { this.state.isDescriptionOpen &&
             <Well bsSize="small">{this.props.filter.why}</Well>
           }
-          <div className="input-wrapper">
-          <Autocomplete
-            menuStyle={{zIndex: 1000}}
-            inputProps={{name:'country', id: 'location-autocomplete'}}
-            value={this.state.value}
-            items={this.state.items}
-            getItemValue={(item) => item.feature.displayName}
+        </div>
+        <Autocomplete
+          menuStyle={{zIndex: 1000}}
+          inputProps={{name:'country', id: 'location-autocomplete', className: 'autocomplete_input form-control'}}
+          value={this.state.value}
+          items={this.state.items}
+          wrapperProps={{className:"autocomplete"}}
+          getItemValue={(item) => item.feature.displayName}
 
-            onChange={(event, value) => {
-              this.setState({ value, loading:true})
-              this.updateList(value);
-            }}
+          onChange={(event, value) => {
+            this.setState({ value, loading:true})
+            this.updateList(value);
+          }}
 
-            onSelect={(value, item) => {
-              this.setState({value: value, items: [item]})
-              this.props.updateLocation(item.feature.longId)
-            }}
+          onSelect={(value, item) => {
+            this.setState({value: value, items: [item]})
+            this.props.updateLocation(item.feature.longId)
+          }}
 
-            renderItem={(item, isHighlighted) => (
-              <div style={(isHighlighted) ? this.state.highlightedStyle : this.state.regularStyle}>
-              {item.feature.displayName}
-              </div>
-            )}
-          />
-          </div>
-        </Col>
-      </Row>
+          renderItem={(item, isHighlighted) => (
+            <div className={"autocomplete_options " + (isHighlighted && "current")}>
+            {item.feature.displayName}
+            </div>
+          )}
+        />
+      </div>
     )
   }
 }
@@ -230,16 +235,18 @@ export class DefaultOption extends Component {
     }
 
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}<small><a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></small></h4>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
+          }
           { this.state.isDescriptionOpen &&
             <Well bsSize="small">{this.props.filter.why}</Well>
           }
-
-          {elems}
-        </Col>
-      </Row>
+        </div>
+        {elems}
+      </div>
     )
   }
 

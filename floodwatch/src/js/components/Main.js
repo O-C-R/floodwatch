@@ -137,7 +137,7 @@ export class Main extends Component {
         {!this.state.user && this.loggedOutHeader()}
         </Row>
         <Row>
-        <Col xs={8} xsOffset={2}>
+        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
 
         {this.props.children && React.cloneElement(this.props.children, {
           showMessage: this.showMessage.bind(this),
