@@ -1,12 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import Autocomplete from 'react-autocomplete';
-import { Row, Col, Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
+import { Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
 import _ from 'lodash'
 import Filters from '../../stubbed_data/filter_response.json';
-import DemographicKeys from '../../stubbed_data/demographic_keys.json';
-import type {DemographicDictionary} from './FindInDemographics'
 
 import {FWApiClient} from '../api/api';
 import type {PersonDemographics} from '../api/types';
@@ -139,7 +136,7 @@ export class DemographicContainer extends Component {
   }
 
   handleClick(checked: boolean, id: number, event: any): void {
-    if (event.target.name != 'age' && event.target.name != 'country_code') {
+    if (event.target.name !== 'age' && event.target.name !== 'country_code') {
       if (checked) {
         this.addToDemographicIds(id)
       } else {
@@ -176,14 +173,14 @@ export class DemographicContainer extends Component {
 
   updateYear(event: any): void {
     let userData = _.cloneDeep(this.state.userData);
-    userData.birth_year = parseInt(event.target.value);
+    userData.birth_year = parseInt(event.target.value, 10);
     this.updateStateAndMessages(userData)
   }
 
   removeFromDemographicIds(id: number): void {
     let userData = _.cloneDeep(this.state.userData)
     userData.demographic_ids = _.filter(userData.demographic_ids, (o) => {
-      return o != id
+      return o !== id
     })
     this.updateStateAndMessages(userData)
   }
@@ -197,26 +194,29 @@ export class DemographicContainer extends Component {
   updateStateAndMessages(userData: PersonDemographics) {
     this.setState({
       userData: userData,
-      curStatus: (this.state.curStatus != 'error') ? null : 'error'
+      curStatus: (this.state.curStatus !== 'error') ? null : 'error'
     })
   }
 
   render() {
-    let elems = Filters.filters.map((filter) => {
-      if (filter.name == 'age') {
+    let elems = Filters.filters.map((filter, i) => {
+      if (filter.name === 'age') {
         return <AgeOption updateYear={this.updateYear.bind(this)}
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
 
-      } else if (filter.name == 'country') {
+      } else if (filter.name === 'country') {
         return <LocationOption
                           updateLocation={this.updateLocation.bind(this)}
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
       } else {
         return <DefaultOption
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
       }
 
 

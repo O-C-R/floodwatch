@@ -2,14 +2,13 @@
 
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import $ from 'jquery';
 import {GraphParent} from './GraphParent';
 import _ from 'lodash';
 import d3 from 'd3'
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 const UNKNOWN = _.findKey(TopicKeys, (topic) => {
-  return (topic == 'Unknown')
+  return (topic === 'Unknown')
 })
 
 type StateType = {
@@ -51,8 +50,6 @@ export class FilterParent extends Component {
   stackData(data: Object): Array<Array<StackedData>> {
     const topics = Object.keys(data);
 
-    console.log(data)
-
     let intermediate = topics.map((key: string): Array<StackedData> => {
       const dTemp = data[key]
       return [{x: 0, y: dTemp, name: key}]
@@ -63,7 +60,7 @@ export class FilterParent extends Component {
     })
 
     let unknown = _.remove(intermediate, (topic) => {
-      return topic[0].name == UNKNOWN
+      return topic[0].name === UNKNOWN
     })
 
     intermediate = _.concat(unknown, intermediate)
@@ -73,7 +70,7 @@ export class FilterParent extends Component {
   }
 
   shouldComponentUpdate(nextProps: Object, nextState: Object): boolean {
-    if (_.isEqual(nextProps.data, this.props.data) && this.props.currentTopic == nextProps.currentTopic) {
+    if (_.isEqual(nextProps.data, this.props.data) && this.props.currentTopic === nextProps.currentTopic) {
       return false;
     }
     return true;

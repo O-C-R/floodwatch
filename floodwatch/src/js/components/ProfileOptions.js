@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import Autocomplete from 'react-autocomplete';
-import { Row, Col, Button, Well } from 'react-bootstrap';
+import { Well } from 'react-bootstrap';
 import {FWApiClient} from '../api/api';
 import _ from 'lodash'
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
@@ -207,11 +207,11 @@ export class DefaultOption extends Component {
     let elems;
     if (this.props.userData) {
       let myOptions = _.filter(DemographicKeys.demographic_keys, (key) => {
-        return key.category_id == this.props.filter.category_id
+        return key.category_id === this.props.filter.category_id
       })
       elems = myOptions.map((opt: DemographicDictionary, key: number) => {
         let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-          return o.id == opt.id
+          return o.id === opt.id
         })
 
         let checked = false;
@@ -224,7 +224,7 @@ export class DefaultOption extends Component {
               <label>
                 <input
                 type="checkbox"
-                checked={checked}
+                defaultChecked={checked}
                 name={this.props.filter.name}
                 onClick={this.props.handleClick.bind(this, !checked, opt.id)} /> {opt.name}
               </label>

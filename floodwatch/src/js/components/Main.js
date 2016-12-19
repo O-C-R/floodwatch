@@ -1,6 +1,5 @@
 // @flow
 import React, {Component} from 'react';
-import {Link} from 'react-router';
 import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap';
 
@@ -30,6 +29,7 @@ export class AppNavigation extends Component {
       if (nav.to === curPath) {
         selectedKey = key;
       }
+      return false
     })
 
     this.state = { selectedKey }
@@ -55,7 +55,7 @@ export class AppNavigation extends Component {
             <Nav pullRight>
               {this.props.navs.map((nav, key) => {
                 return (
-                      <LinkContainer to={nav.to}>
+                      <LinkContainer to={nav.to} key={key}>
                         <NavItem eventKey={key} key={key}>{nav.name}</NavItem>
                       </LinkContainer>
                   )
