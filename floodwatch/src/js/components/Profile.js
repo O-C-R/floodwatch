@@ -173,7 +173,17 @@ export class DemographicContainer extends Component {
 
   updateYear(event: any): void {
     let userData = _.cloneDeep(this.state.userData);
-    userData.birth_year = parseInt(event.target.value, 10);
+
+    if (!event.target.value) {
+      userData.birth_year = null
+    } else {
+      userData.birth_year = parseInt(event.target.value);
+    }
+
+    if (isNaN(userData.birth_year)) {
+      userData.birth_year = null
+    }
+
     this.updateStateAndMessages(userData)
   }
 
@@ -187,7 +197,12 @@ export class DemographicContainer extends Component {
 
   updateLocation(loc: string) {
     let userData = _.cloneDeep(this.state.userData)
-    userData.twofishes_id = loc
+    if (loc == '') {
+      userData.twofishes_id = null
+    } else {
+      userData.twofishes_id = loc
+    }
+    console.log(userData.twofishes_id)
     this.updateStateAndMessages(userData)
   }
 

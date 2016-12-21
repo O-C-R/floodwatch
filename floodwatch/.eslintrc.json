@@ -33,6 +33,7 @@
     "space-in-parens": [2, "never"],
     "brace-style": [2, "1tbs", { "allowSingleLine": true }],
     "no-unused-vars": [1],
+    "eqeqeq": [1, "smart"],
     "flowtype/boolean-style": [
       2,
       "boolean"
