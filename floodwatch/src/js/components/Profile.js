@@ -15,23 +15,26 @@ import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions'
 const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
 
-type ProfileStateType = {
-  isDescriptionOpen: boolean
-};
-
-function setInitialStateProfile() {
-  return {
-    isDescriptionOpen: false
+export class ProfilePage extends Component {
+  render() {
+    return (
+      <Row className="profile-page panel">
+        <h3>My Profile</h3>
+        <ProfileExplanation />
+        <hr/>
+        <DemographicContainer/>
+        <AccountOptionsContainer/>
+      </Row>
+    )
   }
 }
 
-
-export class Profile extends Component {
-  state: ProfileStateType
+export class ProfileExplanation extends Component {
+  state: { isDescriptionOpen: boolean };
 
   constructor() {
     super();
-    this.state = setInitialStateProfile();
+    this.state = { isDescriptionOpen: false };
   }
 
   toggleDescriptionVisibility() {
@@ -43,28 +46,25 @@ export class Profile extends Component {
 
   render() {
     return (
-      <Row className="profile-page panel">
-        <Col xs={12} id="profile-explanation" className="panel-body">
-          <h3>My Profile</h3>
-          <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
-          <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
-          { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">
-                <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
-                <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
-              </Well>
-            </p>
-          }
-        <hr/>
-        <DemographicContainer/>
-        <AccountOptionsContainer/>
-        </Col>
+      <Row id="profile-explanation">
+        <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
+        <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
+        { this.state.isDescriptionOpen &&
+          <p>
+            <Well bsSize="small">
+              <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
+              <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
+            </Well>
+          </p>
+        }
       </Row>
     );
   }
-
 }
+
+type DemographicContainerProps = {
+  onSuccess?: Function;
+};
 
 type DemographicContainerStateType = {
   userData?: PersonDemographics,
@@ -78,10 +78,11 @@ function setInitialStateDemographicContainer() {
 }
 
 export class DemographicContainer extends Component {
-  state: DemographicContainerStateType
+  props: DemographicContainerProps;
+  state: DemographicContainerStateType;
 
-  constructor() {
-    super();
+  constructor(props: DemographicContainerProps) {
+    super(props);
     this.state = setInitialStateDemographicContainer();
   }
 
@@ -120,7 +121,10 @@ export class DemographicContainer extends Component {
         this.setState({
           userData: filteredUserData,
           curStatus: 'success'
-        })
+        });
+        if (this.props.onSuccess) {
+          this.props.onSuccess();
+        }
       } else {
         this.setState({curStatus: 'error'});
       }

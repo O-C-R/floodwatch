@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import { withRouter } from 'react-router';
 
-import {FWApiClient} from '../api/api';
+import {FWApiClient, AuthenticationError} from '../api/api';
 import history from '../common/history';
 
 type Props = {
@@ -53,22 +53,16 @@ export class Login extends Component {
 
     try {
       await FWApiClient.get().login(this.state.username, this.state.password);
-      this.props.showMessage('Logged in!');
+      this.props.showMessage('Logged in!', 2000);
       this.props.loginChanged();
 
-      history.push('/');
+      history.push('/compare');
     } catch (error) {
-      if(error.response) {
-        switch(error.response.status){
-          case 429:
-            this.setState({ error: 'Try again later' });
-            break;
-          case 401:
-            this.setState({error: 'Username or password incorrect.' });
-            break;
-        }
+      console.log(error);
+      if (error instanceof AuthenticationError) {
+        this.setState({ error: 'Username or password incorrect.' });
       } else {
-        this.setState({error: 'A server error occurred.' });
+        this.setState({error: 'An unknown error occurred.' });
       }
     }
   }

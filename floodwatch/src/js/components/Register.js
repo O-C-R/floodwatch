@@ -28,7 +28,8 @@ function initialState() {
 }
 
 type Props = {
-  showMessage: Function
+  showMessage: (msg: string, timeout?: number) => void,
+  loginChanged: () => Promise<void>
 };
 
 export class Register extends Component {
@@ -64,10 +65,12 @@ export class Register extends Component {
 
     try {
       await FWApiClient.get().register(this.state.username, this.state.email, this.state.password);
+      await FWApiClient.get().login(this.state.username, this.state.password);
+      await this.props.loginChanged();
 
       this.setState(initialState());
-      this.props.showMessage('Registered successfully! Please log in in the extension.');
-      history.push('/login');
+      this.props.showMessage('Registered successfully!', 2000);
+      history.push('/register/demographics');
     } catch (error) {
       console.error(error);
 

@@ -1,19 +1,30 @@
 // @flow
 
 import React, { Component } from 'react';
-import {Router, Route, IndexRedirect} from 'react-router';
+import {Router, Route, IndexRoute} from 'react-router';
 
 import {FWApiClient} from './api/api.js';
 import history from './common/history';
 
 import {Main} from './components/Main';
+import {SignedOut} from './components/SignedOut';
+
 import {Register} from './components/Register';
+import {RegisterDemographics} from './components/RegisterDemographics';
 import {Login} from './components/Login';
-import Person from './components/Person';
-import {Profile} from './components/Profile';
+import {ProfilePage} from './components/Profile';
 import {Faq} from './components/Faq';
 import {Compare} from './components/Compare';
+import {Landing} from './components/Landing';
 
+function requireNoAuth(nextState, replace): void {
+  if (FWApiClient.get().loggedIn()) {
+    replace({
+      pathname: '/compare',
+      state: { nextPathname: nextState.location.pathname }
+    })
+  }
+}
 
 function requireAuth(nextState, replace): void {
   if (!FWApiClient.get().loggedIn()) {
@@ -32,21 +43,25 @@ export class App extends Component {
   }
 
   onLogout() {
-    // TODO: redirect to login
+    history.pushState('/');
   }
 
   render() {
     return (
       <Router history={history}>
         <Route path="/" component={Main}>
-          <IndexRedirect to="/person" />
+          <IndexRoute component={Landing} />
 
-          <Route path="person" component={Person} onEnter={requireAuth} />
+          <Route path="login" component={Login} onEnter={requireNoAuth} />
           <Route path="faq" component={Faq} />
+
+          <Route path="/register" onEnter={requireNoAuth}>
+            <IndexRoute component={Register} />
+            <Route path="demographics" component={RegisterDemographics} />
+          </Route>
+
           <Route path="compare" component={Compare} onEnter={requireAuth} />
-          <Route path="profile" component={Profile} onEnter={requireAuth} />
-          <Route path="login" component={Login} />
-          <Route path="register" component={Register} />
+          <Route path="profile" component={ProfilePage} onEnter={requireAuth} />
         </Route>
       </Router>
     );
