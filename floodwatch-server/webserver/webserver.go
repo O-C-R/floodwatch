@@ -70,8 +70,8 @@ type Webserver struct {
 func New(options *Options) (*Webserver, error) {
 
 	mux := http.NewServeMux()
-	mux.Handle("/api/register", RateLimitHandler(Register(options), options, 1/60e9, 3))
-	mux.Handle("/api/login", RateLimitHandler(Login(options), options, 10/60e9, 10))
+	mux.Handle("/api/register", RateLimitHandler(Register(options), options, 10/60e9, 30))
+	mux.Handle("/api/login", RateLimitHandler(Login(options), options, 10/60e9, 30))
 	mux.Handle("/api/logout", Logout(options))
 
 	authenticatedMux := http.NewServeMux()
@@ -120,7 +120,7 @@ func New(options *Options) (*Webserver, error) {
 		handlers.AllowCredentials(),
 		handlers.AllowedOrigins([]string{"https://floodwatch.me", "http://localhost:3000"}),
 	)(handler)
-	handler = RateLimitHandler(handler, options, 100/60e9, 100)
+	handler = RateLimitHandler(handler, options, 1000/60e9, 1000)
 
 	webserver := &Webserver{
 		options: options,

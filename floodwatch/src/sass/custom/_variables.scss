@@ -10,7 +10,7 @@ $bootstrap-sass-asset-helper: false;
 
 $gray-base:              #091628;
 $gray-darker:            #162233;
-$gray-dark:              lighten($gray-base, 20%);  
+$gray-dark:              lighten($gray-base, 20%);
 $gray:                   #9da2a9;
 $gray-light:             #f2f3f4;
 $gray-lighter:           #f7f8f8;
@@ -859,7 +859,7 @@ $pre-scrollable-max-height:   340px;
 //** Horizontal offset for forms and lists.
 $component-offset-horizontal: 180px;
 //** Text muted color
-$text-muted:                  $gray-light;
+$text-muted:                  $gray;
 //** Abbreviations and acronyms border color
 $abbr-border-color:           $gray-light;
 //** Headings small color

@@ -8,69 +8,12 @@ import '../../css/app.css';
 import history from '../common/history';
 import {FWApiClient} from '../api/api';
 
-type AppNavigationProps = {
-  navs: any
-};
-
-type AppNavigationState = {
-  selectedKey: ?string
-};
-
-export class AppNavigation extends Component {
-  props: AppNavigationProps;
-  state: AppNavigationState;
-
-  constructor(props: AppNavigationProps) {
-    super(props);
-
-    let curPath = window.location.pathname;
-    let selectedKey = null;
-    this.props.navs.map((nav, key) => {
-      if (nav.to === curPath) {
-        selectedKey = key;
-      }
-      return false
-    })
-
-    this.state = { selectedKey }
-  }
-
-  handleSelect(selectedKey: string) {
-    this.setState({
-      selectedKey: selectedKey
-    })
-  }
-
-  render() {
-    return (
-      <Navbar collapseOnSelect>
-        <div className="container">
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="#">Floodwatch</a>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav pullRight>
-              {this.props.navs.map((nav, key) => {
-                return (
-                      <LinkContainer to={nav.to} key={key}>
-                        <NavItem eventKey={key} key={key}>{nav.name}</NavItem>
-                      </LinkContainer>
-                  )
-              })}
-            </Nav>
-          </Navbar.Collapse>
-        </div>
-      </Navbar>
-    );
-  }
-}
+import {Navigation} from './Navigation';
 
 type MainState = {
   user: ?Object,
-  message: ?string
+  message: ?string,
+  messageClearTimeout: ?number
 };
 
 export class Main extends Component {
@@ -80,70 +23,74 @@ export class Main extends Component {
     super();
     this.state = {
       user: null,
-      message: null
+      message: null,
+      messageClearTimeout: null
     };
 
     this.loadUserFromServer();
   }
 
-  loadUserFromServer() {
+  loadUserFromServer(): Promise<void> {
     return FWApiClient.get().getCurrentPerson()
       .then((user) => {
         this.setState({ user: user });
       })
       .catch((error) => {
         this.setState({ user: null });
-        history.push('/login');
       })
   }
 
-  showMessage(message: string) {
+  showMessage(message: string, timeout?: number) {
     this.setState({ message });
+
+    if (this.state.messageClearTimeout) {
+      clearTimeout(this.state.messageClearTimeout);
+    }
+
+    if (timeout) {
+      const messageClearTimeout = setTimeout(() => this.setState({ message: null }), timeout);
+      this.setState({ messageClearTimeout });
+    }
   }
 
   async handleLogout() {
     await FWApiClient.get().logout();
     this.setState({ user: null });
-    history.push('/login');
-  }
-
-  loggedInHeader(user: Object) {
-    return (
-      <Row>
-        <Col>
-        <AppNavigation navs={[{name: 'Compare', to: '/compare'}, /*{name: 'My ads', to: '/myads'},{name:'Findings', to:'/findings'},{name:'Research', to:'/research'}, */ {name:'About', to:'/faq'}, {name:'Profile', to:'/profile'}]} />
-        </Col>
-      </Row>
-    );
-  }
-
-  loggedOutHeader() {
-    return (
-      <Row>
-      <Col>
-      <AppNavigation navs={[{name:'Register', to:'/register'}, {name:'Login', to:'/login'}]} />
-      </Col>
-      </Row>
-    );
+    history.push('/');
   }
 
   render() {
+    // Navs have to be designed here because we're passing handleLogout
+    const SIGNED_IN_NAVS = [
+      { name: 'Compare', to: '/compare' },
+      { name: 'Profile', to: '/profile' },
+      { name: 'FAQ', to: '/faq' },
+      { name: 'Logout', to: '/logout', action: this.handleLogout.bind(this) }
+    ];
+
+    const SIGNED_OUT_NAVS = [
+      { name: 'Home', to: '/' },
+      { name: 'Login', to: '/login' },
+      { name: 'Register', to: '/register' },
+      { name: 'FAQ', to: '/faq' }
+    ];
+
+    const navs = this.state.user ? SIGNED_IN_NAVS : SIGNED_OUT_NAVS;
+
     return (
       <Grid fluid style={{position:'relative'}}>
         <Row>
-
-                {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
-        {this.state.user && this.loggedInHeader(this.state.user)}
-        {!this.state.user && this.loggedOutHeader()}
+          {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
+          <Navigation navs={navs} />
         </Row>
         <Row>
         <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
-
-        {this.props.children && React.cloneElement(this.props.children, {
-          showMessage: this.showMessage.bind(this),
-          loginChanged: this.loadUserFromServer.bind(this),
-          user: this.state.user
-        })}
+          {this.props.children && React.cloneElement(this.props.children, {
+            showMessage: this.showMessage.bind(this),
+            loginChanged: this.loadUserFromServer.bind(this),
+            handleLogout: this.handleLogout.bind(this),
+            user: this.state.user
+          })}
         </Col>
         </Row>
       </Grid>

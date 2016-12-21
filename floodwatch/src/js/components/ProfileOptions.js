@@ -50,7 +50,10 @@ export class AgeOption extends Component {
     return (
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
-          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+              <span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
           { this.props.filter.instruction &&
             <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }
@@ -111,14 +114,14 @@ export class LocationOption extends Component {
 
   componentWillReceiveProps(nextProps: LocationPropsType) {
     if (nextProps.userData) {
-      this.decodeTwoFishes(nextProps.userData.twofishes_id)    
+      this.decodeTwoFishes(nextProps.userData.twofishes_id)
     }
   }
 
   async updateList(value: string) {
     const val = await FWApiClient.get().getLocationOptions(value);
     if (val.interpretations.length > 0) {
-      this.setState({items: val.interpretations, loading: false});    
+      this.setState({items: val.interpretations, loading: false});
     } else {
       this.props.updateLocation('')
     }
@@ -129,7 +132,7 @@ export class LocationOption extends Component {
     if (place.interpretations.length > 0) {
       this.setState({
         value: place.interpretations[0].feature.displayName
-      })      
+      })
     } else {
       this.setState({
         value: ''
@@ -150,7 +153,10 @@ export class LocationOption extends Component {
     return (
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
-          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}><
+            span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
           { this.props.filter.instruction &&
             <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }
@@ -229,9 +235,9 @@ export class DefaultOption extends Component {
         if (val) {
           checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
         }
-        
+
         return (
-            <div key={key} className={"custom-option checkbox " + (checked && "checked")}>
+            <div key={key} className={"custom-option checkbox " + (checked ? "checked" : '')}>
               <label>
                 <input
                 type="checkbox"
@@ -242,13 +248,16 @@ export class DefaultOption extends Component {
             </div>
           )
       })
-    
+
     }
 
     return (
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
-          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)} className={"profile-page_learnmore " + (this.state.isDescriptionOpen && "open")}><span className="glyphicon glyphicon-info-sign"></span></a></h4>
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+            <span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
           { this.props.filter.instruction &&
             <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }

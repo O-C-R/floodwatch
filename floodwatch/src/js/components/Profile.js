@@ -12,29 +12,28 @@ import scrollTo from 'scroll-to';
 
 const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
-
-type ProfileStateType = {
-  isDescriptionOpen: boolean,
-  success: string,
-  errors: string,
-  status: string
-};
-
-function setInitialStateProfile() {
-  return {
-    isDescriptionOpen: false,
-    success : null,
-    errors : null
+export class ProfilePage extends Component {
+  render() {
+    return (
+      <div className="profile-page panel">
+        <div className="panel-container">
+          <h3>My Profile</h3>
+          <ProfileExplanation />
+          <hr/>
+          <DemographicContainer/>
+          <AccountOptionsContainer/>
+        </div>
+      </div>
+    );
   }
 }
 
-
-export class Profile extends Component {
-  state: ProfileStateType
+export class ProfileExplanation extends Component {
+  state: { isDescriptionOpen: boolean };
 
   constructor() {
     super();
-    this.state = setInitialStateProfile();
+    this.state = { isDescriptionOpen: false };
   }
 
   toggleDescriptionVisibility() {
@@ -44,95 +43,84 @@ export class Profile extends Component {
     })
   }
 
-  statusHandler(status, message){
-
-    scrollTo(0, 0, {
-      ease: 'linear',
-      duration: 200
-    });
-
-    let success = (status === 'success' ? message : null)
-    let errors = (status === 'error' ? message : null)
-
-    this.setState({
-      errors,
-      success
-    })
-  }
-
   render() {
     return (
-      <div>
-
-        {(this.state.success || this.state.errors) &&
-          <ListGroup>
-            {(this.state.success &&
-              <ListGroupItem bsStyle="success">{this.state.success}</ListGroupItem>
-            )}
-            {(this.state.errors &&
-              <ListGroupItem bsStyle="danger">{this.state.errors}</ListGroupItem>
-            )}
-          </ListGroup>
+      <div className="panel-container">
+        <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
+        <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
+        { this.state.isDescriptionOpen &&
+          <p>
+            <Well bsSize="small">
+              <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
+              <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
+            </Well>
+          </p>
         }
-      
-        <div className="profile-page panel">
-          <div className="panel-container">
-            <h1>My Profile</h1>
-            <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
-            <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
-            { this.state.isDescriptionOpen &&
-              <p>
-                <Well bsSize="small">
-                  <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
-                  <p>Without being able to show advertising trends as experienced by large groups, it’s hard to prove that these discriminatory behaviors are happening. This is why Floodwatch asks for your demographic data: because knowing who’s getting served what ads helps our researchers uncover large-scale trends of discriminatory practices. The more demographic information you volunteer, the more information our researchers have to find these connections.</p>
-                </Well>
-              </p>
-            }
-          </div>
-
-          <DemographicContainer statusHandler={this.statusHandler.bind(this)}/>
-          <AccountOptionsContainer/>
-        </div>
-
+        <p>Remember, all of this information is completely optional!</p>
       </div>
     );
   }
-
 }
 
-type DemographicContainerStateType = {
+function setInitialStateProfile() {
+  return {
+    isDescriptionOpen: false,
+
+  }
+}
+
+type DemographicContainerProps = {
+  onSuccess?: Function;
+};
+
+type DemographicContainerState = {
   userData?: PersonDemographics,
+  successMsg: ?string,
+  errorMsg: ?string,
   curStatus: null | "success" | "error"
 };
 
 function setInitialStateDemographicContainer() {
   return {
+    successMsg: null,
+    errorMsg: null,
     curStatus: null
   }
 }
 
 export class DemographicContainer extends Component {
-  state: DemographicContainerStateType
+  props: DemographicContainerProps;
+  state: DemographicContainerState;
 
-  constructor() {
-    super();
+  constructor(props: DemographicContainerProps) {
+    super(props);
     this.state = setInitialStateDemographicContainer();
   }
 
   componentDidMount() {
     const init = async () => {
       try {
-        const UserData = await FWApiClient.get().getCurrentPerson()
-        let filteredUserData = _.pick(UserData, TO_PICK)
-        this.setState({
-          userData: filteredUserData,
-        })
+        const userData = await FWApiClient.get().getCurrentPerson()
+        let filteredUserData = _.pick(userData, TO_PICK)
+        this.setState({ userData: filteredUserData })
       } catch (e) {
         this.setState({curStatus: 'error'})
         console.error(e)
       }
     };
     init();
+  }
+
+  statusHandler(status: 'success' | 'error', message: string) {
+    scrollTo(0, 0, {
+      ease: 'linear',
+      duration: 200
+    });
+
+    let successMsg = (status === 'success' ? message : null)
+    let errorMsg = (status === 'error' ? message : null)
+
+    this.setState({ curStatus: status, errorMsg, successMsg });
   }
 
   handleClick(checked: boolean, id: number, event: any): void {
@@ -150,18 +138,20 @@ export class DemographicContainer extends Component {
       if (this.state.userData) {
         const userData = this.state.userData;
         const reply = await FWApiClient.get().updatePersonDemographics(userData);
+
         let filteredUserData = _.pick(reply, TO_PICK)
-        this.setState({
-          userData: filteredUserData
-        })
+        this.setState({ userData: filteredUserData });
 
-        this.props.statusHandler("success","Successfully saved changes!")
+        if (this.props.onSuccess) {
+          this.props.onSuccess();
+        }
 
+        this.statusHandler("success", "Successfully saved changes!")
       } else {
-        this.setState({curStatus: "error"});
+        this.statusHandler("error", "Profile not loaded, please reload this page.");
       }
     } catch (e) {
-      this.props.statusHandler("error", "Error while trying to save changes. Please check your connection.")
+      this.statusHandler("error", "Error while trying to save changes. Please check your connection.");
     }
   }
 
@@ -202,7 +192,6 @@ export class DemographicContainer extends Component {
     } else {
       userData.twofishes_id = loc
     }
-    console.log(userData.twofishes_id)
     this.updateStateAndMessages(userData)
   }
 
@@ -238,15 +227,28 @@ export class DemographicContainer extends Component {
     })
 
     return (
-      <Row>
-        <Col xs={12}>
-        {elems}
-        </Col>
+      <div>
+        {(this.state.successMsg || this.state.errorMsg) &&
+          <ListGroup>
+            {(this.state.success &&
+              <ListGroupItem bsStyle="success">{this.state.successMsg}</ListGroupItem>
+            )}
+            {(this.state.errorMsg &&
+              <ListGroupItem bsStyle="danger">{this.state.errorMsg}</ListGroupItem>
+            )}
+          </ListGroup>
+        }
 
-        <Col xs={12} className="profile-page_actions">
-          <Button className="profile-page_actions_submit" bsSize="large" bsStyle="primary" onClick={this.updateUserInfo.bind(this)} id="submit-button">Save</Button>
-        </Col>
-      </Row>
+        <Row>
+          <Col xs={12}>
+          {elems}
+          </Col>
+
+          <Col xs={12} className="profile-page_actions">
+            <Button className="profile-page_actions_submit" bsSize="large" bsStyle="primary" onClick={this.updateUserInfo.bind(this)} id="submit-button">Save</Button>
+          </Col>
+        </Row>
+      </div>
     )
   }
 }
