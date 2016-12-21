@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
+import { Col, Row, Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
 import _ from 'lodash'
 import Filters from '../../stubbed_data/filter_response.json';
 
@@ -64,19 +64,19 @@ export class Profile extends Component {
     return (
       <div>
 
-        {(this.state.success || this.state.success) &&
+        {(this.state.success || this.state.errors) &&
           <ListGroup>
             {(this.state.success &&
               <ListGroupItem bsStyle="success">{this.state.success}</ListGroupItem>
             )}
-            {(this.state.erros &&
-              <ListGroupItem bsStyle="danger">{this.state.erros}</ListGroupItem>
+            {(this.state.errors &&
+              <ListGroupItem bsStyle="danger">{this.state.errors}</ListGroupItem>
             )}
           </ListGroup>
         }
       
         <div className="profile-page panel">
-          <div className="panel-body">
+          <div className="panel-container">
             <h1>My Profile</h1>
             <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
             <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
@@ -161,7 +161,7 @@ export class DemographicContainer extends Component {
         this.setState({curStatus: "error"});
       }
     } catch (e) {
-      this.props.statusHandler("danger", "Error while trying to save changes. Please check your connection.")
+      this.props.statusHandler("error", "Error while trying to save changes. Please check your connection.")
     }
   }
 
@@ -223,15 +223,15 @@ export class DemographicContainer extends Component {
     })
 
     return (
-      <div>
-        <div>
+      <Row>
+        <Col xs={12}>
         {elems}
-        </div>
+        </Col>
 
-        <div className="profile-page_actions">
+        <Col xs={12} className="profile-page_actions">
           <Button className="profile-page_actions_submit" bsSize="large" bsStyle="primary" onClick={this.updateUserInfo.bind(this)} id="submit-button">Save</Button>
-        </div>
-      </div>
+        </Col>
+      </Row>
     )
   }
 }
@@ -239,7 +239,7 @@ export class DemographicContainer extends Component {
 export class AccountOptionsContainer extends Component {
   render() {
     return (
-      <div className="panel-body">
+      <div className="panel-container">
         <p>If you would like to download your data, reset your password, or delete your account, please email us at <a href="mailto:floodwatch@ocr.nyc">floodwatch@ocr.nyc</a></p>
       </div>
     )

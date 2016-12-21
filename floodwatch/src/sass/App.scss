@@ -11,3 +11,36 @@
 
 @import "pages/compare";
 @import "pages/profile";
+
+
+a.anchor {
+	color: $gray-base;
+	position: relative;
+
+	&::before {
+		content: "\e144";
+
+		display: none;
+
+		position: absolute;
+		left: -22px;
+		top: 10px;
+		margin-top: -2px;
+
+		font-family: 'Glyphicons Halflings';
+		color: $gray;
+		font-size: 12px;
+	}
+
+	&:hover {
+		text-decoration: none;
+
+		&::before {
+			display: block;
+		}
+	}
+
+	&.noicon:hover::before {
+		display: none;
+	}
+}
