@@ -112,7 +112,6 @@ export class DemographicContainer extends Component {
   }
 
   async updateUserInfo() {
-    console.log('final data', this.state.userData)
     try {
       if (this.state.userData) {
         const userData = this.state.userData;
@@ -142,11 +141,11 @@ export class DemographicContainer extends Component {
     if (!event.target.value) {
       userData.birth_year = null
     } else {
-      userData.birth_year = parseInt(event.target.value);   
+      userData.birth_year = parseInt(event.target.value);
     }
 
     if (isNaN(userData.birth_year)) {
-      userData.birth_year == null
+      userData.birth_year = null
     }
 
     this.updateStateAndMessages(userData)
