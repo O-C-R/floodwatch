@@ -120,14 +120,25 @@ export class LocationOption extends Component {
 
   async updateList(value: string) {
     const val = await FWApiClient.get().getLocationOptions(value);
-    this.setState({items: val.interpretations, loading: false});
+    if (val.interpretations.length > 0) {
+      this.setState({items: val.interpretations, loading: false});    
+    } else {
+      this.props.updateLocation('')
+    }
   }
 
   async decodeTwoFishes(id: string) {
     const place = await FWApiClient.get().getDecodedLocation(id);
-    this.setState({
-      value: place.interpretations[0].feature.displayName
-    })
+    if (place.interpretations.length > 0) {
+      this.setState({
+        value: place.interpretations[0].feature.displayName
+      })      
+    } else {
+      this.setState({
+        value: ''
+      })
+    }
+
 
   }
 
