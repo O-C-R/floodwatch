@@ -37,7 +37,6 @@ export class Main extends Component {
       })
       .catch((error) => {
         this.setState({ user: null });
-        history.push('/login');
       })
   }
 

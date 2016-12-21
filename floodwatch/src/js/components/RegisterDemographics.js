@@ -28,16 +28,14 @@ export class RegisterDemographics extends Component {
     history.push('/compare');
   }
 
-  handleSkip() {
-    history.push('/post_register');
-  }
-
   render() {
     return (
-      <div>
-        <ProfileExplanation />
-        <DemographicContainer
-          onSuccess={this.handleSuccess.bind(this)} />
+      <div className="profile-page panel">
+        <div className="panel-container">
+          <h1>Your profile</h1>
+          <ProfileExplanation />
+          <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
+        </div>
       </div>
     );
   }

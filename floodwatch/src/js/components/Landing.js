@@ -2,9 +2,12 @@
 
 import React, { Component } from 'react';
 import { Row, Col, Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
-import _ from 'lodash'
+import history from '../common/history';
 
 export class Landing extends Component {
+  handleJoinUs() {
+    history.push('/register');
+  }
 
   render() {
     return (
@@ -13,6 +16,9 @@ export class Landing extends Component {
           <Row>
             <p>Floodwatch collects the ads you see as you browse the internet, in order to track how advertisers are categorizing and tracking you.</p>
             <p>Join Floodwatch, and help us create a database of how advertisers are targeting their ads, which can be used to uncover discriminatory practices in online advertising.</p>
+          </Row>
+          <Row>
+            <Button className="btn btn-primary btn-block" onClick={this.handleJoinUs.bind(this)}>Join Us</Button>
           </Row>
           <Row>
             <h2>Why Floodwatch Matters</h2>

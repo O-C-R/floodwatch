@@ -56,6 +56,7 @@ export class ProfileExplanation extends Component {
             </Well>
           </p>
         }
+        <p>Remember, all of this information is completely optional!</p>
       </div>
     );
   }

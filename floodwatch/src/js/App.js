@@ -54,7 +54,7 @@ export class App extends Component {
           <Route path="login" component={Login} onEnter={requireNoAuth} />
           <Route path="faq" component={Faq} />
 
-          <Route path="/register" onEnter={requireNoAuth}>
+          <Route path="/register">
             <IndexRoute component={Register} />
             <Route path="demographics" component={RegisterDemographics} />
           </Route>
