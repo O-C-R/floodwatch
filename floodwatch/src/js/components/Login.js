@@ -1,7 +1,6 @@
 // @flow
 
 import React, {Component} from 'react';
-import { withRouter } from 'react-router';
 
 import {FWApiClient, AuthenticationError} from '../api/api';
 import history from '../common/history';
@@ -58,7 +57,6 @@ export class Login extends Component {
 
       history.push('/compare');
     } catch (error) {
-      console.log(error);
       if (error instanceof AuthenticationError) {
         this.setState({ error: 'Username or password incorrect.' });
       } else {

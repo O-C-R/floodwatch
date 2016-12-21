@@ -1,31 +1,30 @@
 // @flow
 
 import React, { Component } from 'react';
-import Autocomplete from 'react-autocomplete';
-import { Row, Col, Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
+import { Col, Row, Button, ListGroup, ListGroupItem, Well } from 'react-bootstrap';
 import _ from 'lodash'
 import Filters from '../../stubbed_data/filter_response.json';
-import DemographicKeys from '../../stubbed_data/demographic_keys.json';
-import type {DemographicDictionary} from './FindInDemographics'
 
 import {FWApiClient} from '../api/api';
 import type {PersonDemographics} from '../api/types';
-import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions'
+import {AgeOption, LocationOption, DefaultOption} from './ProfileOptions';
+import scrollTo from 'scroll-to';
 
 const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
-
 
 export class ProfilePage extends Component {
   render() {
     return (
-      <Row className="profile-page panel">
-        <h3>My Profile</h3>
-        <ProfileExplanation />
-        <hr/>
-        <DemographicContainer/>
-        <AccountOptionsContainer/>
-      </Row>
-    )
+      <div className="profile-page panel">
+        <div className="panel-container">
+          <h3>My Profile</h3>
+          <ProfileExplanation />
+          <hr/>
+          <DemographicContainer/>
+          <AccountOptionsContainer/>
+        </div>
+      </div>
+    );
   }
 }
 
@@ -46,9 +45,9 @@ export class ProfileExplanation extends Component {
 
   render() {
     return (
-      <Row id="profile-explanation">
+      <div className="panel-container">
         <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
-        <p>Wondering why your demographic data matters? <Button bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button></p>
+        <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
         { this.state.isDescriptionOpen &&
           <p>
             <Well bsSize="small">
@@ -57,8 +56,15 @@ export class ProfileExplanation extends Component {
             </Well>
           </p>
         }
-      </Row>
+      </div>
     );
+  }
+}
+
+function setInitialStateProfile() {
+  return {
+    isDescriptionOpen: false,
+
   }
 }
 
@@ -66,20 +72,24 @@ type DemographicContainerProps = {
   onSuccess?: Function;
 };
 
-type DemographicContainerStateType = {
+type DemographicContainerState = {
   userData?: PersonDemographics,
+  successMsg: ?string,
+  errorMsg: ?string,
   curStatus: null | "success" | "error"
 };
 
 function setInitialStateDemographicContainer() {
   return {
+    successMsg: null,
+    errorMsg: null,
     curStatus: null
   }
 }
 
 export class DemographicContainer extends Component {
   props: DemographicContainerProps;
-  state: DemographicContainerStateType;
+  state: DemographicContainerState;
 
   constructor(props: DemographicContainerProps) {
     super(props);
@@ -89,11 +99,9 @@ export class DemographicContainer extends Component {
   componentDidMount() {
     const init = async () => {
       try {
-        const UserData = await FWApiClient.get().getCurrentPerson()
-        let filteredUserData = _.pick(UserData, TO_PICK)
-        this.setState({
-          userData: filteredUserData,
-        })
+        const userData = await FWApiClient.get().getCurrentPerson()
+        let filteredUserData = _.pick(userData, TO_PICK)
+        this.setState({ userData: filteredUserData })
       } catch (e) {
         this.setState({curStatus: 'error'})
         console.error(e)
@@ -102,8 +110,20 @@ export class DemographicContainer extends Component {
     init();
   }
 
+  statusHandler(status: 'success' | 'error', message: string) {
+    scrollTo(0, 0, {
+      ease: 'linear',
+      duration: 200
+    });
+
+    let successMsg = (status === 'success' ? message : null)
+    let errorMsg = (status === 'error' ? message : null)
+
+    this.setState({ curStatus: status, errorMsg, successMsg });
+  }
+
   handleClick(checked: boolean, id: number, event: any): void {
-    if (event.target.name != 'age' && event.target.name != 'country_code') {
+    if (event.target.name !== 'age' && event.target.name !== 'country_code') {
       if (checked) {
         this.addToDemographicIds(id)
       } else {
@@ -117,20 +137,20 @@ export class DemographicContainer extends Component {
       if (this.state.userData) {
         const userData = this.state.userData;
         const reply = await FWApiClient.get().updatePersonDemographics(userData);
+
         let filteredUserData = _.pick(reply, TO_PICK)
-        this.setState({
-          userData: filteredUserData,
-          curStatus: 'success'
-        });
+        this.setState({ userData: filteredUserData });
+
         if (this.props.onSuccess) {
           this.props.onSuccess();
         }
+
+        this.statusHandler("success", "Successfully saved changes!")
       } else {
-        this.setState({curStatus: 'error'});
+        this.statusHandler("error", "Profile not loaded, please reload this page.");
       }
     } catch (e) {
-      console.error(e)
-      this.setState({curStatus: 'error'})
+      this.statusHandler("error", "Error while trying to save changes. Please check your connection.");
     }
   }
 
@@ -142,6 +162,7 @@ export class DemographicContainer extends Component {
 
   updateYear(event: any): void {
     let userData = _.cloneDeep(this.state.userData);
+
     if (!event.target.value) {
       userData.birth_year = null
     } else {
@@ -158,7 +179,7 @@ export class DemographicContainer extends Component {
   removeFromDemographicIds(id: number): void {
     let userData = _.cloneDeep(this.state.userData)
     userData.demographic_ids = _.filter(userData.demographic_ids, (o) => {
-      return o != id
+      return o !== id
     })
     this.updateStateAndMessages(userData)
   }
@@ -170,61 +191,63 @@ export class DemographicContainer extends Component {
     } else {
       userData.twofishes_id = loc
     }
-    console.log(userData.twofishes_id)
     this.updateStateAndMessages(userData)
   }
 
   updateStateAndMessages(userData: PersonDemographics) {
     this.setState({
       userData: userData,
-      curStatus: (this.state.curStatus != 'error') ? null : 'error'
+      curStatus: (this.state.curStatus !== 'error') ? null : 'error'
     })
   }
 
   render() {
-    let elems = Filters.filters.map((filter) => {
-      if (filter.name == 'age') {
+    let elems = Filters.filters.map((filter, i) => {
+      if (filter.name === 'age') {
         return <AgeOption updateYear={this.updateYear.bind(this)}
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
 
-      } else if (filter.name == 'country') {
+      } else if (filter.name === 'country') {
         return <LocationOption
                           updateLocation={this.updateLocation.bind(this)}
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
       } else {
         return <DefaultOption
                           handleClick={this.handleClick.bind(this)}
-                          userData={this.state.userData} filter={filter}/>
+                          userData={this.state.userData} filter={filter}
+                          key={i}/>
       }
 
 
     })
 
-    const displayGroup = (this.state.curStatus == null) ? 'none' : 'block'
-
     return (
-      <Row>
-        <Col xs={12}>
-        {elems}
-        </Col>
-        <Col xs={12}>
-        <Button onClick={this.updateUserInfo.bind(this)} id="submit-button">Submit</Button>
-        <ListGroup style={{display: displayGroup, textAlign:'center'}}>
-          { this.state.curStatus == 'success' &&
-            <ListGroupItem bsStyle="success">
-              Successfully saved changes!
-            </ListGroupItem>
-          }
-          { this.state.curStatus == 'error' &&
-            <ListGroupItem bsStyle="danger">
-              Error while trying to save changes. Please check your connection.
-            </ListGroupItem>
-          }
-        </ListGroup>
-        </Col>
-      </Row>
+      <div>
+        {(this.state.successMsg || this.state.errorMsg) &&
+          <ListGroup>
+            {(this.state.success &&
+              <ListGroupItem bsStyle="success">{this.state.successMsg}</ListGroupItem>
+            )}
+            {(this.state.errorMsg &&
+              <ListGroupItem bsStyle="danger">{this.state.errorMsg}</ListGroupItem>
+            )}
+          </ListGroup>
+        }
+
+        <Row>
+          <Col xs={12}>
+          {elems}
+          </Col>
+
+          <Col xs={12} className="profile-page_actions">
+            <Button className="profile-page_actions_submit" bsSize="large" bsStyle="primary" onClick={this.updateUserInfo.bind(this)} id="submit-button">Save</Button>
+          </Col>
+        </Row>
+      </div>
     )
   }
 }
@@ -232,12 +255,9 @@ export class DemographicContainer extends Component {
 export class AccountOptionsContainer extends Component {
   render() {
     return (
-      <Row style={{padding:'20px'}}>
-        <hr/>
-        <Col xs={12} >
-          <p>If you would like to download your data, reset your password, or delete your account, please email us at floodwatch@ocr.nyc.</p>
-        </Col>
-      </Row>
+      <div className="panel-container">
+        <p>If you would like to download your data, reset your password, or delete your account, please email us at <a href="mailto:floodwatch@ocr.nyc">floodwatch@ocr.nyc</a></p>
+      </div>
     )
   }
 

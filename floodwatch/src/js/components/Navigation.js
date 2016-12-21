@@ -38,21 +38,23 @@ export class Navigation extends Component {
   render() {
     return (
       <Navbar collapseOnSelect>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="#">Floodwatch</a>
-          </Navbar.Brand>
-          <Navbar.Toggle/>
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav pullRight onSelect={this.handleSelect.bind(this)} activeHref={window.location.pathname}>
-            {this.props.navs.map((nav, key) => {
-              return (
-                <NavItem eventKey={key} key={key} href={nav.to}>{nav.name}</NavItem>
-              )
-            })}
-          </Nav>
-        </Navbar.Collapse>
+        <div className="container">
+          <Navbar.Header>
+            <Navbar.Brand>
+              <a href="#">Floodwatch</a>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+          </Navbar.Header>
+          <Navbar.Collapse>
+            <Nav pullRight onSelect={this.handleSelect.bind(this)} activeHref={window.location.pathname}>
+              {this.props.navs.map((nav, key) => {
+                return (
+                  <NavItem eventKey={key} key={key} href={nav.to}>{nav.name}</NavItem>
+                )
+              })}
+            </Nav>
+          </Navbar.Collapse>
+        </div>
       </Navbar>
     );
   }

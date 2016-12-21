@@ -1,8 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
-import * as d3 from 'd3';
 import _ from 'lodash'
 import {Chart} from './Chart'
 import type {StackedData} from './FilterParent'
@@ -16,10 +14,6 @@ type PropsType = {
 
 export class GraphParent extends Component {
   props: PropsType;
-
-  constructor(props: PropsType): void {
-    super(props);
-  }
 
   render() {
     return (

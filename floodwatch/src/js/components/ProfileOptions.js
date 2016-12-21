@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import Autocomplete from 'react-autocomplete';
-import { Row, Col, Button, Well } from 'react-bootstrap';
+import { Well } from 'react-bootstrap';
 import {FWApiClient} from '../api/api';
 import _ from 'lodash'
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
@@ -46,23 +46,23 @@ export class AgeOption extends Component {
 
   render() {
     let value = (this.props.userData) ? this.props.userData.birth_year : ''
-    let elem = <input min="0" onChange={this.props.updateYear} value={value} type="number"/>
+    let elem = <input min="0" className="form-control text-center" onChange={this.props.updateYear} value={value} placeholder="YYYY" type="number"/>
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          <div className="input-wrapper">
-          {elem}
-          </div>
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          { this.state.isDescriptionOpen &&
-          <p>
-            <Well bsSize="small">{this.props.filter.why}</Well>
-          </p>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+              <span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }
-        </Col>
-      </Row>
+          { this.state.isDescriptionOpen &&
+            <Well bsSize="small">{this.props.filter.why}</Well>
+          }
+        </div>
+        {elem}
+      </div>
     )
   }
 }
@@ -114,14 +114,14 @@ export class LocationOption extends Component {
 
   componentWillReceiveProps(nextProps: LocationPropsType) {
     if (nextProps.userData) {
-      this.decodeTwoFishes(nextProps.userData.twofishes_id)    
+      this.decodeTwoFishes(nextProps.userData.twofishes_id)
     }
   }
 
   async updateList(value: string) {
     const val = await FWApiClient.get().getLocationOptions(value);
     if (val.interpretations.length > 0) {
-      this.setState({items: val.interpretations, loading: false});    
+      this.setState({items: val.interpretations, loading: false});
     } else {
       this.props.updateLocation('')
     }
@@ -132,7 +132,7 @@ export class LocationOption extends Component {
     if (place.interpretations.length > 0) {
       this.setState({
         value: place.interpretations[0].feature.displayName
-      })      
+      })
     } else {
       this.setState({
         value: ''
@@ -151,43 +151,44 @@ export class LocationOption extends Component {
 
   render() {
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          <div className="input-wrapper">
-          <Autocomplete
-            menuStyle={{zIndex: 1000}}
-            inputProps={{name:'country', id: 'location-autocomplete'}}
-            value={this.state.value}
-            items={this.state.items}
-            getItemValue={(item) => item.feature.displayName}
-
-            onChange={(event, value) => {
-              this.setState({ value, loading:true})
-              this.updateList(value);
-            }}
-
-            onSelect={(value, item) => {
-              this.setState({value: value, items: [item]})
-              this.props.updateLocation(item.feature.longId)
-            }}
-
-            renderItem={(item, isHighlighted) => (
-              <div style={(isHighlighted) ? this.state.highlightedStyle : this.state.regularStyle}>
-              {item.feature.displayName}
-              </div>
-            )}
-          />
-          </div>
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">{this.props.filter.why}</Well>
-            </p>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}><
+            span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }
-        </Col>
-      </Row>
+          { this.state.isDescriptionOpen &&
+            <Well bsSize="small">{this.props.filter.why}</Well>
+          }
+        </div>
+        <Autocomplete
+          menuStyle={{zIndex: 1000}}
+          inputProps={{name:'country', id: 'location-autocomplete', className: 'autocomplete_input form-control'}}
+          value={this.state.value}
+          items={this.state.items}
+          wrapperProps={{className:"autocomplete"}}
+          getItemValue={(item) => item.feature.displayName}
+
+          onChange={(event, value) => {
+            this.setState({ value, loading:true})
+            this.updateList(value);
+          }}
+
+          onSelect={(value, item) => {
+            this.setState({value: value, items: [item]})
+            this.props.updateLocation(item.feature.longId)
+          }}
+
+          renderItem={(item, isHighlighted) => (
+            <div className={"autocomplete_options " + (isHighlighted && "current")}>
+            {item.feature.displayName}
+            </div>
+          )}
+        />
+      </div>
     )
   }
 }
@@ -223,45 +224,49 @@ export class DefaultOption extends Component {
     let elems;
     if (this.props.userData) {
       let myOptions = _.filter(DemographicKeys.demographic_keys, (key) => {
-        return key.category_id == this.props.filter.category_id
+        return key.category_id === this.props.filter.category_id
       })
       elems = myOptions.map((opt: DemographicDictionary, key: number) => {
         let val = _.find(DemographicKeys.demographic_keys, (o: DemographicDictionary) => {
-          return o.id == opt.id
+          return o.id === opt.id
         })
 
         let checked = false;
         if (val) {
           checked = (_.indexOf(this.props.userData.demographic_ids, val.id) > -1)
         }
-        
-        return <div key={key} className="custom-option">
-                    <Button
-                    active={checked}
-                    name={this.props.filter.name}
-                    onClick={this.props.handleClick.bind(this, !checked, opt.id)}>
-                    {opt.name}
-                    </Button>
-                </div>
+
+        return (
+            <div key={key} className={"custom-option checkbox " + (checked ? "checked" : '')}>
+              <label>
+                <input
+                type="checkbox"
+                defaultChecked={checked}
+                name={this.props.filter.name}
+                onClick={this.props.handleClick.bind(this, !checked, opt.id)} /> {opt.name}
+              </label>
+            </div>
+          )
       })
-    
+
     }
 
     return (
-      <Row className="demographic-category">
-        <Col xs={12}>
-          <h4>{this.props.filter.question}</h4>
-          {elems}
-
-          <br/>
-          <Button className="learn-more" bsSize="xsmall" onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</Button>
-          { this.state.isDescriptionOpen &&
-            <p>
-              <Well bsSize="small">{this.props.filter.why}</Well>
-            </p>
+      <div className="profile-page_option panel-body">
+        <div className="profile-page_option_header">
+          <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
+            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+            <span className="glyphicon glyphicon-info-sign"></span></a>
+          </h4>
+          { this.props.filter.instruction &&
+            <p className="profile-page_option_header_instruction">{this.props.filter.instruction}</p>
           }
-        </Col>
-      </Row>
+          { this.state.isDescriptionOpen &&
+            <Well bsSize="small">{this.props.filter.why}</Well>
+          }
+        </div>
+        {elems}
+      </div>
     )
   }
 

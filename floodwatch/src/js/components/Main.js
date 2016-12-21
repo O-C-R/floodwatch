@@ -1,7 +1,7 @@
 // @flow
 import React, {Component} from 'react';
-import {Link} from 'react-router';
 import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 
 import '../../css/app.css';
 
@@ -85,7 +85,7 @@ export class Main extends Component {
           <Navigation navs={navs} />
         </Row>
         <Row>
-        <Col md={8} mdOffset={2} xs={12}>
+        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
           {this.props.children && React.cloneElement(this.props.children, {
             showMessage: this.showMessage.bind(this),
             loginChanged: this.loadUserFromServer.bind(this),

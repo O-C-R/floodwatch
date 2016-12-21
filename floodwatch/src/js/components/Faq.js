@@ -7,17 +7,17 @@ export class Faq extends Component {
   render() {
     return (
       <div id="faqpp">
-        <Row className="section panel" id="faq">
-          <Col className="panel-body">
-            <h1 className="centered"><a name="faq">FAQ</a></h1>
+        <div className="panel">
+          <div className="panel-body">
+            <h1><a className="anchor noicon" name="faq">FAQ</a></h1>
 
-            <h3 className="header"><a name="adblock">Does Floodwatch work with Adblock, Ghostery, etc.?</a></h3>
+            <h3 className="header"><a className="anchor" name="adblock">Does Floodwatch work with Adblock, Ghostery, etc.?</a></h3>
             <p>Floodwatch unfortunately does not work with AdBlock, or any other service that blocks ad images from loading. <span className="italics">You will have to turn off or remove your adblocker (not just pause it) in order to use Floodwatch.</span></p>
             <p>Floodwatch looks at the images on a website after that website has finished loading, which means that any service that stops the images from loading in the first place is not compatible. (Other anti-tracking tools that do not block images from loading should still work with Floodwatch, and the extension may still work with Ghostery, depending on its settings.)</p>
             <p>Floodwatch does have the ability to remove ads once it has taken a snapshot of them. This is a good option for people who want to use Floodwatch, but prefer not to see ads. You can toggle this option in the extension settings.</p>
 
 
-            <h3 className="header"><a name="info">Why am I being asked for my demographic information? Do I have to give any?</a></h3>
+            <h3 className="header"><a className="anchor" name="info">Why am I being asked for my demographic information? Do I have to give any?</a></h3>
             <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
             <p>Advertisers are constantly looking to refine their demographic profile of a given person in order to serve them the ads they think “fit” their interest group. For certain factors, that’s an acceptable practice: for example, it makes sense to serve more sports advertising to people who visit more sports websites. </p>
             <p>For many other factors, however, this practice is not only unethical, but illegal: for example, Facebook allowing advertisers to exclude certain races from particular job and housing postings (as shown by Propublica <a className="underlined" href="https://www.propublica.org/article/facebook-lets-advertisers-exclude-users-by-race" target="_blank">here</a>). </p>
@@ -26,31 +26,31 @@ export class Faq extends Component {
             <p>Jump to our <a href="#privacy" className="underlined">Privacy Policy</a> to learn more about the risks of providing personal information to anyone, and to see how Floodwatch protects your data.</p>
 
 
-            <h3 className="header"><a name="adtypes">What kinds of ads do you collect? Why aren’t I seeing more ads on the My Ads page?</a></h3>
+            <h3 className="header"><a className="anchor" name="adtypes">What kinds of ads do you collect? Why aren’t I seeing more ads on the My Ads page?</a></h3>
             <p>Ad detection is a tricky problem for many reasons, and we are constantly working on improving our detection algorithm. The more users we have, the better we become at detecting different kinds of ads.</p>
             <p>Floodwatch only collects image-based ads, and therefore can miss text-based ads on a website. We’re also working on recording Flash ads, but are not currently able to do so.</p>
             <p>If you’re not seeing any ads displayed on your History page, please first try browsing for a little longer, before reporting a bug on our public <a className="underlined" href="https://github.com/O-C-R/floodwatch-extension" target="_blank">Github repository</a>, or contacting us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
 
 
-            <h3 className="header"><a name="otherads">Why do I see other ads in my ad stream?</a></h3>
+            <h3 className="header"><a className="anchor" name="otherads">Why do I see other ads in my ad stream?</a></h3>
             <p>Sometimes our ad classification system gets it wrong: it can be confused by an image that is the same size as a standard ad, or perhaps because the URL for the image closely matches one for images that have been correctly classified as ads in the past.</p>
             <p>We appreciate your help in marking these images as falsely classified--this will help improve our algorithm and prevent them from reappearing in your ad stream.</p>
 
 
-            <h3 className="header"><a name="browsers">Does Floodwatch plan to expand to other browsers?</a></h3>
+            <h3 className="header"><a className="anchor" name="browsers">Does Floodwatch plan to expand to other browsers?</a></h3>
             <p>Currently, we have a very small development team supporting Floodwatch. We plan to expand to other browsers eventually, but are currently focusing our efforts on bug fixes and improvements to the Chrome version of the extension.</p>
             <p>The Floodwatch extension is <a className="underlined" href="https://github.com/O-C-R/floodwatch-extension" target="_blank">open source</a>, so if you’re interested in porting Floodwatch to other browsers, feel free to fork it.</p>
 
 
-            <h3 className="header"><a name="bugs">I found a bug! What should I do?</a></h3>
+            <h3 className="header"><a className="anchor" name="bugs">I found a bug! What should I do?</a></h3>
             <p>We’re working hard to fix bugs and make improvements. Email us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a> to report it, or check the Issues list on our <a className="underlined" href="https://github.com/O-C-R/floodwatch-extension" target="_blank">Github repository</a>, where you can see if the bug has already been filed or file a new one.</p>
+          </div>
+        </div>
 
-          </Col>
-        </Row>
-        <Row className="section" id="privacy">
-          <Col>
-            <h1 className="centered"><a name="privacy">Privacy Policy</a></h1>
-            <h3 className="header"><a name="risks">What are the risks in offering up my demographic or advertising information?</a></h3>
+        <div className="panel">
+          <div className="panel-body">
+            <h1><a className="anchor noicon" name="privacy">Privacy Policy</a></h1>
+            <h3 className="header"><a className="anchor" name="risks">What are the risks in offering up my demographic or advertising information?</a></h3>
             <p>There is implicit risk in having your demographic data collected by anyone--whether passively by an advertiser, or actively by an app like Floodwatch. Even when that data is ostensibly anonymized, there are reidentification techniques that can take simple demographic or preference factors and associate a profile with its true owner. Consider the following:
             </p>
             <ul>
@@ -70,11 +70,11 @@ export class Faq extends Component {
             <p>Still have questions? Send them to <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
 
 
-            <h3 className="header"><a name="adinfo">What ad information do you collect?</a></h3>
+            <h3 className="header"><a className="anchor" name="adinfo">What ad information do you collect?</a></h3>
             <p>When you go to a webpage, Floodwatch looks at all the images on that page. It then tries to make a guess at which of these images are ads.</p>
 
 
-            <h3 className="header"><a name="browsing">Wait, so if you see my browsing, can you see my bank account/social media/personal email, etc.?</a></h3>
+            <h3 className="header"><a className="anchor" name="browsing">Wait, so if you see my browsing, can you see my bank account/social media/personal email, etc.?</a></h3>
             <p>Nope! Floodwatch very deliberately tries to avoid collecting this info in a few ways:</p>
             <ul>
               <li>We only take a look at certain HTML tags, specifically image ones. No data from forms, or any text-based information, will be collected.</li> 
@@ -83,26 +83,25 @@ export class Faq extends Component {
             <p>The public release of Floodwatch will include a blacklist, which will allow users to list specific sites that they don’t want Floodwatch to run on at all. </p>
 
 
-            <h3 className="header"><a name="visibility">How do you use my information? Who can see it?</a></h3>
+            <h3 className="header"><a className="anchor" name="visibility">How do you use my information? Who can see it?</a></h3>
             <p>User information is expressed in two ways in Floodwatch: data from individual user accounts, and data from user accounts that have been aggregated together (based on demographics).</p>
             <p>Individual user entries are only ever accessible by the researchers that we have vetted. This is so they can do their own aggregation and analysis to find trends and patterns in advertising practices. No other Floodwatch users or outside viewers are able to see your individual data.</p>
             <p>Aggregated ad data is only accessible to logged-in users and researchers, and can only be viewed along demographic lines (e.g. the ad breakdown for the average woman Floodwatch user). Further, this aggregation is only visible if we have sufficient users of that demographic. If you fall into a very small demographic, we won’t show your data even in aggregation until we have sufficient other users like you to mask your ad signature.</p>
             <p>Floodwatch will never give your data to advertisers, nor sell your data or the platform itself to any third party.</p>
 
 
-            <h3 className="header"><a name="export">Can I see my records?</a></h3>
+            <h3 className="header"><a className="anchor" name="export">Can I see my records?</a></h3>
             <p>Sure! For now, email us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
 
 
-            <h3 className="header"><a name="delete">Can I delete my records?</a></h3>
+            <h3 className="header"><a className="anchor" name="delete">Can I delete my records?</a></h3>
             <p>Anytime! For now, email us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
 
 
-            <h3 className="header"><a name="policychanges">Changes to policy</a></h3>
+            <h3 className="header"><a className="anchor" name="policychanges">Changes to policy</a></h3>
             <p>There is a possibility that we might need to adapt our Privacy Policy in the future, to clarify or modify it in response to our needs and your feedback. Please check the <a className="underlined" href="#faq">FAQ</a> periodically for changes. We will still do our best to notify you of any major changes to our policy, and your continued use of Floodwatch will mean you accept them.</p>
-
-          </Col>
-        </Row>
+          </div>
+        </div>
       </div>
     );
   }

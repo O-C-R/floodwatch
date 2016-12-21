@@ -1,0 +1,8 @@
+.compare {
+	//background: red;
+	&_actions {
+		&_share, &_toggleCompare {
+			margin: 0px 10px;
+		}
+	}
+}

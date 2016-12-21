@@ -15,12 +15,18 @@ $gray:                   #9da2a9;
 $gray-light:             #f2f3f4;
 $gray-lighter:           #f7f8f8;
 
-$brand-primary:         $gray-base;
-$brand-success:         #5cb85c;
-$brand-info:            #5bc0de;
-$brand-warning:         #f0ad4e;
-$brand-danger:          #d9534f;
+$brand-primary:         #ff0042;
+$brand-success:         #A2C930;
+$brand-info:            #08c5fb;
+$brand-warning:         #fd730e;
+$brand-danger:          #FF7558;
 
+
+//== Drop shadow
+//
+//## Gray and brand colors for use across Bootstrap
+
+$drop-shadow: 0px 0px 15px rgba($gray-base, 0.1);
 
 //== Scaffolding
 //
@@ -32,9 +38,9 @@ $body-bg:               $gray-lighter;
 $text-color:            $gray-base;
 
 //** Global textual link color.
-$link-color:            $gray-base;
+$link-color:            $brand-primary;
 //** Link hover color set via `darken()` function.
-$link-hover-color:      $gray-base;
+$link-hover-color:      $brand-primary;
 //** Link hover decoration.
 $link-hover-decoration: underline;
 
@@ -61,7 +67,7 @@ $font-size-h5:            $font-size-base;
 $font-size-h6:            ceil(($font-size-base * 0.85)); // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
-$line-height-base:        1.6; // 20/14
+$line-height-base:        1.8; // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
 $line-height-computed:    floor(($font-size-base * $line-height-base)); // ~20px
 
@@ -92,11 +98,11 @@ $icon-font-svg-id:        "glyphicons_halflingsregular";
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
-$padding-base-vertical:     6px;
-$padding-base-horizontal:   12px;
+$padding-base-vertical:     8px;
+$padding-base-horizontal:   18px;
 
-$padding-large-vertical:    10px;
-$padding-large-horizontal:  16px;
+$padding-large-vertical:    12px;
+$padding-large-horizontal:  32px;
 
 $padding-small-vertical:    5px;
 $padding-small-horizontal:  10px;
@@ -107,7 +113,7 @@ $padding-xs-horizontal:     5px;
 $line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
 $line-height-small:         1.5;
 
-$border-radius-base:        4px;
+$border-radius-base:        0px;
 $border-radius-large:       6px;
 $border-radius-small:       3px;
 
@@ -149,9 +155,9 @@ $table-border-color:            #ddd;
 
 $btn-font-weight:                normal;
 
-$btn-default-color:              #333;
+$btn-default-color:              $gray-base;
 $btn-default-bg:                 #fff;
-$btn-default-border:             #ccc;
+$btn-default-border:             $gray-lighter;
 
 $btn-primary-color:              #fff;
 $btn-primary-bg:                 $brand-primary;
@@ -176,8 +182,8 @@ $btn-danger-border:              darken($btn-danger-bg, 5%);
 $btn-link-disabled-color:        $gray-light;
 
 // Allows for customizing button radius independently from global border radius
-$btn-border-radius-base:         $border-radius-base;
-$btn-border-radius-large:        $border-radius-large;
+$btn-border-radius-base:         $border-radius-small;
+$btn-border-radius-large:        $border-radius-small;
 $btn-border-radius-small:        $border-radius-small;
 
 
@@ -191,31 +197,31 @@ $input-bg:                       #fff;
 $input-bg-disabled:              $gray-lighter;
 
 //** Text color for `<input>`s
-$input-color:                    $gray;
+$input-color:                    $gray-base;
 //** `<input>` border color
-$input-border:                   #ccc;
+$input-border:                   $gray-light;
 
 // TODO: Rename `$input-border-radius` to `$input-border-radius-base` in v4
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
-$input-border-radius:            $border-radius-base;
+$input-border-radius:            $border-radius-small;
 //** Large `.form-control` border radius
-$input-border-radius-large:      $border-radius-large;
+$input-border-radius-large:      $border-radius-small;
 //** Small `.form-control` border radius
 $input-border-radius-small:      $border-radius-small;
 
 //** Border color for inputs on focus
-$input-border-focus:             #66afe9;
+$input-border-focus:             $gray-light;
 
 //** Placeholder text color
-$input-color-placeholder:        #999;
+$input-color-placeholder:        $gray;
 
 //** Default `.form-control` height
-$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2);
+$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 10);
 //** Large `.form-control` height
-$input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 2);
+$input-height-large:             (ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) + 10);
 //** Small `.form-control` height
-$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 2);
+$input-height-small:             (floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) + 10);
 
 //** `.form-group` margin
 $form-group-margin-bottom:       15px;
@@ -501,21 +507,21 @@ $jumbotron-heading-font-size:    ceil(($font-size-base * 4.5));
 //
 //## Define colors for form feedback states and, by default, alerts.
 
-$state-success-text:             #3c763d;
-$state-success-bg:               #dff0d8;
-$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%);
+$state-success-text:             #fff;
+$state-success-bg:               $brand-success;
+$state-success-border:           $brand-success;
 
-$state-info-text:                #31708f;
-$state-info-bg:                  #d9edf7;
-$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%);
+$state-info-text:                #fff;
+$state-info-bg:                  $brand-info;
+$state-info-border:              $brand-info;
 
-$state-warning-text:             #8a6d3b;
-$state-warning-bg:               #fcf8e3;
-$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%);
+$state-warning-text:             #fff;
+$state-warning-bg:               $brand-warning;
+$state-warning-border:           $brand-warning;
 
-$state-danger-text:              #a94442;
-$state-danger-bg:                #f2dede;
-$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%);
+$state-danger-text:              #fff;
+$state-danger-bg:                $brand-danger;
+$state-danger-border:            $brand-danger;
 
 
 //== Tooltips
@@ -765,8 +771,8 @@ $thumbnail-caption-padding:   9px;
 //
 //##
 
-$well-bg:                     #f5f5f5;
-$well-border:                 darken($well-bg, 7%);
+$well-bg:                     $gray-lighter;
+$well-border:                 $gray-light;
 
 
 //== Badges

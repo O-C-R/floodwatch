@@ -26,14 +26,14 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
       'disabled': true
     }
 
-    if (filter.name == 'age') {
+    if (filter.name === 'age') {
       if (userData.birth_year) {
         thisFilter.disabled = false
       }
     } else {
       const myKey = DemographicKeys.category_to_id[filter.name];
       const thisKey = _.find(DemographicKeys.demographic_keys, function(dk) {
-        return dk.category_id == myKey
+        return dk.category_id === myKey
       })
       if (thisKey) {
         thisFilter.disabled = false;
@@ -46,10 +46,11 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
     if (m.disabled) {
       return m
     }
+    return false
   })
 
   return {
-    disabled: (needed.length == 0) ? false : true,
+    disabled: (needed.length === 0) ? false : true,
     required: needed
   }
 }
@@ -58,7 +59,7 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
   let disabled = true;
 
   // age works a lil differently 
-  if (category == 'age') {
+  if (category === 'age') {
     if (userData.birth_year) {
       return {
         disabled: false,
@@ -71,7 +72,7 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
   const myKey = DemographicKeys.category_to_id[category]
 
   const userVal = _.forEach(DemographicKeys.demographic_keys, function(dk) {
-    if (dk.category_id == myKey) {
+    if (dk.category_id === myKey) {
       return dk.category_id
     }
   })

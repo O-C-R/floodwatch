@@ -7,7 +7,6 @@ import {FWApiClient} from './api/api.js';
 import history from './common/history';
 
 import {Main} from './components/Main';
-import {SignedOut} from './components/SignedOut';
 
 import {Register} from './components/Register';
 import {RegisterDemographics} from './components/RegisterDemographics';

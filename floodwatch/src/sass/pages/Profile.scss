@@ -1,34 +1,70 @@
 .profile-page {
-    background-color:white;
-    border-radius:10px;
-    padding:20px;
+    &_option {
+        border-bottom: 1px solid $gray-lighter;
+        padding-top: 40px;
+        padding-bottom: 40px;
 
-    .demographic-category {
-        margin-bottom:50px;
+        &:first-child {
+            border-top: 1px solid $gray-lighter;
+        }
+    
+        &_header {
+            margin-bottom: 15px;
+
+            &_instruction {
+                margin-top: -5px;
+                opacity: 0.5;
+                font-style: italic;
+            }
+        }
     }
 
-    .demographic-category .input-wrapper{
-        margin-left:5px;
+    &_learnmore {
+        opacity: 0.5;
+        cursor: pointer;
+        color: $gray-base;
+        margin-left: 5px;
+
+        transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        &.open {
+            opacity: 1;
+            color: $brand-primary;
+        }
     }
 
-    .learn-more {
-        margin-left:5px;
+    &_actions {
+        text-align: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+
+        &_submit {
+
+        }
     }
 
-    #profile-explanation {
-        margin-bottom:5px;
-    }
+    .autocomplete {
+        width: 100%;
 
-    h4 {
-        font-weight:500;
-    }
+        &_input {
+            margin-right: 0;
+        }
 
-    #submit-button {
-        background-color:lightblue;
-        width:100%;
-    }
+        &_options {
+            padding: 15px 20px;
+            background-color: $gray-base;
+            color: white;
+            cursor: pointer;
+            border-bottom: solid 1px $gray-darker;
 
-    .learn-more {
-        font-style: italic;
+            &.current {
+                background-color: $brand-primary;
+                border-bottom-color: $brand-primary;
+            }
+        }
     }
 }

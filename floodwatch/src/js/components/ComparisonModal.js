@@ -45,11 +45,11 @@ export class ComparisonModal extends Component {
   }
 
   handleCustomClick(side: string): void {
-    if (side == 'right') {
+    if (side === 'right') {
       this.setState({
         rightIsCustom: true
       })
-    } else if (side == 'left') {
+    } else if (side === 'left') {
       this.setState({
         leftIsCustom: true
       })
@@ -57,11 +57,11 @@ export class ComparisonModal extends Component {
   }
 
   changeCategoriesPreset(side: string, obj: Preset): void {
-    if (side == 'right') {
+    if (side === 'right') {
       this.setState({
         rightIsCustom: false
       })
-    } else if (side == 'left') {
+    } else if (side === 'left') {
       this.setState({
         leftIsCustom: false
       })

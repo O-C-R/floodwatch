@@ -34,7 +34,7 @@ export class APIClient {
       throw new APIError('HTTP error');
     }
 
-    if (res.status == 401) {
+    if (res.status === 401) {
       log.error('Bad auth while POSTing', url.toString(), await res.text());
       throw new AuthenticationError();
     } else if (!res.ok) {
@@ -68,7 +68,7 @@ export class APIClient {
       throw new APIError('HTTP error');
     }
 
-    if (res.status == 401) {
+    if (res.status === 401) {
       log.error('Bad auth while GETing', url.toString(), await res.text());
       throw new AuthenticationError();
     } else if (!res.ok) {
@@ -94,7 +94,7 @@ export class APIClient {
 
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
-    if (res.status == 204) {
+    if (res.status === 204) {
       return null
     }
     return res.json();

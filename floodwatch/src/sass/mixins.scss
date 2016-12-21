@@ -18,12 +18,12 @@
 
 // Components
 @import "bootstrap/mixins/alerts";
-@import "bootstrap/mixins/buttons";
+	@import "custom/mixins/buttons";
 @import "bootstrap/mixins/panels";
 @import "bootstrap/mixins/pagination";
-@import "bootstrap/mixins/list-group";
+	@import "custom/mixins/list-group";
 @import "bootstrap/mixins/nav-divider";
-@import "bootstrap/mixins/forms";
+	@import "custom/mixins/forms";
 @import "bootstrap/mixins/progress-bar";
 @import "bootstrap/mixins/table-row";
 
