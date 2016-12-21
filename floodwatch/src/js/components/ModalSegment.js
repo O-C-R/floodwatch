@@ -20,9 +20,6 @@ type PropsType = {
 
 export class ModalSegment extends Component {
   props: PropsType;
-  constructor(props: PropsType){
-    super(props);
-  }
 
   render() {
     let elem;

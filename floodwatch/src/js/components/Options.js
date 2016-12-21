@@ -40,7 +40,7 @@ export class CustomOptions extends Component {
 
       let thisCategorysSelection;
       const index = _.findIndex(this.props.currentSelection, function(selection) {
-        return selection.name == item.name;
+        return selection.name === item.name;
       })
 
 
@@ -82,7 +82,7 @@ export class OptionDropdown extends Component {
       let requirements = shouldPresetBeDisabled(this.props.userData, item)
         // tk
         // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
-      if (requirements.disabled == false) {
+      if (requirements.disabled === false) {
         return  <MenuItem key={i}
                                 disabled={requirements.disabled}
                                 onClick={this.props.handlePresetClick.bind(this, item, this.props.side)}>

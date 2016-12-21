@@ -1,7 +1,6 @@
 // @flow
 
 import React, {Component} from 'react';
-import {withRouter} from 'react-router';
 import {FWApiClient} from '../api/api';
 import history from '../common/history';
 

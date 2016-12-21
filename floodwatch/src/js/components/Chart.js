@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
 import * as d3 from 'd3';
 import _ from 'lodash';
 
@@ -41,13 +40,12 @@ export class Chart extends Component {
     const ctx = this;
     let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
     let defs = svg.append('defs')
-    console.log(ctx.props.side)
 
     const keys = Object.keys(colors)
 
     _.forEach(keys, (key: string) => {
       const myStartColor = (ctx.props.side === 'left') ? colors[key][1] : colors[key][0]
-      const myEndColor = (ctx.props.side == 'left') ? colors[key][0]: colors[key][1]
+      const myEndColor = (ctx.props.side === 'left') ? colors[key][0]: colors[key][1]
 
       let thisGradient = defs.append('linearGradient')
         .attr('id', key.replace(/[\/\s,\-!]+/g, '') + this.props.side)
@@ -79,14 +77,14 @@ export class Chart extends Component {
   drawRects(svg: any, mydata: Array<Array<StackedData>>): void {
     // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
 
-    if (mydata.length == 0) {
+    if (mydata.length === 0) {
       return
     }
 
     const data = _.cloneDeep(mydata)
     let ctx = this;
 
-    if (data[0] == undefined) {
+    if (data[0] === undefined) {
       return;
     }
 
@@ -170,13 +168,13 @@ export class Chart extends Component {
       })
       .attr('width', '100%')
       .attr('stroke', (d: Object): string => {
-        if (d.name == this.props.currentTopic) {
+        if (d.name === this.props.currentTopic) {
           return 'white'
         }
         return 'transparent'
       })
       .attr('stroke-width', (d: Object): number => {
-        if (d.name == this.props.currentTopic) {
+        if (d.name === this.props.currentTopic) {
           return 3
         }
         return 0

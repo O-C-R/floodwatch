@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import $ from 'jquery';
 import d3 from 'd3';
 import _ from 'lodash';
 
@@ -11,8 +10,8 @@ import {ComparisonModal} from './ComparisonModal';
 import {FWApiClient} from '../api/api';
 
 import type {UnstackedData} from './FilterParent';
-import type {PresetsAndFilters, Preset, Filter, FilterLogic} from './filtertypes'
-import type {PersonResponse, FilterRequest, FilterRequestItem} from '../api/types';
+import type {Preset, Filter, FilterLogic} from './filtertypes'
+import type {PersonResponse, FilterRequestItem} from '../api/types';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import Filters from '../../stubbed_data/filter_response.json';
@@ -21,24 +20,24 @@ import TopicKeys from '../../stubbed_data/topic_keys.json';
 // import '../../Compare.css';
 
 const UNKNOWN = _.findKey(TopicKeys, (topic) => {
-  return (topic == 'Unknown')
+  return (topic === 'Unknown')
 })
 
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
-  if (options.length == 0) {
+  if (options.length === 0) {
     sentence = 'All ' + sentence;
     return sentence
   }
 
-  if (options[0].name == 'data') {
+  if (options[0].name === 'data') {
     return 'You'
   }
 
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
-    if (opt.logic == 'NOR') {
+    if (opt.logic === 'NOR') {
       logic = ' Non-';
       choices = opt.choices.join(', non-')
     } else {
@@ -124,32 +123,32 @@ export class CompareContainer extends Component {
 
   updateSearchLogic(side: string, logic: FilterLogic, filtername: string) {
     let curInfo = []
-    if (side == 'left') {
+    if (side === 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
-    } else if (side == 'right') {
+    } else if (side === 'right') {
       curInfo = _.cloneDeep(this.state.rightOptions)
     }
 
     let found = false;
     for (let i = 0; i < curInfo.length; i++) {
-      if (curInfo[i].name == filtername)  {
+      if (curInfo[i].name === filtername)  {
         curInfo[i].logic = logic
         found = true;
       }
     }
-    if (found == false) {
+    if (found === false) {
       curInfo.push({name: filtername, logic: logic, choices: []})
     }
 
-    if (side == 'left') {
+    if (side === 'left') {
       this.updateData(curInfo, this.state.rightOptions)
-    } else if (side == 'right') {
+    } else if (side === 'right') {
       this.updateData(this.state.leftOptions, curInfo)
     }
   }
 
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
-    const isPersonal = _.find(filter, f => f.name == 'data' && f.choices[0] == 'You');
+    const isPersonal = _.find(filter, f => f.name === 'data' && f.choices[0] === 'You');
     if (isPersonal) {
       return { personal: true };
     }
@@ -159,23 +158,23 @@ export class CompareContainer extends Component {
     };
 
     for (const f of filter) {
-      if (f.name == 'age') {
+      if (f.name === 'age') {
         if (f.choices[0]) {
-          const min = parseInt(f.choices[0].split('-')[0])
-          const max = parseInt(f.choices[0].split('-')[1])
+          const min = parseInt(f.choices[0].split('-')[0], 10)
+          const max = parseInt(f.choices[0].split('-')[1], 10)
           obj.age = {
             min: min,
             max: max
           }
         }
-      } else if (f.name == 'country') {
+      } else if (f.name === 'country') {
         // TK
       } else {
         const arr = [];
         const myCategoryId = DemographicKeys.category_to_id[f.name];
         for (const choice of f.choices) {
           for (const key of DemographicKeys.demographic_keys) {
-            if (key.name == choice && key.category_id == myCategoryId) {
+            if (key.name === choice && key.category_id === myCategoryId) {
               arr.push(key.id)
             }
           }
@@ -194,12 +193,12 @@ export class CompareContainer extends Component {
       return filter
     }
 
-    if (filter.demographics.length == 0) {
+    if (filter.demographics.length === 0) {
       return filter
     }
 
     for (let i = filter.demographics.length - 1; i >= 0; i--) {
-      if (filter.demographics[i].values.length == 0) {
+      if (filter.demographics[i].values.length === 0) {
         filter.demographics.splice(i, 1)
       }
     }
@@ -209,18 +208,18 @@ export class CompareContainer extends Component {
 
   changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
     let curInfo = [];
-    if (side == 'left') {
+    if (side === 'left') {
       curInfo = _.cloneDeep(this.state.leftOptions)
-    } else if (side == 'right') {
+    } else if (side === 'right') {
       curInfo = _.cloneDeep(this.state.rightOptions)
     }
 
     let found = false;
 
     for (let i = 0; i < curInfo.length; i++) {
-      if (curInfo[i].name == info.name)  {
+      if (curInfo[i].name === info.name)  {
         if (checked) {
-          if (info.name == 'age') { // special case for age
+          if (info.name === 'age') { // special case for age
             curInfo[i].choices = info.choices // treat it like a radio button: only 1 choice allowed
           } else {
             curInfo[i].choices = _.union(curInfo[i].choices, info.choices)
@@ -228,7 +227,7 @@ export class CompareContainer extends Component {
           }
         } else {
           curInfo[i].choices = _.filter(curInfo[i].choices, function(n: string) {
-            return n != info.choices[0]
+            return n !== info.choices[0]
           })
         }
 
@@ -242,27 +241,24 @@ export class CompareContainer extends Component {
 
     // fixing something stupid for when the filter is You
     for (let [index: number, info: Filter] of curInfo.entries()) {
-      if (info.name == 'data') {
+      if (info.name === 'data') {
         curInfo.splice(index, 1)
-      } else if (info.choices.length == 0) { // this feels like it should be handled by the above _.filter but it's not...
+      } else if (info.choices.length === 0) { // this feels like it should be handled by the above _.filter but it's not...
         curInfo.splice(index, 1)
       }
     }
 
-    console.log(curInfo)
-
-
-    if (side == 'left') {
+    if (side === 'left') {
       this.updateData(curInfo, this.state.rightOptions)
-    } else if (side == 'right') {
+    } else if (side === 'right') {
       this.updateData(this.state.leftOptions, curInfo)
     }
   }
 
   changeCategoriesPreset(side: string, info: Preset): void {
-    if (side == 'left') {
+    if (side === 'left') {
       this.updateData(info.filters, this.state.rightOptions)
-    } else if (side == 'right') {
+    } else if (side === 'right') {
       this.updateData(this.state.leftOptions, info.filters)
     }
   }
@@ -278,20 +274,20 @@ export class CompareContainer extends Component {
     let sentence = '';
     const prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
 
-    if (this.state.currentTopic == UNKNOWN) {
+    if (this.state.currentTopic === UNKNOWN) {
       return sentence
     }
 
     // Math.sign isn't supported on Chromium fwiw
-    if (prc == -Infinity) {
+    if (prc === -Infinity) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}.`
-    } else if (prc == 100) {
+    } else if (prc === 100) {
       sentence = `On average, ${createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.leftOptions)}.`
     } else if (prc < 0) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
     } else if (prc > 0) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
-    } else if (prc == 0) {
+    } else if (prc === 0) {
       sentence = `${createSentence(this.state.leftOptions)} and ${createSentence(this.state.rightOptions)} see the same amount of ${TopicKeys[this.state.currentTopic]} ads.`;
     }
 
@@ -328,7 +324,7 @@ export class CompareContainer extends Component {
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
     return (
-      <Row className="main">
+      <Row className="main compare">
         <Col xs={12}>
           <Row>
             <Col xs={5} xsOffset={1}>
@@ -353,13 +349,13 @@ export class CompareContainer extends Component {
           </Row>
           <Row>
             <Col xs={10} xsOffset={1}>
-              <p className="centered"><h3>{sentence}</h3></p>
+              <p className="centered h3">{sentence}</p>
             </Col>
           </Row>
           <Row>
-            <p className="centered">
-              <button className="btn btn-default button">Share finding</button>
-              <button className="btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
+            <p className="compare_actions text-center">
+              <button className="compare_actions_share btn btn-default button">Share finding</button>
+              <button className="compare_actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
             </p>
           </Row>
         </Col>

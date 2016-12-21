@@ -23,10 +23,6 @@ type PropType = {
 export class CustomFilter extends Component {
   props: PropType;
 
-  constructor(props: PropType) {
-    super(props);
-  }
-
   updateSearchLogic(event: any) {
     this.props.updateSearchLogic(event.target.value, event.target.name.split(this.props.side)[1])
   }
@@ -37,7 +33,7 @@ export class CustomFilter extends Component {
 
     if (this.props.filter.category_id) {
       myOptions = _.filter(DemographicKeys.demographic_keys, (opt: DemographicDictionary) => {
-        return opt.category_id == this.props.filter.category_id
+        return opt.category_id === this.props.filter.category_id
       })
     }
 
@@ -86,7 +82,7 @@ export class CustomFilter extends Component {
 
     let select = this.generateLogicSelectors();
 
-    if (elems.length == 0) {
+    if (elems.length === 0) {
       elems.push(`Unlock by adding your ${this.props.filter.name} information to your profile.`)
     } else {
       elems.unshift(select)
@@ -107,10 +103,10 @@ export class CustomFilter extends Component {
     const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or'
 
     let or, and, nor;
-    or = <Radio className="logic-option" checked={logicSelection == 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
-    if (this.props.filter.name != 'age') {
-      and = <Radio className="logic-option" checked={logicSelection == 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of these</Radio>
-      nor = <Radio className="logic-option" checked={logicSelection == 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of these</Radio>
+    or = <Radio className="logic-option" checked={logicSelection === 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
+    if (this.props.filter.name !== 'age') {
+      and = <Radio className="logic-option" checked={logicSelection === 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of these</Radio>
+      nor = <Radio className="logic-option" checked={logicSelection === 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of these</Radio>
     }
 
     let select = <div>

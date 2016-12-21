@@ -1,7 +1,6 @@
 // @flow
 
 import React, {Component} from 'react';
-import { withRouter } from 'react-router';
 
 import {FWApiClient} from '../api/api';
 import history from '../common/history';
@@ -66,6 +65,9 @@ export class Login extends Component {
           case 401:
             this.setState({error: 'Username or password incorrect.' });
             break;
+          default:
+            
+          break;
         }
       } else {
         this.setState({error: 'A server error occurred.' });
