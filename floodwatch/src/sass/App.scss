@@ -13,6 +13,24 @@
 @import "pages/compare";
 @import "pages/profile";
 
+* {
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	font-weight: inherit;
+
+	text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+
+	box-sizing: border-box;
+}
+
+#row-top {
+	.alert {
+		margin-bottom: 0;
+	}
+}
 
 a.anchor {
 	color: $gray-base;

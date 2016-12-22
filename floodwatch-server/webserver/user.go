@@ -89,6 +89,7 @@ func Login(options *Options) http.Handler {
 			Value:    sessionID.String(),
 			Domain:   req.URL.Host,
 			HttpOnly: true,
+			MaxAge:   60 * 60 * 24 * 365, // 1 year
 			Secure:   req.TLS != nil,
 		}
 		http.SetCookie(w, cookie)

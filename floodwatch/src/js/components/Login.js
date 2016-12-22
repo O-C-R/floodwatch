@@ -1,6 +1,7 @@
 // @flow
 
 import React, {Component} from 'react';
+import {Row, Col} from 'react-bootstrap';
 
 import {FWApiClient, AuthenticationError} from '../api/api';
 import history from '../common/history';
@@ -66,27 +67,32 @@ export class Login extends Component {
   }
 
   render() {
+
     return (
-      <div className="row">
-        <div className="col-md-12">
-          <h3>Login.</h3>
-          <p></p>
-        </div>
-        <div className="col-md-12">
-            <form onSubmit={this.handleSubmit.bind(this)}>
-              <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: 'none'}}>
-                <strong>Login failed.</strong> {this.state.error}
-              </div>
-              <div className="form-group">
-                <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
-              </div>
-              <div className="form-group">
-                <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
-              </div>
-              <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
-            </form>
-        </div>
-      </div>
+      <Row>
+        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+          {this.state.error &&
+            <div className="alert alert-danger" role="alert">
+              Login failed. {this.state.error}
+            </div> }
+
+          <div className="panel">
+            <div className="panel-container">
+              <h1>Login</h1>
+
+              <form onSubmit={this.handleSubmit.bind(this)}>
+                <div className="form-group">
+                  <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
+                </div>
+                <div className="form-group">
+                  <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
+                </div>
+                <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
+              </form>
+            </div>
+          </div>
+        </Col>
+      </Row>
     )
   }
 }

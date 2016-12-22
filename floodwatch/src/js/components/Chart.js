@@ -1,292 +1,310 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
+
 import * as d3 from 'd3';
 import _ from 'lodash';
 
 import colors from './colors'
-import type {StackedData} from './FilterParent'
-
 import TopicKeys from '../../stubbed_data/topic_keys.json';
+import {createSentence} from './Compare';
+
+import type {UnstackedData, VisibilityMap} from './Compare';
+
+type StackedData = Array<{
+  name: string,
+  id: string,
+  y: number,
+  height: number,
+  value: number
+}>
 
 type PropsType = {
-  barData: Array<Array<StackedData>>,
-  currentTopic: string,
   side: string,
-  updateMouseOver: (topic: string) => void
+  data: UnstackedData,
+  sentence: string,
+  visibilityMap: VisibilityMap,
+  currentTopic: ?string,
+  mouseEnterHandler: (topic: string) => void,
+  mouseLeaveHandler: (topic: string) => void
 };
 
 type StateType = {
   height: number,
-  svg?: mixed
+  svg?: any,
+  defs? : any
 };
 
-function initialState(): StateType {
+function initialState():StateType {
   return {
-    height:500
+    height : 500
   }
 }
 
 export class Chart extends Component {
-  state: StateType;
-  props: PropsType;
+  props: PropsType
+  state: StateType
 
-  constructor(props: PropsType): void {
+  constructor(props: PropsType) {
     super(props);
-    this.state = initialState();
+
+    this.state = initialState()
   }
 
-  componentDidMount(): void {
-    const ctx = this;
-    let svg = d3.select('.svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', ctx.state.height)
+  componentDidMount() {
+    let svg = d3.select('.chart_svg-' + this.props.side).append('svg').attr('width', '100%').attr('height', this.state.height)
     let defs = svg.append('defs')
 
-    const keys = Object.keys(colors)
-
-    _.forEach(keys, (key: string) => {
-      const myStartColor = (ctx.props.side === 'left') ? colors[key][1] : colors[key][0]
-      const myEndColor = (ctx.props.side === 'left') ? colors[key][0]: colors[key][1]
-
-      let thisGradient = defs.append('linearGradient')
-        .attr('id', key.replace(/[\/\s,\-!]+/g, '') + this.props.side)
-        .attr('x1', '0%')
-        .attr('x2', '100%')
-        .attr('y1', '0%')
-        .attr('y2', '0%');
-
-      thisGradient.append('stop')
-        .attr('class', 'start')
-        .attr('offset', '20%')
-        .attr('stop-color', myStartColor)
-        .attr('stop-opacity', 1);
-
-      thisGradient.append('stop')
-        .attr('class', 'end')
-        .attr('offset', '90%')
-        .attr('stop-color', myEndColor)
-        .attr('stop-opacity', 1);
-
-    })
-
-    this.drawRects(svg, this.props.barData);
     this.setState({
-      svg: svg,
+      svg,
+      defs
     })
   }
 
-  drawRects(svg: any, mydata: Array<Array<StackedData>>): void {
-    // Some of this  d3is redundant, but it's tricky to strip out before testing it with the query changer. Willfix.
+  processData(data: UnstackedData, visibilityMap: VisibilityMap):StackedData {
+    let processedData = []
+    let totalValue = 0;
+    let other = 0;
 
-    if (mydata.length === 0) {
-      return
+    /**
+     *
+     * Create structure
+     *
+     */
+
+    for (let catId in data) {
+
+      if (visibilityMap[catId] === "show") {
+
+        let obj = {
+          name : TopicKeys[catId],
+          value : data[catId],
+          id : catId,
+          y : 0,
+          height : 0
+        }
+        processedData.push(obj)
+        totalValue += data[catId]
+
+      } else if (visibilityMap[catId] === "other") {
+
+        other += data[catId]
+        totalValue += data[catId]
+
+      }
     }
 
-    const data = _.cloneDeep(mydata)
-    let ctx = this;
+    /**
+     *
+     * Sort
+     *
+     */
 
-    if (data[0] === undefined) {
-      return;
-    }
-
-    const x = d3.scale.ordinal()
-      .rangeRoundBands([0, 1000], 0)
-      .domain(data[0].map((d: Object): number => {
-        return d.x;
-      }));
-    
-
-    const y = d3.scale.linear()
-      .range([ctx.state.height, 0])
-      .domain([0,
-      d3.max(data[data.length - 1],
-        (d: Object): number => { return d.y0 + d.y;})
-      ])
-
-
-    let layer = svg.selectAll('.stack')
-      .data(data)
-            
-
-    layer.enter().append('g')
-      .attr('class', 'stack ')
-      .attr('width', '100%')
-      .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
-      })
-
-    layer.data(data)
-      .attr('fill', (d: Object): string => {
-        return 'url(#' + TopicKeys[d[0].name].replace(/[\/\s,\-!]+/g, '') + ctx.props.side + ')'
-      })
-
-    layer.exit().remove()
-
-
-
-    let rect = layer.selectAll('rect')
-      .data((d: Object): Object => {
-        return d
-      })
-
-    rect.enter().append('rect')
-      .attr('x', (d: Object): number => {
-        return x(d.x);
-      })
-      .attr('y', (d: Object): number => {
-        return y(d.y + d.y0);
-      })
-      .attr('height', (d: Object): number => {
-        return y(d.y0) - y(d.y + d.y0);
-      })
-      .attr('class', (d: Object): string => {
-        return (d.name.toLowerCase())
-      })
-      .attr('width', '100%')
-      .on('click', (d: Object): void => {
-        this.props.updateMouseOver(d.name)
-      })
-      .style('overflowY', 'hidden')
-
-
-    rect.exit()
-      .transition()
-      .attr('width', 0)
-      .remove()
-
-    rect.data((d: Object): Object => {
-      return d
+    processedData.sort((a,b):number => {
+      if (a.value < b.value) return 1
+      if (a.value > b.value) return -1
+      else return 0
     })
+
+    /**
+     *
+     * Add other
+     *
+     */
+
+    processedData.push(
+      {
+        name : "Other",
+        id : "Other",
+        value : other,
+        y : 0,
+        height : 0
+      }
+    )
+
+    /**
+     *
+     * Map Height and get Y
+     *
+     */
+
+    let scaleHeight = d3.scale.linear()
+      .domain([0, totalValue])
+      .range([0, this.state.height])
+
+    processedData.map((item, index) => {
+      item.height = Math.floor(scaleHeight(item.value))
+
+      let count = 0;
+      for (let i = 0; i < index; i++) {
+        count += processedData[i].height
+      }
+      item.y = count
+
+      // Correct the offset due to the floor
+      if (index === processedData.length-1) item.height = this.state.height - count
+
+      return item
+    })
+
+    return processedData
+  }
+
+  drawChart(data:StackedData) {
+    if (this.state.svg && this.state.defs) {
+      const svg = this.state.svg
+      const defs = this.state.defs
+
+    let rects = svg.selectAll('rect').data(data)
+    let names = svg.selectAll('text.name').data(data)
+    let percentages = svg.selectAll('text.percentage').data(data)
+    let grads = defs.selectAll('linearGradient').data(data)
+
+    // Enter
+    rects.enter().append('rect')
+      .attr('x', 0)
+      .attr('width', "100%")
+      .on('mouseenter', (d) => {
+        this.props.mouseEnterHandler(d.id)
+      })
+      .on('mouseleave', (d) => {
+        this.props.mouseLeaveHandler(d.id)
+      })
+      .attr('fill', (d, i) => {
+        return "url(#"+ this.props.side + i +")"
+      })
+
+    names.enter().append('text')
+      .attr('fill', '#FFF')
+      .attr('text-anchor', 'middle')
+      .attr('x', "50%")
+      .attr('class', (d) => {
+        if (d.height < 20) return 'name xsmall'
+        if (d.height < 30) return 'name small'
+        return 'name'
+      })
+
+    percentages.enter().append('text')
+      .attr('fill', '#FFF')
+      .attr('text-anchor', 'middle')
+      .attr('x', "50%")
+      .attr('class', "percentage")
+
+    grads.enter().append('linearGradient')
+      .attr('id', (d, i) => {
+        return this.props.side + i
+      })
+      .selectAll("stop")
+        .data( (d) => {
+          if ( this.props.side === "right" ) return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
+          else return [ { offset : 0, color : colors[d.name][1] }, { offset : 1, color : colors[d.name][0] }]
+
+        })
+        .enter().append("stop")
+        .attr('class', (d) => {
+          return "color_" + d.offset
+        })
+            .attr("offset", function(d) { return d.offset; })
+            .attr("stop-color", function(d) { return d.color; });
+
+    // Update
+    rects
       .transition()
-      .attr('x', (d: Object): number => {
-        return x(d.x);
+        .duration(200)
+        .attr('fill-opacity', (d) => {
+          if(this.props.currentTopic === null) {
+            return 1
+          } else if (this.props.currentTopic === d.id) {
+            return 1
+          }
+          return 0.1
+        })
+        .attr('height', (d, i) => {
+          return (d.height >= 1.5 ? d.height : 0)
+        })
+        .attr('y', (d, i) => {
+            return d.y
+        })
+
+    names
+      .text((d) => {
+        return d.name
       })
-      .attr('y', (d: Object): number => {
-        return y(d.y + d.y0) 
+      .attr('class', (d) => {
+        if (d.height < 20) return 'name xsmall'
+        if (d.height < 30) return 'name small'
+        return 'name'
       })
-      .attr('height', (d: Object): number => {
-        return y(d.y0) - y(d.y + d.y0);
+      .transition()
+      .duration(200)
+      .attr('fill-opacity', (d) => {
+        return 1
+        //return 0
       })
-      .attr('width', '100%')
-      .attr('stroke', (d: Object): string => {
-        if (d.name === this.props.currentTopic) {
-          return 'white'
-        }
-        return 'transparent'
+      .attr('y', (d, i) => {
+        return d.y + d.height / 2 + 4
       })
-      .attr('stroke-width', (d: Object): number => {
-        if (d.name === this.props.currentTopic) {
-          return 3
-        }
+
+    percentages
+      .text((d) => {
+        return Math.floor(d.value*100) + "%"
+      })
+      .transition()
+      .duration(200)
+      .attr('fill-opacity', (d) => {
+        if (d.height > 70) return
         return 0
       })
-
-    let text = layer.selectAll('.text-label')
-      .data((d: Object): Object => {
-        return d
+      .attr('y', (d, i) => {
+        return d.y + d.height / 2 + 20
       })
 
-    text.enter().append('text')
-      .attr('x','50%')
-      .attr('fill', 'white')
-      .text((d: Object): string => {
-        if (d.y > 0.03) {
-          const myName = TopicKeys[+d.name];
-          return myName + ' ads'
-        } 
-        return ''
-      })
-      .attr('class', 'text-label')
-      .attr('text-anchor', 'middle')
-      .on('click', (d: Object): void => {
-        this.props.updateMouseOver(d.name)
+    grads
+        .selectAll("stop")
+        .data( (d) => {
+          if ( this.props.side === "right" ) return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
+          else return [ { offset : 0, color : colors[d.name][1] }, { offset : 1, color : colors[d.name][0] }]
       })
 
+        .transition()
+        .duration(200)
 
-    text.exit()
-      .transition()
-      .remove()
-
-    text.data((d: Object): Object => {
-      return d
-    })
-      .transition()
-      .attr('x', '50%')
-      .attr('y', (d: Object): number => {
-        return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2)
+      .attr("offset", (d) => {
+        return d.offset
       })
-      .text((d: Object): mixed => {
-        if (d.y > .03) {
-          const myName = TopicKeys[+d.name];
-          return myName + ' ads'
-        } 
-        return ''
-      })
-            
-
-    let percentage = layer.selectAll('.text-number')
-      .data((d: Object): Object => {
-        return d
+      .attr("stop-color", (d) => {
+        return d.color
       })
 
-    percentage.enter().append('text').attr('class', 'text-number')
-      .attr('x', '50%')
-      .attr('y', (d: Object): number => {
-        return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
-      })
-      .text((d: Object): string =>{ 
-        if (d.y > 0.05) {
-          return Math.floor((d.y)*100) + '%'
-        }
-        return ''
-      })
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'white')
-      .style('font-size', '8px')
+    // Exit
+    rects.exit().remove()
+    names.exit().remove()
+    percentages.exit().remove()
+    grads.exit().remove()
 
-
-    percentage.data((d: Object): Object => { return d })
-      .attr('x', '50%')
-      .attr('y', (d: Object): number => {
-        return (y(d.y + d.y0) + (y(d.y0) - y(d.y + d.y0))/2) + 9
-      })
-      .text((d: Object): mixed => { 
-        if (d.y > 0.05) {
-          return Math.floor((d.y)*100) + '%'
-        }
-        return ''
-      })
-    
-    layer = svg.selectAll('.stack')
-      .data(data)
-      .exit().remove()
-
-    layer.selectAll('rect')
-      .data((d: Object): Object => {
-        return d
-      })
-      .exit().remove()
-  
-  }
-
-
-  componentDidUpdate(): void {
-    if (this.state.svg) {
-      this.drawRects(this.state.svg, this.props.barData)  
     }
   }
 
   render() {
-    let pDisplay = (this.props.barData.length > 0) ? 'none' : 'block';
-    let chartDisplay = (this.props.barData.length > 0) ? 'block' : 'none';
+    this.drawChart(this.processData(this.props.data, this.props.visibilityMap))
 
+    const chart = <div className={`chart_svg chart_svg-${this.props.side} show`}></div>;
 
-
-    return  (
-      <div>
-      <p style={{display: pDisplay}}>Not enough results for this demographic. Please try another category.</p>
-      <div style={{display:chartDisplay}} className={'chart_svg svg-' + this.props.side}>
-      </div>
-      </div>
-    )
+    if (this.props.side == 'left') {
+      return (
+        <div>
+          <Col xs={12} md={4} className="sentence left-sentence">{this.props.sentence}</Col>
+          <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Col xs={12} md={4} mdPush={8} className="sentence right-sentence">{this.props.sentence}</Col>
+          <Col xs={12} md={8} mdPull={4} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+        </div>
+      );
+    }
   }
 }

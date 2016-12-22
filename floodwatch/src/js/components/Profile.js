@@ -15,15 +15,17 @@ const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping 
 export class ProfilePage extends Component {
   render() {
     return (
-      <div className="profile-page panel">
-        <div className="panel-container">
-          <h3>My Profile</h3>
+      <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+        <div className="profile-page panel">
+          <div className="panel-container">
+            <h1>My Profile</h1>
+          </div>
+
           <ProfileExplanation />
-          <hr/>
           <DemographicContainer/>
           <AccountOptionsContainer/>
         </div>
-      </div>
+      </Col>
     );
   }
 }
@@ -45,7 +47,7 @@ export class ProfileExplanation extends Component {
 
   render() {
     return (
-      <div className="panel-container">
+      <div>
         <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
         <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
         { this.state.isDescriptionOpen &&

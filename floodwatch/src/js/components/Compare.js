@@ -5,11 +5,11 @@ import { Row, Col } from 'react-bootstrap';
 import d3 from 'd3';
 import _ from 'lodash';
 
-import {FilterParent} from './FilterParent';
+//import {FilterParent} from './FilterParent';
+import {Chart} from './Chart';
 import {ComparisonModal} from './ComparisonModal';
 import {FWApiClient} from '../api/api';
 
-import type {UnstackedData} from './FilterParent';
 import type {Preset, Filter, FilterLogic} from './filtertypes'
 import type {PersonResponse, FilterRequestItem} from '../api/types';
 
@@ -17,11 +17,16 @@ import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import Filters from '../../stubbed_data/filter_response.json';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
-// import '../../Compare.css';
+export type VisibilityMap = {
+  [catId : string]: "show" | "hide" | "other"
+}
 
-const UNKNOWN = _.findKey(TopicKeys, (topic) => {
-  return (topic === 'Unknown')
-})
+export type UnstackedData = {
+  [key: string]: number
+};
+
+const unknownId = "16"
+const otherBreackDown = 0.02
 
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
@@ -37,11 +42,17 @@ export function createSentence(options: Array<Filter>): string {
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
+
+    let wrappedChoices = opt.choices;
+    if (opt.name == 'age') {
+      wrappedChoices = wrappedChoices.map(c => `${c} year old`);
+    }
+
     if (opt.logic === 'NOR') {
       logic = ' Non-';
-      choices = opt.choices.join(', non-')
+      choices = wrappedChoices.join(', non-')
     } else {
-      choices = opt.choices.join(', ')
+      choices = wrappedChoices.join(', ')
     }
     sentence = logic + choices + ' ' + sentence
   })
@@ -64,9 +75,10 @@ export class Compare extends Component {
 type StateType = {
   leftOptions: Array<Filter>,
   rightOptions: Array<Filter>,
+  visibilityMap: VisibilityMap,
   leftData: UnstackedData,
   rightData: UnstackedData,
-  currentTopic: string,
+  currentTopic: ?string,
   modalVisible: boolean,
   userData: PersonResponse
 };
@@ -77,7 +89,8 @@ function CompareContainerInitialState(): Object {
     rightOptions: Filters.presets[1].filters,
     leftData: {},
     rightData: {},
-    currentTopic: '1',
+    visibilityMap: {},
+    currentTopic: null,
     modalVisible: false
   }
 }
@@ -94,11 +107,27 @@ export class CompareContainer extends Component {
     const init = async () => {
       const filterA = this.generateFilterRequestItem(this.state.leftOptions)
       const filterB = this.generateFilterRequestItem(this.state.rightOptions)
-
       const cleanedFilterA = this.cleanFilterRequest(filterA)
       const cleanedFilterB = this.cleanFilterRequest(filterB)
 
       const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({ filterA: cleanedFilterA, filterB: cleanedFilterB })
+
+      let visibilityMap = {}
+      let leftData = AdBreakdown.filterA.categories
+      let rightData = AdBreakdown.filterB.categories
+
+      for (let key in leftData) {
+        if (key !== unknownId) { // Hide cats (16 is unknown)
+          if ((leftData[key] > otherBreackDown) || (leftData[key] > otherBreackDown)) { // Make sure cats are above some percentage for both side
+            visibilityMap[key] = "show"
+          } else {
+            visibilityMap[key] = "other"
+          }
+        } else {
+          visibilityMap[key] = "hide"
+        }
+      }
+
       const FilterATopic = d3.entries(AdBreakdown.filterA.categories).sort(function(a, b) {
         return d3.descending(a.value, b.value);
       })[0]
@@ -106,18 +135,27 @@ export class CompareContainer extends Component {
       const UserData = await FWApiClient.get().getCurrentPerson()
 
       this.setState({
-        leftData: AdBreakdown.filterA.categories,
-        rightData: AdBreakdown.filterB.categories,
-        currentTopic: FilterATopic.key,
+        leftData,
+        rightData,
+        visibilityMap,
+        currentTopic: null,
         userData: UserData
       })
     }
     init();
   }
 
-  updateMouseOver(newTopic: string): void {
+  mouseEnterHandler(newTopic: string): void {
+    if (newTopic !== "Other") {
+      this.setState({
+        currentTopic: newTopic
+      })
+    }
+  }
+
+  mouseLeaveHandler() {
     this.setState({
-      currentTopic: newTopic
+      currentTopic: null
     })
   }
 
@@ -203,7 +241,6 @@ export class CompareContainer extends Component {
       }
     }
     return filter
-
   }
 
   changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
@@ -274,17 +311,13 @@ export class CompareContainer extends Component {
     let sentence = '';
     const prc = Math.floor(this.calculatePercentDiff(lVal, rVal))
 
-    if (this.state.currentTopic === UNKNOWN) {
-      return sentence
-    }
-
     // Math.sign isn't supported on Chromium fwiw
     if (prc === -Infinity) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.rightOptions)}.`
     } else if (prc === 100) {
       sentence = `On average, ${createSentence(this.state.rightOptions)} don't see any ${TopicKeys[this.state.currentTopic]} ads, as opposed to ${createSentence(this.state.leftOptions)}.`
     } else if (prc < 0) {
-      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
+      sentence = `On average, ${createSentence(this.state.leftOptions)} see ${Math.abs(prc)}% less ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
     } else if (prc > 0) {
       sentence = `On average, ${createSentence(this.state.leftOptions)} see ${prc}% more ${TopicKeys[this.state.currentTopic]} ads than ${createSentence(this.state.rightOptions)}.`;
     } else if (prc === 0) {
@@ -319,46 +352,48 @@ export class CompareContainer extends Component {
   }
 
   render() {
-    const lVal = this.state.leftData[this.state.currentTopic];
-    const rVal = this.state.rightData[this.state.currentTopic];
+    const lVal = this.state.currentTopic ? this.state.leftData[this.state.currentTopic] : 0;
+    const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
-    return (
-      <Row className="main compare">
-        <Col xs={12}>
-          <Row>
-            <Col xs={5} xsOffset={1}>
-              <FilterParent
-                className="chart"
-                side="left"
-                data={this.state.leftData}
-                currentSelection={this.state.leftOptions}
-                currentTopic={this.state.currentTopic}
-                updateMouseOver={this.updateMouseOver.bind(this)}/>
-            </Col>
+    const lSentence = createSentence(this.state.leftOptions);
+    const rSentence = createSentence(this.state.rightOptions);
 
-            <Col xs={5}>
-              <FilterParent
-                className="chart"
-                side="right"
-                data={this.state.rightData}
-                currentSelection={this.state.rightOptions}
-                currentTopic={this.state.currentTopic}
-                updateMouseOver={this.updateMouseOver.bind(this)}/>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={10} xsOffset={1}>
-              <p className="centered h3">{sentence}</p>
-            </Col>
-          </Row>
-          <Row>
-            <p className="compare_actions text-center">
-              <button className="compare_actions_share btn btn-default button">Share finding</button>
-              <button className="compare_actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
-            </p>
-          </Row>
-        </Col>
+    return (
+      <div className="main compare">
+        <Row className="chart-container">
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="left"
+              data={this.state.leftData}
+              sentence={lSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="right"
+              data={this.state.rightData}
+              sentence={rSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+            <h3 className="chart-sentence">{sentence}</h3>
+
+            <div className="chart-actions">
+              <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
+            </div>
+          </Col>
+        </Row>
+
         <ComparisonModal
           visible={this.state.modalVisible}
           toggleModal={this.toggleComparisonModal.bind(this)}
@@ -368,7 +403,7 @@ export class CompareContainer extends Component {
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
           updateSearchLogic={this.updateSearchLogic.bind(this)}
           userData={this.state.userData}/>
-      </Row>
+      </div>
     )
   }
 }
