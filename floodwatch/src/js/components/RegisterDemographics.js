@@ -34,8 +34,8 @@ export class RegisterDemographics extends Component {
         <div className="panel-container">
           <h1>Your profile</h1>
           <ProfileExplanation />
-          <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
         </div>
+        <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
       </div>
     );
   }
