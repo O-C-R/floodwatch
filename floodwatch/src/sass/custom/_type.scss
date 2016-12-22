@@ -13,7 +13,7 @@ h1, h2, h3, h4, h5, h6,
 
 h1, .h1 {
 	position: relative;
-
+	
 	margin-bottom: 20px;
 
 	&::after {
@@ -31,7 +31,7 @@ h1, .h1 {
 
 h2, .h2,
 h3, .h3 {
-  margin-top: $line-height-computed + 20;
+  margin-top: $line-height-computed + 15;
   margin-bottom: ($line-height-computed / 2) + 10;
 
   // small,
