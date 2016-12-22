@@ -12,6 +12,11 @@
 @import "pages/compare";
 @import "pages/profile";
 
+#row-top {
+	.alert {
+		margin-bottom: 0;
+	}
+}
 
 a.anchor {
 	color: $gray-base;
