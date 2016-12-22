@@ -350,24 +350,33 @@ export class CompareContainer extends Component {
     const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
+    const lSentence = createSentence(this.state.leftOptions);
+    const rSentence = createSentence(this.state.rightOptions);
+
     return (
       <div className="main compare">
-        <div className="chart-container">
-          <Chart
-            side="left"
-            data={this.state.leftData}
-            visibilityMap={this.state.visibilityMap}
-            currentTopic={this.state.currentTopic}
-            mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-            mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
-          <Chart
-            side="right"
-            data={this.state.rightData}
-            visibilityMap={this.state.visibilityMap}
-            currentTopic={this.state.currentTopic}
-            mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-            mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
-        </div>
+        <Row className="chart-container">
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="left"
+              data={this.state.leftData}
+              sentence={lSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="right"
+              data={this.state.rightData}
+              sentence={rSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+        </Row>
 
         <p className="chart-sentence h3">{sentence}</p>
 
