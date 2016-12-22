@@ -1,11 +1,14 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
+
 import * as d3 from 'd3';
 import _ from 'lodash';
 
 import colors from './colors'
 import TopicKeys from '../../stubbed_data/topic_keys.json';
+import {createSentence} from './Compare';
 
 import type {UnstackedData, VisibilityMap} from './Compare';
 
@@ -20,6 +23,7 @@ type StackedData = Array<{
 type PropsType = {
   side: string,
   data: UnstackedData,
+  sentence: string,
   visibilityMap: VisibilityMap,
   currentTopic: ?string,
   mouseEnterHandler: (topic: string) => void,
@@ -285,11 +289,22 @@ export class Chart extends Component {
   render() {
     this.drawChart(this.processData(this.props.data, this.props.visibilityMap))
 
-    return(
-      <div className="chart">
-        <p className="chart_sentence"></p>
-        <div className={"chart_svg chart_svg-" + this.props.side + " " + "show"}></div>
-      </div>
-    )
+    const chart = <div className={`chart_svg chart_svg-${this.props.side} show`}></div>;
+
+    if (this.props.side == 'left') {
+      return (
+        <div>
+          <Col xs={12} md={4} className="sentence left-sentence">{this.props.sentence}</Col>
+          <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <Col xs={12} md={4} mdPush={8} className="sentence right-sentence">{this.props.sentence}</Col>
+          <Col xs={12} md={8} mdPull={4} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+        </div>
+      );
+    }
   }
 }

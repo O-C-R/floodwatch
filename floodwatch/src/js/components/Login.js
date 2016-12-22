@@ -1,6 +1,7 @@
 // @flow
 
 import React, {Component} from 'react';
+import {Row, Col} from 'react-bootstrap';
 
 import {FWApiClient, AuthenticationError} from '../api/api';
 import history from '../common/history';
@@ -68,14 +69,12 @@ export class Login extends Component {
   render() {
 
     return (
-      <div className="row">
-        <div className="col-md-12">
-
+      <Row>
+        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
           {this.state.error &&
             <div className="alert alert-danger" role="alert">
               Login failed. {this.state.error}
-            </div>
-          }
+            </div> }
 
           <div className="panel">
             <div className="panel-container">
@@ -92,8 +91,8 @@ export class Login extends Component {
               </form>
             </div>
           </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     )
   }
 }

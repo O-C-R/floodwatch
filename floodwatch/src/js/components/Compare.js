@@ -42,11 +42,17 @@ export function createSentence(options: Array<Filter>): string {
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
+
+    let wrappedChoices = opt.choices;
+    if (opt.name == 'age') {
+      wrappedChoices = wrappedChoices.map(c => `${c} year old`);
+    }
+
     if (opt.logic === 'NOR') {
       logic = ' Non-';
-      choices = opt.choices.join(', non-')
+      choices = wrappedChoices.join(', non-')
     } else {
-      choices = opt.choices.join(', ')
+      choices = wrappedChoices.join(', ')
     }
     sentence = logic + choices + ' ' + sentence
   })
@@ -350,30 +356,43 @@ export class CompareContainer extends Component {
     const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
+    const lSentence = createSentence(this.state.leftOptions);
+    const rSentence = createSentence(this.state.rightOptions);
+
     return (
       <div className="main compare">
-        <div className="chart-container">
-          <Chart
-            side="left"
-            data={this.state.leftData}
-            visibilityMap={this.state.visibilityMap}
-            currentTopic={this.state.currentTopic}
-            mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-            mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
-          <Chart
-            side="right"
-            data={this.state.rightData}
-            visibilityMap={this.state.visibilityMap}
-            currentTopic={this.state.currentTopic}
-            mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-            mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
-        </div>
+        <Row className="chart-container">
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="left"
+              data={this.state.leftData}
+              sentence={lSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+          <Col sm={6} xs={12} style={{ padding:0 }}>
+            <Chart
+              side="right"
+              data={this.state.rightData}
+              sentence={rSentence}
+              visibilityMap={this.state.visibilityMap}
+              currentTopic={this.state.currentTopic}
+              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
+          </Col>
+        </Row>
 
-        <p className="chart-sentence h3">{sentence}</p>
+        <Row>
+          <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+            <h3 className="chart-sentence">{sentence}</h3>
 
-        <div className="chart-actions">
-          <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
-        </div>
+            <div className="chart-actions">
+              <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
+            </div>
+          </Col>
+        </Row>
 
         <ComparisonModal
           visible={this.state.modalVisible}

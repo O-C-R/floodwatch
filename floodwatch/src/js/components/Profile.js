@@ -15,15 +15,17 @@ const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping 
 export class ProfilePage extends Component {
   render() {
     return (
-      <div className="profile-page panel">
-        <div className="panel-container">
-          <h1>My Profile</h1>
+      <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+        <div className="profile-page panel">
+          <div className="panel-container">
+            <h1>My Profile</h1>
+          </div>
+
           <ProfileExplanation />
+          <DemographicContainer/>
+          <AccountOptionsContainer/>
         </div>
-        
-        <DemographicContainer/>
-        <AccountOptionsContainer/>
-      </div>
+      </Col>
     );
   }
 }

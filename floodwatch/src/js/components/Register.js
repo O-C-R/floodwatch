@@ -96,84 +96,86 @@ export class Register extends Component {
 
   render() {
     return (
-      <div className="profile-page panel">
-        <div className="panel-container">
-          <h1>Signup to use Floodwatch.</h1>
+      <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+        <div className="panel">
+          <div className="panel-container">
+            <h1>Signup to use Floodwatch.</h1>
 
-          <Row>
-            <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
-              { this.state.error &&
-                <Alert bsStyle="danger">
-                  <strong>Registration failed.</strong> {this.state.error}
-                </Alert> }
-              <FormGroup className={(this.state.usernameFeedback ? 'has-danger' : '')}>
-                <Col componentClass={ControlLabel} sm={2} xs={12}>
-                  <label htmlFor="username">Username</label>
-                </Col>
-                <Col sm={10} xs={12}>
-                  <FormControl
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="Username"
-                    required={true}
-                    maxLength="120"
-                    pattern="\S{3,}"
-                    value={this.state.username}
-                    onChange={this.setFormState.bind(this)}
-                    ref="username" />
-                  { this.state.usernameFeedback &&
-                    <FormControl.Feedback>{this.state.usernameFeedback}</FormControl.Feedback> }
-                  <small id="usernameHelp" className="form-text text-muted">Usernames cannot contain spaces.</small>
-                </Col>
-              </FormGroup>
-              <FormGroup className="form-group">
-                <Col componentClass={ControlLabel} sm={2} xs={12}>
-                  <label htmlFor="email">Email</label><br />
-                </Col>
-                <Col sm={10} xs={12}>
-                  <input type="email" className="form-control" id="email" placeholder="Email" value={this.state.email} onChange={this.setFormState.bind(this)} />
-                  <small className="form-text text-muted">Optional - for password recovery.</small>
-                </Col>
-              </FormGroup>
-              <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
-                <Col componentClass={ControlLabel} sm={2} xs={12}>
-                  <label htmlFor="password">Password</label>
-                </Col>
-                <Col sm={10} xs={12}>
-                  <FormControl type="password"
-                    className={this.state.passwordFeedback ? 'form-control-danger' : ''}
-                    id="password"
-                    placeholder="Password"
-                    name="password"
-                    required={true}
-                    value={this.state.password}
-                    onChange={this.setFormState.bind(this)} />
-                </Col>
-              </FormGroup>
-              <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
-                <Col sm={10} smOffset={2} xs={12}>
-                  <FormControl type="password"
-                    className={this.state.passwordFeedback ? 'form-control-danger' : ''}
-                    id="passwordRepeated"
-                    name="passwordRepeated"
-                    placeholder="Retype Password"
-                    required={true}
-                    value={this.state.passwordRepeated}
-                    onChange={this.setFormState.bind(this)} />
-                  { this.state.passwordFeedback &&
-                    <FormControl.Feedback>{this.state.passwordFeedback}</FormControl.Feedback> }
-                </Col>
-              </FormGroup>
-              <FormGroup>
-                <Col sm={10} smOffset={2} xs={12}>
-                  <Button type="submit" className="btn btn-primary" id="loginInput">Register</Button>
-                </Col>
-              </FormGroup>
-            </Form>
-          </Row>
+            <Row>
+              <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
+                { this.state.error &&
+                  <Alert bsStyle="danger">
+                    <strong>Registration failed.</strong> {this.state.error}
+                  </Alert> }
+                <FormGroup className={(this.state.usernameFeedback ? 'has-danger' : '')}>
+                  <Col componentClass={ControlLabel} sm={2} xs={12}>
+                    <label htmlFor="username">Username</label>
+                  </Col>
+                  <Col sm={10} xs={12}>
+                    <FormControl
+                      type="text"
+                      id="username"
+                      name="username"
+                      placeholder="Username"
+                      required={true}
+                      maxLength="120"
+                      pattern="\S{3,}"
+                      value={this.state.username}
+                      onChange={this.setFormState.bind(this)}
+                      ref="username" />
+                    { this.state.usernameFeedback &&
+                      <FormControl.Feedback>{this.state.usernameFeedback}</FormControl.Feedback> }
+                    <small id="usernameHelp" className="form-text text-muted">Usernames cannot contain spaces.</small>
+                  </Col>
+                </FormGroup>
+                <FormGroup className="form-group">
+                  <Col componentClass={ControlLabel} sm={2} xs={12}>
+                    <label htmlFor="email">Email</label><br />
+                  </Col>
+                  <Col sm={10} xs={12}>
+                    <input type="email" className="form-control" id="email" placeholder="Email" value={this.state.email} onChange={this.setFormState.bind(this)} />
+                    <small className="form-text text-muted">Optional - for password recovery.</small>
+                  </Col>
+                </FormGroup>
+                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
+                  <Col componentClass={ControlLabel} sm={2} xs={12}>
+                    <label htmlFor="password">Password</label>
+                  </Col>
+                  <Col sm={10} xs={12}>
+                    <FormControl type="password"
+                      className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                      id="password"
+                      placeholder="Password"
+                      name="password"
+                      required={true}
+                      value={this.state.password}
+                      onChange={this.setFormState.bind(this)} />
+                  </Col>
+                </FormGroup>
+                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
+                  <Col sm={10} smOffset={2} xs={12}>
+                    <FormControl type="password"
+                      className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                      id="passwordRepeated"
+                      name="passwordRepeated"
+                      placeholder="Retype Password"
+                      required={true}
+                      value={this.state.passwordRepeated}
+                      onChange={this.setFormState.bind(this)} />
+                    { this.state.passwordFeedback &&
+                      <FormControl.Feedback>{this.state.passwordFeedback}</FormControl.Feedback> }
+                  </Col>
+                </FormGroup>
+                <FormGroup>
+                  <Col sm={10} smOffset={2} xs={12}>
+                    <Button type="submit" className="btn btn-primary" id="loginInput">Register</Button>
+                  </Col>
+                </FormGroup>
+              </Form>
+            </Row>
+          </div>
         </div>
-      </div>
+      </Col>
     );
   }
 }

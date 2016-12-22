@@ -2,6 +2,7 @@
 
 import React, {Component} from 'react';
 import {withRouter} from 'react-router';
+import {Col} from 'react-bootstrap';
 import {FWApiClient} from '../api/api';
 import history from '../common/history';
 import {ProfileExplanation, DemographicContainer} from './Profile';
@@ -30,13 +31,16 @@ export class RegisterDemographics extends Component {
 
   render() {
     return (
-      <div className="profile-page panel">
-        <div className="panel-container">
-          <h1>Your profile</h1>
+      <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+        <div className="profile-page panel">
+          <div className="panel-container">
+            <h1>Your profile</h1>
+          </div>
+
           <ProfileExplanation />
+          <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
         </div>
-        <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
-      </div>
+      </Col>
     );
   }
 }

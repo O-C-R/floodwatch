@@ -6,7 +6,7 @@ import { Row, Col } from 'react-bootstrap';
 export class Faq extends Component {
   render() {
     return (
-      <div id="faqpp">
+      <Col xs={10} xsOffset={1} md={8} mdOffset={2} id="faqpp">
         <div className="panel">
           <div className="panel-body">
             <h1><a className="anchor noicon" name="faq">FAQ</a></h1>
@@ -77,7 +77,7 @@ export class Faq extends Component {
             <h3 className="header"><a className="anchor" name="browsing">Wait, so if you see my browsing, can you see my bank account/social media/personal email, etc.?</a></h3>
             <p>Nope! Floodwatch very deliberately tries to avoid collecting this info in a few ways:</p>
             <ul>
-              <li>We only take a look at certain HTML tags, specifically image ones. No data from forms, or any text-based information, will be collected.</li> 
+              <li>We only take a look at certain HTML tags, specifically image ones. No data from forms, or any text-based information, will be collected.</li>
               <li>We only show images of ads if they’ve been seen by a minimum number of other people besides you. That means any ads or images that could potentially be specific to or identify you will be stripped out automatically.</li>
             </ul>
             <p>The public release of Floodwatch will include a blacklist, which will allow users to list specific sites that they don’t want Floodwatch to run on at all. </p>
@@ -102,7 +102,7 @@ export class Faq extends Component {
             <p>There is a possibility that we might need to adapt our Privacy Policy in the future, to clarify or modify it in response to our needs and your feedback. Please check the <a className="underlined" href="#faq">FAQ</a> periodically for changes. We will still do our best to notify you of any major changes to our policy, and your continued use of Floodwatch will mean you accept them.</p>
           </div>
         </div>
-      </div>
+      </Col>
     );
   }
 }
