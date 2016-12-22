@@ -42,11 +42,17 @@ export function createSentence(options: Array<Filter>): string {
   _.forEach(options, function(opt: Filter) {
     let logic = ''
     let choices = ''
+
+    let wrappedChoices = opt.choices;
+    if (opt.name == 'age') {
+      wrappedChoices = wrappedChoices.map(c => `${c} year old`);
+    }
+
     if (opt.logic === 'NOR') {
       logic = ' Non-';
-      choices = opt.choices.join(', non-')
+      choices = wrappedChoices.join(', non-')
     } else {
-      choices = opt.choices.join(', ')
+      choices = wrappedChoices.join(', ')
     }
     sentence = logic + choices + ' ' + sentence
   })
