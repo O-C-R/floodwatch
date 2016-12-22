@@ -119,15 +119,13 @@ export class Main extends Component {
           <Navigation navs={navs} />
         </Row>
         <Row>
-          <div className="container">
-            {this.props.children && React.cloneElement(this.props.children, {
-              showMessage: this.showMessage.bind(this),
-              loginChanged: this.loadUserFromServer.bind(this),
-              handleLogout: this.handleLogout.bind(this),
-              user: this.state.user
-            })}
-          </div>
-        </Row>
+          {this.props.children && React.cloneElement(this.props.children, {
+            showMessage: this.showMessage.bind(this),
+            loginChanged: this.loadUserFromServer.bind(this),
+            handleLogout: this.handleLogout.bind(this),
+            user: this.state.user
+           })}
+         </Row>
       </Grid>
     );
   }
