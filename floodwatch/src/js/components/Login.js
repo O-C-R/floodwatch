@@ -66,13 +66,17 @@ export class Login extends Component {
   }
 
   render() {
+
     return (
       <div className="row">
         <div className="col-md-12">
-          <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: 'none'}}>
-            Login failed. {this.state.error}
-          </div>
-    
+
+          {this.state.error &&
+            <div className="alert alert-danger" role="alert">
+              Login failed. {this.state.error}
+            </div>
+          }
+
           <div className="panel">
             <div className="panel-container">
               <h1>Login</h1>
