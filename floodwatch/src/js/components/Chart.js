@@ -21,7 +21,7 @@ type PropsType = {
   side: string,
   data: UnstackedData,
   visibilityMap: VisibilityMap,
-  currentTopic: string,
+  currentTopic: ?string,
   mouseEnterHandler: (topic: string) => void,
   mouseLeaveHandler: (topic: string) => void
 };
@@ -96,7 +96,7 @@ export class Chart extends Component {
      * Sort
      *
      */
-    
+
     processedData.sort((a,b):number => {
       if (a.value < b.value) return 1
       if (a.value > b.value) return -1
@@ -108,7 +108,7 @@ export class Chart extends Component {
      * Add other
      *
      */
-    
+
     processedData.push(
       {
         name : "Other",
@@ -168,7 +168,7 @@ export class Chart extends Component {
         this.props.mouseLeaveHandler(d.id)
       })
       .attr('fill', (d, i) => {
-        return "url(#"+ this.props.side + i +")"        
+        return "url(#"+ this.props.side + i +")"
       })
 
     names.enter().append('text')
@@ -180,13 +180,13 @@ export class Chart extends Component {
         if (d.height < 30) return 'name small'
         return 'name'
       })
-    
+
     percentages.enter().append('text')
       .attr('fill', '#FFF')
       .attr('text-anchor', 'middle')
       .attr('x', "50%")
       .attr('class', "percentage")
-    
+
     grads.enter().append('linearGradient')
       .attr('id', (d, i) => {
         return this.props.side + i
@@ -222,7 +222,7 @@ export class Chart extends Component {
         .attr('y', (d, i) => {
             return d.y
         })
-      
+
     names
       .text((d) => {
         return d.name
@@ -249,7 +249,7 @@ export class Chart extends Component {
       .transition()
       .duration(200)
       .attr('fill-opacity', (d) => {
-        if (d.height > 70) return 
+        if (d.height > 70) return
         return 0
       })
       .attr('y', (d, i) => {

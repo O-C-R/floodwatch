@@ -346,8 +346,8 @@ export class CompareContainer extends Component {
   }
 
   render() {
-    const lVal = this.state.leftData[this.state.currentTopic];
-    const rVal = this.state.rightData[this.state.currentTopic];
+    const lVal = this.state.currentTopic ? this.state.leftData[this.state.currentTopic] : 0;
+    const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
     const sentence = this.generateDifferenceSentence(lVal, rVal)
 
     return (
@@ -368,7 +368,7 @@ export class CompareContainer extends Component {
             mouseEnterHandler={this.mouseEnterHandler.bind(this)}
             mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
         </div>
-          
+
         <p className="chart-sentence h3">{sentence}</p>
 
         <div className="chart-actions">
