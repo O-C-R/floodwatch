@@ -302,7 +302,7 @@ export class CompareContainer extends Component {
 
   calculatePercentDiff(a: number, b: number): number {
     const abs = (a-b)
-    const denom = (Math.abs(a))
+    const denom = Math.abs(b);
     const prc = (abs/denom)*100
     return prc
   }
