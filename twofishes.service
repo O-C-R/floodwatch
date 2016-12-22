@@ -2,6 +2,8 @@
 Description=twofishes
 
 [Service]
+ExecStartPre=-/usr/bin/docker kill twofishes
+ExecStartPre=-/usr/bin/docker rm twofishes
 ExecStart=/usr/bin/docker run --name=twofishes --rm -p 8081:8081 fsqio/twofishes
 ExecStop=/usr/bin/docker stop twofishes
 Restart=always

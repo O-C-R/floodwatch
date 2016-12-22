@@ -158,6 +158,21 @@ func Register(options *Options) http.Handler {
 	})
 }
 
+func FetchPersonResponse(b *backend.Backend, userId id.ID) (*data.PersonResponse, error) {
+	person, err := b.Person(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	demographicIds, err := b.PersonDemographics(person.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	personResponse := person.NewPersonResponse(demographicIds)
+	return &personResponse, nil
+}
+
 func PersonCurrent(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
@@ -166,19 +181,12 @@ func PersonCurrent(options *Options) http.Handler {
 			return
 		}
 
-		person, err := options.Backend.Person(session.UserID)
+		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 			return
 		}
 
-		demographicIds, err := options.Backend.PersonDemographics(person.ID)
-		if err != nil {
-			Error(w, err, 500)
-			return
-		}
-
-		personResponse := person.NewPersonResponse(demographicIds)
 		WriteJSON(w, personResponse)
 	})
 }
@@ -207,12 +215,15 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 		}
 
 		didUpdatePerson := false
-		if demographicRequest.BirthYear != nil {
+		if demographicRequest.BirthYear != nil && *person.BirthYear != *demographicRequest.BirthYear {
 			person.BirthYear = demographicRequest.BirthYear
+			didUpdatePerson = true
+		} else if demographicRequest.BirthYear == nil {
+			person.BirthYear = nil
 			didUpdatePerson = true
 		}
 
-		if demographicRequest.TwofishesID != nil {
+		if demographicRequest.TwofishesID != nil && *person.TwofishesID != *demographicRequest.TwofishesID {
 			countryCode, err := data.GetCountryCodeFromTwofishesID(options.TwofishesHost, *demographicRequest.TwofishesID)
 			if err != nil {
 				Error(w, err, 500)
@@ -221,6 +232,11 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 
 			person.TwofishesID = demographicRequest.TwofishesID
 			person.CountryCode = countryCode
+
+			didUpdatePerson = true
+		} else if demographicRequest.TwofishesID == nil {
+			person.TwofishesID = nil
+			person.CountryCode = nil
 
 			didUpdatePerson = true
 		}
@@ -240,6 +256,12 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 			}
 		}
 
-		w.WriteHeader(http.StatusNoContent)
+		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		WriteJSON(w, personResponse)
 	})
 }

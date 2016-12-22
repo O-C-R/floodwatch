@@ -1,22 +1,22 @@
 // @flow
 
 import React, {Component} from 'react';
-import { withRouter } from 'react-router';
+import {Row, Col} from 'react-bootstrap';
 
-import auth from '../api/auth';
+import {FWApiClient, AuthenticationError} from '../api/api';
 import history from '../common/history';
 
 type Props = {
   showMessage: Function,
   loginChanged: Function,
   user: ?Object
-}
+};
 
 type State = {
-  username: string;
-  password: string;
-  error: ?string;
-}
+  username: string,
+  password: string,
+  error: ?string
+};
 
 export class Login extends Component {
   props: Props;
@@ -49,54 +49,50 @@ export class Login extends Component {
   }
 
   async handleSubmit(e: Event) {
-  	e.preventDefault();
+    e.preventDefault();
 
     try {
-      await auth.login(this.state.username, this.state.password);
-      this.props.showMessage('Logged in!');
+      await FWApiClient.get().login(this.state.username, this.state.password);
+      this.props.showMessage('Logged in!', 2000);
       this.props.loginChanged();
 
-      history.push('/');
+      history.push('/compare');
     } catch (error) {
-      if(error.response) {
-        switch(error.response.status){
-          case 429:
-            this.setState({ error: 'Try again later' });
-            break;
-          case 401:
-            this.setState({error: 'Username or password incorrect.' });
-            break;
-        }
+      if (error instanceof AuthenticationError) {
+        this.setState({ error: 'Username or password incorrect.' });
       } else {
-        this.setState({error: 'A server error occurred.' });
+        this.setState({error: 'An unknown error occurred.' });
       }
     }
   }
 
   render() {
+
     return (
-      <div className="row">
-        <div className="col-md-12">
-          <h3>Login.</h3>
-          <p></p>
-        </div>
-        <div className="col-md-12">
-          <div className="container">
-	          <form onSubmit={this.handleSubmit.bind(this)}>
-	            <div className="alert alert-danger" role="alert" style={this.state.error ? {} : {display: "none"}}>
-	              <strong>Login failed.</strong> {this.state.error}
-	            </div>
-	            <div className="form-group">
-	              <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
-	            </div>
-	            <div className="form-group">
-	              <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
-	            </div>
-	            <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
-	          </form>
-	        </div>
-        </div>
-      </div>
+      <Row>
+        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+          {this.state.error &&
+            <div className="alert alert-danger" role="alert">
+              Login failed. {this.state.error}
+            </div> }
+
+          <div className="panel">
+            <div className="panel-container">
+              <h1>Login</h1>
+
+              <form onSubmit={this.handleSubmit.bind(this)}>
+                <div className="form-group">
+                  <input type="name" className="form-control" id="username" placeholder="Username" required={true} value={this.state.username} onChange={this.setFormState.bind(this)} ref="username" />
+                </div>
+                <div className="form-group">
+                  <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
+                </div>
+                <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
+              </form>
+            </div>
+          </div>
+        </Col>
+      </Row>
     )
   }
 }

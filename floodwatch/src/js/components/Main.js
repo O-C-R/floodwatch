@@ -1,37 +1,24 @@
 // @flow
-
 import React, {Component} from 'react';
-import {Link} from 'react-router';
+import {Grid, Nav, Navbar, NavItem, Row, Col, Button, Alert} from 'react-bootstrap';
+import {LinkContainer} from 'react-router-bootstrap';
 
-import '../../css/App.css';
+import '../../css/app.css';
 
 import history from '../common/history';
-import auth from '../api/auth';
+import {FWApiClient} from '../api/api';
 
-export class AppNavigation extends Component {
-  render() {
-    return (
-      <div className="row">
-        <div className="col-md-12">
-          <ul className="nav nav-tabs">
-            {this.props.navs.map((nav, key) => {
-              return (
-                <li className="nav-item" key={key}>
-                  <Link to={nav.to} className="nav-link" activeClassName="nav-link active">{nav.name}</Link>
-                </li>
-              )
-            })}
-          </ul>
-        </div>
-      </div>
-    );
-  }
-}
+import {Navigation} from './Navigation';
+
+const chrome = window.chrome;
 
 type MainState = {
-  user: ?Object;
-  message: ?string;
-}
+  user: ?Object,
+  message: ?string,
+  messageClearTimeout: ?number,
+  extensionInstalled: boolean,
+  extensionInstallMsgDismissed: boolean
+};
 
 export class Main extends Component {
   state: MainState;
@@ -41,68 +28,105 @@ export class Main extends Component {
 
     this.state = {
       user: null,
-      message: null
+      message: null,
+      messageClearTimeout: null,
+      extensionInstalled: false,
+      extensionInstallMsgDismissed: false
     };
 
     this.loadUserFromServer();
+    this.detectExtension();
   }
 
-  loadUserFromServer() {
-    return auth.get('/api/person/current', null)
-      .then((user) => {
-        this.setState({ user: user });
-      })
-      .catch((error) => {
-        this.setState({ user: null });
-        history.push('/login');
-      })
+  async loadUserFromServer(): Promise<void> {
+    try {
+      const user = await FWApiClient.get().getCurrentPerson()
+      this.setState({ user: user });
+    } catch (e) {
+      this.setState({ user: null });
+    }
   }
 
-  showMessage(message: string) {
+  detectExtension(): void {
+    const hasExtension = () => {
+      if (document.body.getAttribute('data-fw-frame-id') != null) {
+        setTimeout(() => this.setState({ extensionInstalled: true }), 1);
+      } else {
+        setTimeout(hasExtension, 100);
+      }
+    }
+    hasExtension();
+  }
+
+  showMessage(message: string, timeout?: number) {
     this.setState({ message });
+
+    if (this.state.messageClearTimeout) {
+      clearTimeout(this.state.messageClearTimeout);
+    }
+
+    if (timeout) {
+      const messageClearTimeout = setTimeout(() => this.setState({ message: null }), timeout);
+      this.setState({ messageClearTimeout });
+    }
   }
 
   async handleLogout() {
-    await auth.logout();
+    await FWApiClient.get().logout();
     this.setState({ user: null });
-    history.push('/login');
+    history.push('/');
   }
 
-  loggedInHeader(user: Object) {
-    return (
-      <div>
-        <div className="row">
-          <div className="col-md-12">
-            <small>
-              User <strong>{user.username}</strong> logged in. <a href="#" onClick={this.handleLogout.bind(this)}>Log out</a>.
-            </small>
-             <hr />
-          </div>
-        </div>
-        <AppNavigation navs={[{name:"User", to:"/user"},{name:"Upload", to:"/upload"}]} />
-      </div>
+  installClick() {
+    chrome.webstore.install(
+      "https://chrome.google.com/webstore/detail/oiilbnnfccienlfahiecfglojnkhpgaf",
+      () => { this.setState({ extensionInstalled: true }) },
+      (err) => { console.error(err); }
     );
   }
 
-  loggedOutHeader() {
-    return (
-      <AppNavigation navs={[{name:"Register", to:"/register"}, {name:"Login", to:"/login"}]} />
-    );
+  dismissInstallClick() {
+    this.setState({ extensionInstallMsgDismissed: true });
   }
 
   render() {
-    return (
-      <div className="container">
-        {this.state.message && <div className="alert alert-info">{this.state.message}</div>}
-        {this.state.user && this.loggedInHeader(this.state.user)}
-        {!this.state.user && this.loggedOutHeader()}
+    // Navs have to be designed here because we're passing handleLogout
+    const SIGNED_IN_NAVS = [
+      { name: 'Compare', to: '/compare' },
+      { name: 'Profile', to: '/profile' },
+      { name: 'FAQ', to: '/faq' },
+      { name: 'Logout', to: '/logout', action: this.handleLogout.bind(this) }
+    ];
 
-        {this.props.children && React.cloneElement(this.props.children, {
-          showMessage: this.showMessage.bind(this),
-          loginChanged: this.loadUserFromServer.bind(this),
-          user: this.state.user
-        })}
-      </div>
+    const SIGNED_OUT_NAVS = [
+      { name: 'Home', to: '/' },
+      { name: 'Login', to: '/login' },
+      { name: 'Register', to: '/register' },
+      { name: 'FAQ', to: '/faq' }
+    ];
+
+    const navs = this.state.user ? SIGNED_IN_NAVS : SIGNED_OUT_NAVS;
+
+    return (
+      <Grid fluid style={{position:'relative'}}>
+        <Row id="row-top">
+          { this.state.message && <Alert bsStyle="info">{this.state.message}</Alert> }
+          { this.state.user && !this.state.message && !this.state.extensionInstalled && !this.state.extensionInstallMsgDismissed &&
+            <Alert bsStyle="info" className="text-center" onDismiss={this.dismissInstallClick.bind(this)}>
+              <span style={{ paddingRight: '10px' }}>Install the extension to get started</span>
+              <Button bsStyle="primary" bsSize="small" onClick={this.installClick.bind(this)}>Add to Chrome</Button>
+          </Alert> }
+          <Navigation navs={navs} />
+        </Row>
+        <Row>
+          {this.props.children && React.cloneElement(this.props.children, {
+            showMessage: this.showMessage.bind(this),
+            loginChanged: this.loadUserFromServer.bind(this),
+            handleLogout: this.handleLogout.bind(this),
+            user: this.state.user
+           })}
+         </Row>
+      </Grid>
     );
   }
 }

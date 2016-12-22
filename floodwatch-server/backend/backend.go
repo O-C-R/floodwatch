@@ -352,40 +352,45 @@ type DBAdCatRow struct {
 	Count        int    `db:"count"`
 }
 
-func (b *Backend) FilteredAds(f data.PersonFilter) (*data.FilterResponseItem, error) {
+func (b *Backend) FilteredAds(f data.PersonFilter, contextPersonId id.ID) (*data.FilterResponseItem, error) {
 	whereClauses := make([]string, 0)
 	params := make(map[string]interface{})
 
-	if f.Age != nil {
-		if f.Age.Min != nil {
-			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year >= :minAge")
-			params["minAge"] = *f.Age.Min
+	if f.Personal != nil && *f.Personal {
+		whereClauses = append(whereClauses, "person.id = :personId")
+		params["personId"] = contextPersonId
+	} else {
+		if f.Age != nil {
+			if f.Age.Min != nil {
+				whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year >= :minAge")
+				params["minAge"] = *f.Age.Min
+			}
+			if f.Age.Max != nil {
+				whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year <= :maxAge")
+				params["maxAge"] = *f.Age.Max
+			}
 		}
-		if f.Age.Max != nil {
-			whereClauses = append(whereClauses, "EXTRACT(YEAR FROM CURRENT_TIMESTAMP) - person.person.birth_year <= :maxAge")
-			params["maxAge"] = *f.Age.Max
+
+		// TODO: fix - this needs to actually use the in binding
+		if f.Location != nil {
+			whereClauses = append(whereClauses, "person.person.country_code IN (:countryCodes)")
+			params["countryCodes"] = f.Location.CountryCodes
 		}
-	}
 
-	// TODO: fix - this needs to actually use the in binding
-	if f.Location != nil {
-		whereClauses = append(whereClauses, "person.person.country_code IN (:countryCodes)")
-		params["countryCodes"] = f.Location.CountryCodes
-	}
-
-	for idx, df := range f.Demographics {
-		key := fmt.Sprintf("demographic_%d", idx)
-		if df.Operator == "and" {
-			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids @> :%s", key))
-			params[key] = pq.Array(df.Values)
-		} else if df.Operator == "or" {
-			whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids && :%s", key))
-			params[key] = pq.Array(df.Values)
-		} else if df.Operator == "nor" {
-			whereClauses = append(whereClauses, fmt.Sprintf("NOT person.person_demographic_aggregate.demographic_ids && :%s", key))
-			params[key] = pq.Array(df.Values)
-		} else {
-			return nil, errors.New("Demographic logic was not and, or, nor nor")
+		for idx, df := range f.Demographics {
+			key := fmt.Sprintf("demographic_%d", idx)
+			if df.Operator == "and" {
+				whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids @> :%s", key))
+				params[key] = pq.Array(df.Values)
+			} else if df.Operator == "or" {
+				whereClauses = append(whereClauses, fmt.Sprintf("person.person_demographic_aggregate.demographic_ids && :%s", key))
+				params[key] = pq.Array(df.Values)
+			} else if df.Operator == "nor" {
+				whereClauses = append(whereClauses, fmt.Sprintf("NOT person.person_demographic_aggregate.demographic_ids && :%s", key))
+				params[key] = pq.Array(df.Values)
+			} else {
+				return nil, errors.New("Demographic logic was not and, or, nor nor")
+			}
 		}
 	}
 
