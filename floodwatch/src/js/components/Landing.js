@@ -41,9 +41,7 @@ export class Landing extends Component {
                 <p>With Floodwatch, you can:</p>
                 <ul>
                   <li>Capture the ads that you see</li>
-                  <li>See your ad breakdown and the categories of ads you get served</li>
                   <li>Compare your breakdown to other demographics</li>
-                  <li>Mark any unusual observations for further investigation</li>
                 </ul>
               </div>
             </div>
@@ -54,12 +52,12 @@ export class Landing extends Component {
                 <p>Floodwatch has several security mechanisms in place to make sure your data is safe and controllable by you:</p>
                 <ul>
                   <li>You get to choose how much demographic information you give us. The core functionality of Floodwatch--seeing your ad breakdown--will always be available to all users.</li>
-                  <li>We keep your data secure through the security industry’s best practices. You can read our latest security audit here.</li>
-                  <li>We vet our researchers. You can see the current list of approved researchers here.</li>
+                  <li>We keep your data secure through the security industry’s best practices. Want to check our work? Our code is <a href="https://github.com/O-C-R/floodwatch" target="_blank">open source</a>.</li>
+                  <li>We vet our researchers, and will make the list of approved researchers publicly available.</li>
                   <li>We’ll never sell your data to third parties or advertisers (obviously).</li>
                   <li>Done with Floodwatch? You can delete your data whenever you want.</li>
                 </ul>
-                <p>Still have questions? Read through our FAQ and Privacy Policy, or check out our most recent security audit.</p>
+                <p>Still have questions? Read through our <a href="/faq#faq">FAQ</a> and <a href="/faq#privacy">Privacy Policy</a>.</p>
               </div>
             </div>
           </Col>
