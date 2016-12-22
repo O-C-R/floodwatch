@@ -52,7 +52,7 @@ export class Landing extends Component {
                 <p>Floodwatch has several security mechanisms in place to make sure your data is safe and controllable by you:</p>
                 <ul>
                   <li>You get to choose how much demographic information you give us. The core functionality of Floodwatch--seeing your ad breakdown--will always be available to all users.</li>
-                  <li>We keep your data secure through the security industry’s best practices. Want to check our work? Our code is <a href="https://github.com/O-C-R/floodwatch">open source</a>.</li>
+                  <li>We keep your data secure through the security industry’s best practices. Want to check our work? Our code is <a href="https://github.com/O-C-R/floodwatch" target="_blank">open source</a>.</li>
                   <li>We vet our researchers, and will make the list of approved researchers publicly available.</li>
                   <li>We’ll never sell your data to third parties or advertisers (obviously).</li>
                   <li>Done with Floodwatch? You can delete your data whenever you want.</li>
