@@ -19,6 +19,9 @@
     "react",
     "flowtype"
   ],
+  "globals": {
+    "chrome": true
+  },
   "settings": {
     "flowtype": {
       "onlyFilesWithFlowAnnotation": true
