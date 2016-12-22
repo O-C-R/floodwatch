@@ -9,13 +9,13 @@ import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 import type {UnstackedData, VisibilityMap} from './Compare';
 
-type StackedData = {
+type StackedData = Array<{
   name: string,
   id: string,
   y: number,
   height: number,
   value: number
-}[]
+}>
 
 type PropsType = {
   side: string,
@@ -32,7 +32,7 @@ type StateType = {
   defs? : any
 };
 
-function initialState():Object {
+function initialState():StateType {
   return {
     height : 500
   }

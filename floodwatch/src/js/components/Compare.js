@@ -25,6 +25,9 @@ export type UnstackedData = {
   [key: string]: number
 };
 
+const unknownId = "16"
+const otherBreackDown = 0.02
+
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
   if (options.length === 0) {
@@ -69,7 +72,7 @@ type StateType = {
   visibilityMap: VisibilityMap,
   leftData: UnstackedData,
   rightData: UnstackedData,
-  currentTopic: string,
+  currentTopic: ?string,
   modalVisible: boolean,
   userData: PersonResponse
 };
@@ -108,8 +111,8 @@ export class CompareContainer extends Component {
       let rightData = AdBreakdown.filterB.categories
 
       for (let key in leftData) {
-        if (key !== "16") { // Hide cats (16 is unknown)
-          if ((leftData[key] > 0.02) || (leftData[key] > 0.02)) { // Make sure cats are above some percentage for both side
+        if (key !== unknownId) { // Hide cats (16 is unknown)
+          if ((leftData[key] > otherBreackDown) || (leftData[key] > otherBreackDown)) { // Make sure cats are above some percentage for both side
             visibilityMap[key] = "show"
           } else {
             visibilityMap[key] = "other"
