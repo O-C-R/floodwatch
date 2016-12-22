@@ -378,11 +378,15 @@ export class CompareContainer extends Component {
           </Col>
         </Row>
 
-        <p className="chart-sentence h3">{sentence}</p>
+        <Row>
+          <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+            <h3 className="chart-sentence">{sentence}</h3>
 
-        <div className="chart-actions">
-          <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
-        </div>
+            <div className="chart-actions">
+              <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
+            </div>
+          </Col>
+        </Row>
 
         <ComparisonModal
           visible={this.state.modalVisible}

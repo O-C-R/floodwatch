@@ -292,12 +292,12 @@ export class Chart extends Component {
     return(
       <div>
         { this.props.side == 'left' &&
-          <Col xs={12} md={2} className="sentence left-sentence">{this.props.sentence}</Col> }
-        <Col xs={12} md={10} className="chart" style={{ padding: '2px' }}>
+          <Col xs={12} md={4} className="sentence left-sentence">{this.props.sentence}</Col> }
+        <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
           <div className={"chart_svg chart_svg-" + this.props.side + " " + "show"}></div>
         </Col>
         { this.props.side == 'right' &&
-          <Col xs={12} md={2} className="sentence right-sentence">{this.props.sentence}</Col> }
+          <Col xs={12} md={4} className="sentence right-sentence">{this.props.sentence}</Col> }
       </div>
     )
   }
