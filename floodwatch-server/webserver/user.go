@@ -214,12 +214,15 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 		}
 
 		didUpdatePerson := false
-		if demographicRequest.BirthYear != nil {
+		if demographicRequest.BirthYear != nil && *person.BirthYear != *demographicRequest.BirthYear {
 			person.BirthYear = demographicRequest.BirthYear
+			didUpdatePerson = true
+		} else if demographicRequest.BirthYear == nil {
+			person.BirthYear = nil
 			didUpdatePerson = true
 		}
 
-		if demographicRequest.TwofishesID != nil {
+		if demographicRequest.TwofishesID != nil && *person.TwofishesID != *demographicRequest.TwofishesID {
 			countryCode, err := data.GetCountryCodeFromTwofishesID(options.TwofishesHost, *demographicRequest.TwofishesID)
 			if err != nil {
 				Error(w, err, 500)
@@ -228,6 +231,11 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 
 			person.TwofishesID = demographicRequest.TwofishesID
 			person.CountryCode = countryCode
+
+			didUpdatePerson = true
+		} else if demographicRequest.TwofishesID == nil {
+			person.TwofishesID = nil
+			person.CountryCode = nil
 
 			didUpdatePerson = true
 		}

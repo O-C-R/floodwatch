@@ -97,7 +97,7 @@ export class APIClient {
     if (res.status === 204) {
       return null
     }
-    return res.json();    
+    return res.json();
   }
 
   async getText(path: string, params?: Object): Promise<string> {
@@ -139,7 +139,7 @@ export class FWApiClient extends APIClient {
   }
 
   onAuthError(e: AuthenticationError) {
-    if (this.loggedIn) {
+    if (this.loggedIn()) {
       this.unauthorizedHandler();
       this.onLogout();
     }
@@ -159,7 +159,7 @@ export class FWApiClient extends APIClient {
 
   async post(path: string, body?: FormData | string): Promise<any> {
     try {
-      return super.post(path, body);
+      return await super.post(path, body);
     } catch (e) {
       if (e instanceof AuthenticationError) {
         this.onAuthError(e);
@@ -171,7 +171,7 @@ export class FWApiClient extends APIClient {
 
   async get(path: string, params?: Object): Promise<any> {
     try {
-      return super.get(path, params);
+      return await super.get(path, params);
     } catch (e) {
       if (e instanceof AuthenticationError) {
         this.onAuthError(e);
@@ -202,6 +202,7 @@ export class FWApiClient extends APIClient {
   async login(username: string, password: string): Promise<void> {
     // response has no content, so any non-error means success
     await this.postForm('/api/login', { username, password });
+    this.onLogin();
   }
 
   async getLocationOptions(place: string) {
@@ -211,7 +212,7 @@ export class FWApiClient extends APIClient {
 
   async getDecodedLocation(id: string) {
     const res = this.getJSON('/api/twofishes?slug=' + id)
-    return res 
+    return res
   }
 
   async logout(): Promise<void> {
