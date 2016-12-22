@@ -30,17 +30,6 @@ export class Faq extends Component {
             <p>Jump to our <a href="#privacy" className="underlined">Privacy Policy</a> to learn more about the risks of providing personal information to anyone, and to see how Floodwatch protects your data.</p>
 
 
-            <h3 className="header"><a className="anchor" name="adtypes">What kinds of ads do you collect? Why aren’t I seeing more ads on the My Ads page?</a></h3>
-            <p>Ad detection is a tricky problem for many reasons, and we are constantly working on improving our detection algorithm. The more users we have, the better we become at detecting different kinds of ads.</p>
-            <p>Floodwatch only collects image-based ads, and therefore can miss text-based ads on a website. We’re also working on recording Flash ads, but are not currently able to do so.</p>
-            <p>If you’re not seeing any ads displayed on your History page, please first try browsing for a little longer, before reporting a bug on our public <a className="underlined" href="https://github.com/O-C-R/floodwatch-extension" target="_blank">Github repository</a>, or contacting us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
-
-
-            <h3 className="header"><a className="anchor" name="otherads">Why do I see other ads in my ad stream?</a></h3>
-            <p>Sometimes our ad classification system gets it wrong: it can be confused by an image that is the same size as a standard ad, or perhaps because the URL for the image closely matches one for images that have been correctly classified as ads in the past.</p>
-            <p>We appreciate your help in marking these images as falsely classified--this will help improve our algorithm and prevent them from reappearing in your ad stream.</p>
-
-
             <h3 className="header"><a className="anchor" name="browsers">Does Floodwatch plan to expand to other browsers?</a></h3>
             <p>Currently, we have a very small development team supporting Floodwatch. We plan to expand to other browsers eventually, but are currently focusing our efforts on bug fixes and improvements to the Chrome version of the extension.</p>
             <p>The Floodwatch extension is <a className="underlined" href="https://github.com/O-C-R/floodwatch-extension" target="_blank">open source</a>, so if you’re interested in porting Floodwatch to other browsers, feel free to fork it.</p>
