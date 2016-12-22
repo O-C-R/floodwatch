@@ -17,12 +17,12 @@ export class ProfilePage extends Component {
     return (
       <div className="profile-page panel">
         <div className="panel-container">
-          <h3>My Profile</h3>
+          <h1>My Profile</h1>
           <ProfileExplanation />
-          <hr/>
-          <DemographicContainer/>
-          <AccountOptionsContainer/>
         </div>
+        
+        <DemographicContainer/>
+        <AccountOptionsContainer/>
       </div>
     );
   }
@@ -45,7 +45,7 @@ export class ProfileExplanation extends Component {
 
   render() {
     return (
-      <div className="panel-container">
+      <div>
         <p>Donate your data to help us discover discriminatory patterns in advertising, and reverse the power relationship between people and advertisers.</p>
         <p>Wondering why your demographic data matters? <a onClick={this.toggleDescriptionVisibility.bind(this)}>Learn more</a></p>
         { this.state.isDescriptionOpen &&
