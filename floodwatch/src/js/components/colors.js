@@ -20,6 +20,6 @@ module.exports = {
   'Tech / Electronics' : ['#fd730e', '#fd8a0e'],
   'Automotive' : ['#c80018', '#f12b42'],
   'Apparel' : ['#ffae00', '#ffc618'],
-  'Development / Design / Hosting / Web-Services' : ['#ff5a00', '#fd730e'],
+  'Development / Design / Web-Services' : ['#ff5a00', '#fd730e'],
   "Other": ["#89a4af", "#9cb5bf"]
 }
