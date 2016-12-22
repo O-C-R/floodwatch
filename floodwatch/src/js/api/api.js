@@ -139,7 +139,7 @@ export class FWApiClient extends APIClient {
   }
 
   onAuthError(e: AuthenticationError) {
-    if (this.loggedIn) {
+    if (this.loggedIn()) {
       this.unauthorizedHandler();
       this.onLogout();
     }
