@@ -287,9 +287,17 @@ export class Chart extends Component {
   }
 
   render() {
-    this.drawChart(this.processData(this.props.data, this.props.visibilityMap))
+    const processedData = this.processData(this.props.data, this.props.visibilityMap);
 
-    const chart = <div className={`chart_svg chart_svg-${this.props.side} show`}></div>;
+    let chart;
+    if (processedData.length > 1) {
+      this.drawChart(processedData)
+      chart = <div className={`chart_svg chart_svg-${this.props.side} show`}></div>;
+    } else {
+      chart = <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
+        Whoops! Not enough data for this demographic category - try another comparison.
+      </Col>
+    }
 
     if (this.props.side == 'left') {
       return (

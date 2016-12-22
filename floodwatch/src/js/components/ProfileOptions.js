@@ -122,8 +122,8 @@ export class LocationOption extends Component {
     const val = await FWApiClient.get().getLocationOptions(value);
     if (val.interpretations.length > 0) {
       this.setState({items: val.interpretations, loading: false});
-    } else {
-      this.props.updateLocation('')
+    } else if (value.length == 0) {
+      this.props.updateLocation(null);
     }
   }
 

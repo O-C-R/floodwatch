@@ -362,7 +362,7 @@ export class CompareContainer extends Component {
     return (
       <div className="main compare">
         <Row className="chart-container">
-          <Col sm={6} xs={12} style={{ padding:0 }}>
+          <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding:0 }}>
             <Chart
               side="left"
               data={this.state.leftData}
@@ -372,7 +372,7 @@ export class CompareContainer extends Component {
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
           </Col>
-          <Col sm={6} xs={12} style={{ padding:0 }}>
+          <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding:0 }}>
             <Chart
               side="right"
               data={this.state.rightData}

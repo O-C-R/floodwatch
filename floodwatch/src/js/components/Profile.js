@@ -19,9 +19,9 @@ export class ProfilePage extends Component {
         <div className="profile-page panel">
           <div className="panel-container">
             <h1>My Profile</h1>
+            <ProfileExplanation />
           </div>
 
-          <ProfileExplanation />
           <DemographicContainer/>
           <AccountOptionsContainer/>
         </div>
@@ -187,9 +187,9 @@ export class DemographicContainer extends Component {
     this.updateStateAndMessages(userData)
   }
 
-  updateLocation(loc: string) {
+  updateLocation(loc: ?string) {
     let userData = _.cloneDeep(this.state.userData)
-    if (loc == '') {
+    if (loc === null) {
       userData.twofishes_id = null
     } else {
       userData.twofishes_id = loc
