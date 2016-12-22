@@ -289,30 +289,37 @@ export class Chart extends Component {
   render() {
     const processedData = this.processData(this.props.data, this.props.visibilityMap);
 
-    let chart;
-    if (processedData.length > 1) {
-      this.drawChart(processedData)
-      chart = <div className={`chart_svg chart_svg-${this.props.side} show`}></div>;
-    } else {
-      chart = <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
+    let error;
+    if (processedData.length <= 1) {
+      error = <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
         Whoops! Not enough data for this demographic category - try another comparison.
       </Col>
     }
 
+    let ret;
     if (this.props.side == 'left') {
-      return (
+      ret = (
         <div>
           <Col xs={12} md={4} className="sentence left-sentence">{this.props.sentence}</Col>
-          <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+          <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
+            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`}></div>
+            {error}
+          </Col>
         </div>
       );
     } else {
-      return (
+      ret = (
         <div>
           <Col xs={12} md={4} mdPush={8} className="sentence right-sentence">{this.props.sentence}</Col>
-          <Col xs={12} md={8} mdPull={4} className="chart" style={{ padding: '2px' }}>{chart}</Col>
+          <Col xs={12} md={8} mdPull={4} className="chart" style={{ padding: '2px' }}>
+            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`}></div>
+            {error}
+          </Col>
         </div>
       );
     }
+
+    this.drawChart(processedData);
+    return ret;
   }
 }
