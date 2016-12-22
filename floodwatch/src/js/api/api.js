@@ -159,7 +159,7 @@ export class FWApiClient extends APIClient {
 
   async post(path: string, body?: FormData | string): Promise<any> {
     try {
-      return super.post(path, body);
+      return await super.post(path, body);
     } catch (e) {
       if (e instanceof AuthenticationError) {
         this.onAuthError(e);
@@ -171,7 +171,7 @@ export class FWApiClient extends APIClient {
 
   async get(path: string, params?: Object): Promise<any> {
     try {
-      return super.get(path, params);
+      return await super.get(path, params);
     } catch (e) {
       if (e instanceof AuthenticationError) {
         this.onAuthError(e);
