@@ -334,6 +334,7 @@ export class CompareContainer extends Component {
                 data={this.state.leftData}
                 currentSelection={this.state.leftOptions}
                 currentTopic={this.state.currentTopic}
+                sentence={createSentence(this.state.leftOptions)}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>
 
@@ -343,6 +344,7 @@ export class CompareContainer extends Component {
                 side="right"
                 data={this.state.rightData}
                 currentSelection={this.state.rightOptions}
+                sentence={createSentence(this.state.rightOptions)}
                 currentTopic={this.state.currentTopic}
                 updateMouseOver={this.updateMouseOver.bind(this)}/>
             </Col>

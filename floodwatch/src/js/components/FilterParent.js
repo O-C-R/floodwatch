@@ -25,7 +25,8 @@ type PropsType = {
   side: string,
   currentTopic: string,
   updateMouseOver: (topic: string) => void,
-  data: UnstackedData
+  data: UnstackedData,
+  sentence: string
 };
 
 export type StackedData = {
@@ -77,12 +78,37 @@ export class FilterParent extends Component {
   }
 
   render() {
+    let elem;
     const data = this.stackData(this.props.data)
+
+    const graph = <GraphParent data={data} side={this.props.side} currentTopic={this.props.currentTopic} updateMouseOver={this.props.updateMouseOver}/>
+    const sentence = <h5>{this.props.sentence}</h5>
+
+    if (this.props.side == 'left') {
+      elem =
+            <div> 
+            <Col xs={3}>
+              {sentence}
+            </Col>
+            <Col xs={9}>
+              {graph}
+            </Col>
+            </div>
+    } else {
+      elem = <div>
+            <Col xs={10}>
+              {graph}
+            </Col>
+            <Col xs={2}>
+              {sentence}
+            </Col>
+            </div>
+    }
+
+    
     return (
       <Row>
-        <Col xs={12}>
-          <GraphParent data={data} side={this.props.side} currentTopic={this.props.currentTopic} updateMouseOver={this.props.updateMouseOver}/>
-        </Col>
+        {elem}
       </Row>
     )
   }
