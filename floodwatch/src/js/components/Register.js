@@ -1,6 +1,7 @@
 // @flow
 
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import { Col, Row, Button, Form, FormGroup, FormControl, ControlLabel, Alert, HelpBlock } from 'react-bootstrap';
 
 import {FWApiClient} from '../api/api';
@@ -91,7 +92,7 @@ export class Register extends Component {
   }
 
   componentDidMount() {
-    this.refs.username.focus();
+    ReactDOM.findDOMNode(this.refs.username).focus();
   }
 
   render() {
@@ -148,6 +149,7 @@ export class Register extends Component {
                       placeholder="Password"
                       name="password"
                       required={true}
+                      minLength={10}
                       value={this.state.password}
                       onChange={this.setFormState.bind(this)} />
                   </Col>
