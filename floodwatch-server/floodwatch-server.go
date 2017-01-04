@@ -15,8 +15,8 @@ import (
 
 var (
 	config struct {
-		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL, twofishesHost string
-		insecure                                                                                                                                               bool
+		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL, twofishesHost, redirectAddr string
+		insecure                                                                                                                                                             bool
 	}
 )
 
@@ -30,6 +30,7 @@ func init() {
 	flag.StringVar(&config.sqsClassifierOutputQueueURL, "output-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-output", "S3 bucket")
 	flag.StringVar(&config.staticPath, "static", "", "static path")
 	flag.StringVar(&config.twofishesHost, "twofishes-host", "http://twofishes.floodwatch.me", "host for twofishes server")
+	flag.StringVar(&config.redirectAddr, "redirect-addr", "127.0.0.1:8081", "address to redirect to https")
 	flag.BoolVar(&config.insecure, "i", false, "insecure (no user authentication)")
 }
 
@@ -85,8 +86,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server, err := webserver.New(&webserver.Options{
+	options := &webserver.Options{
 		Addr:                        config.addr,
+		RedirectAddr:                config.redirectAddr,
 		Backend:                     b,
 		SessionStore:                sessionStore,
 		AWSSession:                  awsSession,
@@ -96,10 +98,22 @@ func main() {
 		Insecure:                    config.insecure,
 		StaticPath:                  config.staticPath,
 		TwofishesHost:               config.twofishesHost,
-	})
+	}
+
+	server, err := webserver.New(options)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Fatal(server.ListenAndServe())
+	redirectServer := webserver.NewRedirectServer(options)
+
+	errs := make(chan error)
+	go func() {
+		errs <- server.ListenAndServe()
+	}()
+	go func() {
+		errs <- redirectServer.ListenAndServe()
+	}()
+
+	log.Fatal(<-errs)
 }

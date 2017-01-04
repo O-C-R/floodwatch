@@ -51,6 +51,13 @@ resource "aws_elb" "floodwatch-staging" {
     ssl_certificate_id = "arn:aws:acm:us-east-1:963245043784:certificate/0cabd13e-7ce1-4bcf-9a33-3372e67b8636"
   }
 
+  listener {
+    instance_port = 8000
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
+  }
+
   health_check {
     healthy_threshold = 2
     unhealthy_threshold = 2

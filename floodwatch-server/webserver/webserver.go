@@ -11,7 +11,9 @@ import (
 	"github.com/O-C-R/auth/httpauth"
 	"github.com/O-C-R/singlepage"
 	"github.com/aws/aws-sdk-go/aws/session"
+
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
 )
@@ -49,8 +51,9 @@ func WriteJSON(w http.ResponseWriter, value interface{}) {
 }
 
 type Options struct {
-	Addr    string
-	Backend *backend.Backend
+	Addr         string
+	RedirectAddr string
+	Backend      *backend.Backend
 
 	SessionStore                *backend.SessionStore
 	AWSSession                  *session.Session
@@ -69,16 +72,20 @@ type Webserver struct {
 
 func New(options *Options) (*Webserver, error) {
 
-	mux := http.NewServeMux()
-	mux.Handle("/api/register", RateLimitHandler(Register(options), options, 10/60e9, 30))
-	mux.Handle("/api/login", RateLimitHandler(Login(options), options, 10/60e9, 30))
-	mux.Handle("/api/logout", Logout(options))
+	r := http.NewServeMux()
 
-	authenticatedMux := http.NewServeMux()
-	authenticatedMux.Handle("/api/person/current", PersonCurrent(options))
-	authenticatedMux.Handle("/api/person/demographics", UpdatePersonDemographics(options))
-	authenticatedMux.Handle("/api/ads", Ads(options))
-	authenticatedMux.Handle("/api/ads/filtered", FilteredAdStats(options))
+	apiRouter := mux.NewRouter().PathPrefix("/api").Subrouter().StrictSlash(false)
+	r.Handle("/api/", apiRouter)
+
+	apiRouter.Handle("/register", RateLimitHandler(Register(options), options, 10/60e9, 30)).Methods("POST")
+	apiRouter.Handle("/login", RateLimitHandler(Login(options), options, 10/60e9, 30)).Methods("POST")
+	apiRouter.Handle("/logout", Logout(options)).Methods("POST")
+
+	authApiRouter := apiRouter.PathPrefix("/").Subrouter()
+	authApiRouter.Handle("/person/current", PersonCurrent(options)).Methods("GET")
+	authApiRouter.Handle("/person/demographics", UpdatePersonDemographics(options)).Methods("POST")
+	authApiRouter.Handle("/ads", Ads(options)).Methods("POST")
+	authApiRouter.Handle("/ads/filtered", FilteredAdStats(options)).Methods("POST")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
@@ -86,16 +93,15 @@ func New(options *Options) (*Webserver, error) {
 	}
 
 	twofishesHandler := http.StripPrefix("/api/twofishes", httputil.NewSingleHostReverseProxy(url))
-	authenticatedMux.Handle("/api/twofishes", twofishesHandler)
+	authApiRouter.Handle("/twofishes", twofishesHandler).Methods("GET")
 
-	authenticatedHandler := http.Handler(authenticatedMux)
-	authenticatedHandler = handlers.CompressHandler(authenticatedHandler)
+	apiAuthHandler := http.Handler(authApiRouter)
+	apiAuthHandler = handlers.CompressHandler(apiAuthHandler)
 	if !options.Insecure {
 		sessionAuthenticator := NewSessionAuthenticator(options.SessionStore)
-		authenticatedHandler = httpauth.TokenCookieAuthenticationHandler(authenticatedHandler, sessionAuthenticator, sessionKey{}, CookieName)
+		apiAuthHandler = httpauth.TokenCookieAuthenticationHandler(apiAuthHandler, sessionAuthenticator, sessionKey{}, CookieName)
 	}
-
-	mux.Handle("/api/", authenticatedHandler)
+	apiRouter.Handle("/", authApiRouter)
 
 	if options.StaticPath != "" {
 		application, err := regexp.Compile(`^/.*$`)
@@ -108,14 +114,14 @@ func New(options *Options) (*Webserver, error) {
 			return nil, err
 		}
 
-		mux.Handle(`/`, singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{
+		r.Handle("/", singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{
 			Root:          http.Dir(options.StaticPath),
 			Application:   application,
 			LongtermCache: longtermCache,
 		}))
 	}
 
-	handler := http.Handler(mux)
+	handler := http.Handler(r)
 	handler = handlers.CORS(
 		handlers.AllowCredentials(),
 		handlers.AllowedOrigins([]string{"https://floodwatch.me", "http://localhost:3000"}),
