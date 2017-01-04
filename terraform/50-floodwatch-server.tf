@@ -35,13 +35,20 @@ resource "aws_elb" "floodwatch" {
   name = "floodwatch"
   subnets = ["${aws_subnet.floodwatch-a.id}", "${aws_subnet.floodwatch-c.id}", "${aws_subnet.floodwatch-d.id}"]
   security_groups = ["${aws_security_group.floodwatch-server-elb.id}"]
-  
+
   listener {
     instance_port = 80
     instance_protocol = "http"
     lb_port = 443
     lb_protocol = "https"
     ssl_certificate_id = "arn:aws:acm:us-east-1:963245043784:certificate/7f55d237-6b70-4f8e-8c84-2198b109c6ba"
+  }
+
+  listener {
+    instance_port = 8000
+    instance_protocol = "http"
+    lb_port = 80
+    lb_protocol = "http"
   }
 
   health_check {
