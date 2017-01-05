@@ -62,10 +62,6 @@ export function createSentence(options: Array<Filter>): string {
 
     }
 
-    if (wrappedChoices.length > 1 && options.length > 1) {
-      choices = '' + choices + ''  
-    }
-
     sentence = sentence + ((index > 0) ? ", and " : " ") + choices;
   })
 
