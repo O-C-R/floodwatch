@@ -7,6 +7,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"regexp"
+	"strconv"
 
 	"github.com/O-C-R/auth/httpauth"
 	"github.com/O-C-R/singlepage"
@@ -32,7 +33,7 @@ func InvalidForm(w http.ResponseWriter, errs map[string]string) {
 
 func Error(w http.ResponseWriter, err error, code int) {
 	if code >= 400 {
-		log.Println(err)
+		log.Println("err: ", err)
 	}
 
 	if code >= 500 {
@@ -40,7 +41,11 @@ func Error(w http.ResponseWriter, err error, code int) {
 		return
 	}
 
-	http.Error(w, err.Error(), code)
+	if err != nil {
+		http.Error(w, err.Error(), code)
+	} else {
+		http.Error(w, strconv.Itoa(code), code)
+	}
 }
 
 func WriteJSON(w http.ResponseWriter, value interface{}) {
@@ -70,22 +75,33 @@ type Webserver struct {
 	server  *http.Server
 }
 
+func secureRoute(h http.Handler, auth *SessionAuthenticator, secure bool) http.Handler {
+	h = handlers.CompressHandler(h)
+	if secure {
+		h = httpauth.TokenCookieAuthenticationHandler(h, auth, sessionKey{}, CookieName)
+	}
+
+	return h
+}
+
 func New(options *Options) (*Webserver, error) {
 
 	r := http.NewServeMux()
 
 	apiRouter := mux.NewRouter().PathPrefix("/api").Subrouter().StrictSlash(false)
+	auth := NewSessionAuthenticator(options.SessionStore)
+	secure := !options.Insecure
+
 	r.Handle("/api/", apiRouter)
 
 	apiRouter.Handle("/register", RateLimitHandler(Register(options), options, 10/60e9, 30)).Methods("POST")
 	apiRouter.Handle("/login", RateLimitHandler(Login(options), options, 10/60e9, 30)).Methods("POST")
 	apiRouter.Handle("/logout", Logout(options)).Methods("POST")
 
-	authApiRouter := apiRouter.PathPrefix("/").Subrouter()
-	authApiRouter.Handle("/person/current", PersonCurrent(options)).Methods("GET")
-	authApiRouter.Handle("/person/demographics", UpdatePersonDemographics(options)).Methods("POST")
-	authApiRouter.Handle("/ads", Ads(options)).Methods("POST")
-	authApiRouter.Handle("/ads/filtered", FilteredAdStats(options)).Methods("POST")
+	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
+	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
@@ -93,15 +109,7 @@ func New(options *Options) (*Webserver, error) {
 	}
 
 	twofishesHandler := http.StripPrefix("/api/twofishes", httputil.NewSingleHostReverseProxy(url))
-	authApiRouter.Handle("/twofishes", twofishesHandler).Methods("GET")
-
-	apiAuthHandler := http.Handler(authApiRouter)
-	apiAuthHandler = handlers.CompressHandler(apiAuthHandler)
-	if !options.Insecure {
-		sessionAuthenticator := NewSessionAuthenticator(options.SessionStore)
-		apiAuthHandler = httpauth.TokenCookieAuthenticationHandler(apiAuthHandler, sessionAuthenticator, sessionKey{}, CookieName)
-	}
-	apiRouter.Handle("/", authApiRouter)
+	apiRouter.Handle("/twofishes", secureRoute(twofishesHandler, auth, secure)).Methods("GET")
 
 	if options.StaticPath != "" {
 		application, err := regexp.Compile(`^/.*$`)

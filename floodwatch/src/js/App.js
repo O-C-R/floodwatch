@@ -38,7 +38,8 @@ export class App extends Component {
   constructor() {
     super();
 
-    FWApiClient.setup(process.env.REACT_APP_API_HOST || '', this.onLogout.bind(this));
+    const apiHost = process.env.REACT_APP_API_HOST || `${window.location.protocol}//${window.location.host}`;
+    FWApiClient.setup(apiHost, this.onLogout.bind(this));
   }
 
   onLogout() {

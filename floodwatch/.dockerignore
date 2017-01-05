@@ -1,5 +1,6 @@
 .DS_Store
 .gitignore
+.env
 build
 build.bash
 node_modules

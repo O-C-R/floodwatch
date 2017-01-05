@@ -7,6 +7,8 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 TAG=$1
 if [ -z $TAG ]; then
   TAG=":$BRANCH"
+else
+  TAG=":$TAG"
 fi
 
 rm -rf docker/static docker/floodwatch-server
