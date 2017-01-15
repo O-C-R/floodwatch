@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import { Col, Row, Button, Form, FormGroup, FormControl, ControlLabel, Alert, HelpBlock } from 'react-bootstrap';
 
-import {FWApiClient} from '../api/api';
+import {FWApiClient, APIError} from '../api/api';
 import history from '../common/history';
 
 type State = {
@@ -57,12 +57,26 @@ export class Register extends Component {
     }
   }
 
+  onPasswordChange(e: Event) {
+    if (e.target instanceof HTMLInputElement) {
+      const id = e.target.id;
+      const val = e.target.value;
+
+      this.setState({ [id]: val });
+
+      if (this.state.passwordFeedback
+          && this.state.passwordRepeated == this.state.password) {
+        this.setState({ passwordFeedback: '' });
+      }
+    }
+  }
+
   async handleSubmit(e: Event) {
     e.preventDefault()
 
-    if(this.state.password !== this.state.passwordRepeated) {
-      this.setState({passwordFeedback:'Passwords do not match.'})
-      return
+    if (this.state.password != this.state.passwordRepeated) {
+      this.setState({ passwordFeedback:'Passwords do not match.' });
+      return;
     }
 
     try {
@@ -76,17 +90,25 @@ export class Register extends Component {
     } catch (error) {
       console.error(error);
 
-      if (error.response && error.response.status === 400) {
-        const errors = await error.response.json();
+      if (error instanceof APIError) {
+        const apiError: APIError = error;
+        if (apiError.response && error.response.status == 400 && apiError.body) {
+          try {
+            const errors: Object = JSON.parse(apiError.body);
 
-        this.setState({
-          usernameFeedback: errors['username'],
-          password: '',
-          passwordRepeated: '',
-          error: ''
-        });
+            this.setState({
+              usernameFeedback: errors['username'],
+              passwordFeedback: errors['password'],
+              error: ''
+            });
+          } catch (e) {
+            this.setState({ error: apiError.body })
+          }
+        } else {
+          this.setState({ error: 'A unknown API error occurred, please contact us at floodwatch@ocr.nyc!' })
+        }
       } else {
-        this.setState({ error: 'A server error occurred.' })
+        this.setState({ error: 'A unknown error occurred, please contact us at floodwatch@ocr.nyc!' })
       }
     }
   }
@@ -125,7 +147,7 @@ export class Register extends Component {
                       onChange={this.setFormState.bind(this)}
                       ref="username" />
                     { this.state.usernameFeedback &&
-                      <FormControl.Feedback>{this.state.usernameFeedback}</FormControl.Feedback> }
+                      <HelpBlock>{this.state.usernameFeedback}</HelpBlock> }
                     <small id="usernameHelp" className="form-text text-muted">Usernames cannot contain spaces.</small>
                   </Col>
                 </FormGroup>
@@ -151,7 +173,7 @@ export class Register extends Component {
                       required={true}
                       minLength={10}
                       value={this.state.password}
-                      onChange={this.setFormState.bind(this)} />
+                      onChange={this.onPasswordChange.bind(this)} />
                   </Col>
                 </FormGroup>
                 <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
@@ -163,9 +185,9 @@ export class Register extends Component {
                       placeholder="Retype Password"
                       required={true}
                       value={this.state.passwordRepeated}
-                      onChange={this.setFormState.bind(this)} />
+                      onChange={this.onPasswordChange.bind(this)} />
                     { this.state.passwordFeedback &&
-                      <FormControl.Feedback>{this.state.passwordFeedback}</FormControl.Feedback> }
+                      <HelpBlock>{this.state.passwordFeedback}</HelpBlock> }
                   </Col>
                 </FormGroup>
                 <FormGroup>

@@ -225,7 +225,7 @@ func (b *Backend) UserByEmail(email string) (*data.Person, error) {
 
 func (b *Backend) AddPerson(person *data.Person) error {
 	_, err := b.addPerson(person)
-	if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" && err.Constraint == "person_username_key" {
+	if err, ok := err.(*pq.Error); ok && err.Code.Name() == "unique_violation" && err.Constraint == "person_username_idx" {
 		return UsernameInUseError
 	}
 

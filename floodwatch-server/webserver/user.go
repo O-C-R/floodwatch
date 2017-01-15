@@ -143,9 +143,13 @@ func Register(options *Options) http.Handler {
 			return
 		}
 
-		if err := options.Backend.AddPerson(person); err == backend.UsernameInUseError {
+		err = options.Backend.AddPerson(person)
+		if err == backend.UsernameInUseError {
 			errs["username"] = "Username is already in use."
 			InvalidForm(w, errs)
+			return
+		} else if err != nil {
+			Error(w, err, 500)
 			return
 		}
 
