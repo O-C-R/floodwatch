@@ -29,7 +29,8 @@ const unknownId = "16"
 const otherBreackDown = 0.02
 
 export function createSentence(options: Array<Filter>): string {
-  let sentence = 'Floodwatch users';
+  let sentence = 'Floodwatch users'; 
+
   if (options.length === 0) {
     sentence = 'All ' + sentence;
     return sentence
@@ -39,22 +40,29 @@ export function createSentence(options: Array<Filter>): string {
     return 'You'
   }
 
-  _.forEach(options, function(opt: Filter) {
+  sentence += ' who are '
+
+  _.forEach(options, function(opt: Filter, index: number) {
+    if (opt.choices.length == 0) return;
+
     let logic = ''
     let choices = ''
 
     let wrappedChoices = opt.choices;
     if (opt.name == 'age') {
-      wrappedChoices = wrappedChoices.map(c => `${c} year old`);
+      wrappedChoices = wrappedChoices.map(c => `${c} years old`);
     }
 
-    if (opt.logic === 'NOR') {
-      logic = ' Non-';
-      choices = wrappedChoices.join(', non-')
+    if (opt.logic === 'nor') {
+      logic = 'Non-';
+      choices = wrappedChoices.join(' and Non-')
+      choices = logic + choices
     } else {
-      choices = wrappedChoices.join(', ')
+      choices = wrappedChoices.join(' ' + opt.logic + ' ')
+
     }
-    sentence = logic + choices + ' ' + sentence
+
+    sentence = sentence + ((index > 0) ? ", and " : " ") + choices;
   })
 
   return sentence
