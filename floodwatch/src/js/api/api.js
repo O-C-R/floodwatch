@@ -6,8 +6,21 @@ import log from 'loglevel';
 import {BaseError} from '../common/util';
 import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographics} from './types';
 
-export class APIError extends BaseError {}
-export class AuthenticationError extends APIError {}
+export class APIError extends BaseError {
+  response: ?Response;
+  body: ?string;
+
+  constructor(msg: string, res: ?Response, body: ?string) {
+    super(msg);
+    this.response = res;
+    this.body = body;
+  }
+}
+export class AuthenticationError extends APIError {
+  constructor(res: ?Response, body: ?string) {
+    super('Unauthorized', res, body);
+  }
+}
 
 export class APIClient {
   baseUrl: string;
@@ -31,15 +44,18 @@ export class APIClient {
     } catch (e) {
       log.error(e);
       log.error('Threw while POSTing', url.toString());
-      throw new APIError('HTTP error');
+      throw new APIError('HTTP error', res);
     }
 
-    if (res.status === 401) {
-      log.error('Bad auth while POSTing', url.toString(), await res.text());
-      throw new AuthenticationError();
-    } else if (!res.ok) {
-      log.error('Non-OK response while POSTing', url.toString(), await res.text());
-      throw new APIError('HTTP error');
+    if (!res.ok) {
+      const body = await res.text();
+      if (res.status === 401) {
+        log.error('Bad auth while POSTing', url.toString(), body);
+        throw new AuthenticationError(res, body);
+      } else {
+        log.error('Non-OK response while POSTing', url.toString(), body);
+        throw new APIError('HTTP error', res, body);
+      }
     }
 
     return res;
@@ -65,15 +81,18 @@ export class APIClient {
     } catch (e) {
       log.error(e);
       log.error('Threw while GETing', url.toString());
-      throw new APIError('HTTP error');
+      throw new APIError('HTTP error', res);
     }
 
-    if (res.status === 401) {
-      log.error('Bad auth while GETing', url.toString(), await res.text());
-      throw new AuthenticationError();
-    } else if (!res.ok) {
-      log.error('Non-OK response while GETing', url.toString(), await res.text());
-      throw new APIError('HTTP error');
+    if (!res.ok) {
+      const body = await res.text();
+      if (res.status === 401) {
+        log.error('Bad auth while GETing', url.toString(), body);
+        throw new AuthenticationError(res, body);
+      } else {
+        log.error('Non-OK response while GETing', url.toString(), body);
+        throw new APIError('HTTP error', res, body);
+      }
     }
 
     return res;
@@ -183,12 +202,18 @@ export class FWApiClient extends APIClient {
 
   async getCurrentPerson(): Promise<PersonResponse> {
     // response has no content, so any non-error means success
-    const res: PersonResponse = await this.getJSON('/api/person/current');
+    try {
+      const res: PersonResponse = await this.getJSON('/api/person/current');
 
-    // Also this method acts as a proxy for logging in sometimes...
-    this.onLogin();
+      // Also this method acts as a proxy for logging in sometimes...
+      this.onLogin();
 
-    return res;
+      return res;
+    } catch (e) {
+      // If this method isn't returning, something's wrong.
+      this.onAuthError(e);
+      throw e;
+    }
   }
 
   async updatePersonDemographics(options: PersonDemographics): Promise<PersonResponse> {
