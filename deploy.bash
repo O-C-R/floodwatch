@@ -15,7 +15,7 @@ deploy () {
 }
 
 TAG=$1
-if [ -z TAG ]; then
+if [ -z $TAG ]; then
   echo "Usage: ./deploy.bash TAG [SERVER...]"
   exit
 fi
