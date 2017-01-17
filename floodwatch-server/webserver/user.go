@@ -252,12 +252,10 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 			}
 		}
 
-		if len(demographicRequest.DemographicIDs) > 0 {
-			err := options.Backend.UpdatePersonDemographics(person.ID, demographicRequest.DemographicIDs)
-			if err != nil {
-				Error(w, err, 500)
-				return
-			}
+		err = options.Backend.UpdatePersonDemographics(person.ID, demographicRequest.DemographicIDs)
+		if err != nil {
+			Error(w, err, 500)
+			return
 		}
 
 		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)

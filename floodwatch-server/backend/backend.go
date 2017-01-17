@@ -45,7 +45,7 @@ type Backend struct {
 
 	addPerson, upsertPerson, updatePerson sqlutil.ValueFunc
 
-	personDemographics, upsertPersonDemographic *sqlx.Stmt
+	personDemographics, upsertPersonDemographic, deleteAllDemographics *sqlx.Stmt
 
 	addAdCategory, upsertAdCategory, updateAdCategory sqlutil.ValueFunc
 
@@ -177,6 +177,11 @@ func New(url string) (*Backend, error) {
 		return nil, err
 	}
 
+	b.deleteAllDemographics, err = b.db.Preparex(`DELETE FROM person.person_demographic WHERE person_id = $1`)
+	if err != nil {
+		return nil, err
+	}
+
 	b.upsertPersonDemographic, err = b.db.Preparex(`INSERT INTO person.person_demographic (person_id, demographic_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`)
 	if err != nil {
 		return nil, err
@@ -243,17 +248,26 @@ func (b *Backend) UpdatePersonDemographics(personId id.ID, demographicIds []int)
 		return err
 	}
 
-	query, args, err := sqlx.In(personDemographicDelete, personId, demographicIds)
-	if err != nil {
-		tx.Rollback()
-		return err
-	}
+	if len(demographicIds) > 0 {
+		query, args, err := sqlx.In(personDemographicDelete, personId, demographicIds)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 
-	query = tx.Rebind(query)
-	_, err = tx.Exec(query, args...)
-	if err != nil {
-		tx.Rollback()
-		return err
+		query = tx.Rebind(query)
+		_, err = tx.Exec(query, args...)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		deleteTx := tx.Stmtx(b.deleteAllDemographics)
+		_, err = deleteTx.Exec(personId)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
 	insertTx := tx.Stmtx(b.upsertPersonDemographic)
