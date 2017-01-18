@@ -109,7 +109,6 @@ export class LocationOption extends Component {
 
   constructor(props: LocationPropsType) {
     super(props);
-    console.log('hi')
     this.state = setInitialStateLocation();
   }
 
