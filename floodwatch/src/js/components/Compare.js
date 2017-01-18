@@ -55,7 +55,7 @@ export function createSentence(options: Array<Filter>): string {
     }
 
     if (opt.name == 'country') {
-      wrappedChoices = wrappedChoices.map(c => `from ${c}`);
+      wrappedChoices = wrappedChoices.map(c => `currently living in ${c}`);
     }
 
     if (opt.logic === 'nor') {

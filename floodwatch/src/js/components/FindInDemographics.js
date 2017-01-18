@@ -79,6 +79,9 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
   let disabled = true;
 
   console.log(category)
+  if (!userData) {
+    return
+  }
 
   // age works a lil differently 
   if (category === 'age') {
@@ -89,7 +92,6 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
       }
     }
   } else if (category === 'country') {
-    console.log(userData.twofishes_id)
     if (userData.twofishes_id) {
       return {
         disabled: false,

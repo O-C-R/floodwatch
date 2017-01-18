@@ -156,9 +156,8 @@ type LocationStateType = {
 };
 
 type LocationPropsType = {
-  handleClick: Function,
-  userData: PersonDemographics,
-  filter: FilterJSON
+  handleFilterClick: (obj: Filter, checked: boolean) => void,
+  selection: Filter
 };
 
 function setInitialStateLocation(props) {
@@ -199,28 +198,6 @@ export class CountryFilter extends Component {
     }
   }
 
-  async decodeTwoFishes(id: string) {
-    const place = await FWApiClient.get().getDecodedLocation(id);
-    if (place.interpretations.length > 0) {
-      this.setState({
-        value: place.interpretations[0].feature.displayName
-      })
-    } else {
-      this.setState({
-        value: ''
-      })
-    }
-  }
-
-  toggleDescriptionVisibility() {
-    const curVisibility = this.state.isDescriptionOpen;
-    this.setState({
-      isDescriptionOpen: !curVisibility
-    })
-  }
-
-
-
   render() {
     return (
       <div className="profile-page_option panel-body">
@@ -249,7 +226,7 @@ export class CountryFilter extends Component {
 
           renderItem={(item, isHighlighted) => (
             <div className={"autocomplete_options " + (isHighlighted && "current")}>
-            {item.feature.displayName}
+            {item.feature.cc}
             </div>
           )}
         />
