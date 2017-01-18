@@ -162,6 +162,114 @@ func Register(options *Options) http.Handler {
 	})
 }
 
+// TODO: handle email requests
+// TODO: send emails
+func StartPasswordReset(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		passwordResetRequest := data.PersonStartPasswordResetRequest{}
+		err := decoder.Decode(&passwordResetRequest)
+		defer req.Body.Close()
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		var person *data.Person
+		if passwordResetRequest.Username != nil {
+			person, err = options.Backend.UserByUsername(*passwordResetRequest.Username)
+			if err != nil {
+				Error(w, nil, 404)
+				return
+			}
+		} else {
+			Error(w, nil, 400)
+			return
+		}
+
+		resetToken, err := id.New()
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personValidation := &data.PersonVerification{
+			PersonId:                 person.ID,
+			PasswordResetToken:       resetToken,
+			PasswordResetTokenExpiry: time.Now().Add(time.Hour * 8),
+		}
+
+		err = options.Backend.UpsertPersonVerification(personValidation)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
+// TODO: better errors
+func ResetPassword(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		passwordResetRequest := data.PersonPasswordResetRequest{}
+		err := decoder.Decode(&passwordResetRequest)
+		defer req.Body.Close()
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		resetToken := id.ID{}
+		if err := resetToken.UnmarshalText([]byte(passwordResetRequest.PasswordResetToken)); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personVerification, err := options.Backend.GetPersonVerification(resetToken)
+		if err != nil {
+			Error(w, err, 404)
+			return
+		}
+
+		if personVerification.PasswordResetToken.String() != passwordResetRequest.PasswordResetToken {
+			Error(w, err, 403)
+			return
+		}
+
+		if personVerification.PasswordResetTokenExpiry.Before(time.Now()) {
+			Error(w, err, 403)
+			return
+		}
+
+		person, err := options.Backend.Person(personVerification.PersonId)
+		if err != nil {
+			Error(w, err, 404)
+			return
+		}
+
+		if err := person.SetPassword(passwordResetRequest.Password); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		err = options.Backend.UpdatePerson(person)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		if err := options.Backend.DeletePersonVerification(person.ID); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		// TODO: invalidate sessions
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
 func FetchPersonResponse(b *backend.Backend, userId id.ID) (*data.PersonResponse, error) {
 	person, err := b.Person(userId)
 	if err != nil {

@@ -98,6 +98,9 @@ func New(options *Options) (*Webserver, error) {
 	apiRouter.Handle("/login", RateLimitHandler(Login(options), options, 10/60e9, 30)).Methods("POST")
 	apiRouter.Handle("/logout", Logout(options)).Methods("POST")
 
+	apiRouter.Handle("/reset_password/start", StartPasswordReset(options)).Methods("POST")
+	apiRouter.Handle("/reset_password/complete", ResetPassword(options)).Methods("POST")
+
 	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
 	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")
 	apiRouter.Handle("/ads", secureRoute(Ads(options), auth, secure)).Methods("POST")

@@ -45,6 +45,9 @@ type Backend struct {
 
 	addPerson, upsertPerson, updatePerson sqlutil.ValueFunc
 
+	upsertPersonVerification                        sqlutil.ValueFunc
+	getPersonVerification, deletePersonVerification *sqlx.Stmt
+
 	personDemographics, upsertPersonDemographic, deleteAllDemographics *sqlx.Stmt
 
 	addAdCategory, upsertAdCategory, updateAdCategory sqlutil.ValueFunc
@@ -108,6 +111,26 @@ func New(url string) (*Backend, error) {
 	}
 
 	b.updatePerson, err = sqlutil.UpdateFunc(b.db.DB, data.Person{}, `person.person`, `id`)
+	if err != nil {
+		return nil, err
+	}
+
+	b.upsertPersonVerification, err = sqlutil.UpsertFunc(b.db.DB, data.PersonVerification{}, `person.verification`, `person_id`)
+	if err != nil {
+		return nil, err
+	}
+
+	personVerificationSelect, err := sqlutil.Select(data.PersonVerification{}, nil, `WHERE password_reset_token = $1`)
+	if err != nil {
+		return nil, err
+	}
+
+	b.getPersonVerification, err = b.db.Preparex(personVerificationSelect)
+	if err != nil {
+		return nil, err
+	}
+
+	b.deletePersonVerification, err = b.db.Preparex(`DELETE FROM person.verification WHERE person_id = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -239,6 +262,24 @@ func (b *Backend) AddPerson(person *data.Person) error {
 
 func (b *Backend) UpsertPerson(person *data.Person) error {
 	_, err := b.upsertPerson(person)
+	return err
+}
+
+func (b *Backend) UpsertPersonVerification(personVerification *data.PersonVerification) error {
+	_, err := b.upsertPersonVerification(personVerification)
+	return err
+}
+
+func (b *Backend) GetPersonVerification(resetToken id.ID) (*data.PersonVerification, error) {
+	personVerification := &data.PersonVerification{}
+	if err := b.getPersonVerification.Get(personVerification, resetToken); err != nil {
+		return nil, err
+	}
+	return personVerification, nil
+}
+
+func (b *Backend) DeletePersonVerification(personId id.ID) error {
+	_, err := b.deletePersonVerification.Exec(personId)
 	return err
 }
 
@@ -448,4 +489,5 @@ func init() {
 	sqlutil.Register(data.Ad{}, "ad.ad")
 	sqlutil.Register(data.AdCategory{}, "ad.category")
 	sqlutil.Register(data.Site{}, "site.site")
+	sqlutil.Register(data.PersonVerification{}, "person.verification")
 }
