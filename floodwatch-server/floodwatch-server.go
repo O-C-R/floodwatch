@@ -6,8 +6,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/O-C-R/auth/session"
+
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsSession "github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
 	"github.com/O-C-R/floodwatch/floodwatch-server/webserver"
@@ -66,7 +68,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sessionStore, err := backend.NewSessionStore(backend.SessionStoreOptions{
+	sessionStore, err := session.NewSessionStore(session.SessionStoreOptions{
 		Addr:            config.sessionStoreAddr,
 		Password:        config.sessionStorePassword,
 		SessionDuration: time.Hour * 24 * 365,
@@ -75,7 +77,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	awsSession, err := session.NewSessionWithOptions(session.Options{
+	awsSession, err := awsSession.NewSessionWithOptions(awsSession.Options{
 		Profile: "floodwatch",
 		Config: aws.Config{
 			Region: aws.String("us-east-1"),

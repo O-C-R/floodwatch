@@ -6,29 +6,25 @@ import (
 	"strings"
 
 	"github.com/O-C-R/auth/id"
-	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/auth/session"
 	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 type SessionAuthenticator struct {
-	sessionStore *backend.SessionStore
+	sessionStore *session.SessionStore
 }
 
-func NewSessionAuthenticator(sessionStore *backend.SessionStore) *SessionAuthenticator {
+func NewSessionAuthenticator(sessionStore *session.SessionStore) *SessionAuthenticator {
 	return &SessionAuthenticator{sessionStore}
 }
 
 func (u *SessionAuthenticator) AuthenticateToken(sessionID id.ID) (info interface{}, authentic bool, err error) {
-	session, err := u.sessionStore.Session(sessionID)
-	if err != nil {
+	fwSession := &data.Session{}
+	if err := u.sessionStore.Session(sessionID, fwSession); err != nil {
 		return nil, false, err
 	}
 
-	if session == nil {
-		return nil, false, nil
-	}
-
-	return session, true, nil
+	return fwSession, true, nil
 }
 
 type sessionKey struct{}
@@ -54,7 +50,7 @@ func RateLimitHandler(handler http.Handler, options *Options, bucketRate, bucket
 		remoteAddrHostname := remoteAddrComponents[0]
 
 		err := options.SessionStore.RateLimitCount(remoteAddrHostname, bucketRate, bucketCapacity)
-		if err == backend.RateLimitExceededError {
+		if err == session.RateLimitExceededError {
 			Error(w, err, 429)
 			return
 		}

@@ -1,4 +1,4 @@
-package backend
+package session
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 
 	"github.com/O-C-R/auth/id"
 	"github.com/garyburd/redigo/redis"
-
-	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
 
 // Arguments: current unix timestamp (nanoseconds), rate (tokens per nanosecond), bucket capacity.
@@ -104,24 +102,19 @@ func NewSessionStore(options SessionStoreOptions) (*SessionStore, error) {
 	}, nil
 }
 
-func (r *SessionStore) Session(sessionID id.ID) (*data.Session, error) {
+func (r *SessionStore) Session(sessionID id.ID, session interface{}) error {
 	conn := r.pool.Get()
 	defer conn.Close()
 
 	reply, err := redis.Bytes(conn.Do("GET", sessionKey(sessionID)))
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	session := &data.Session{}
-	if err := gob.NewDecoder(bytes.NewBuffer(reply)).Decode(session); err != nil {
-		return nil, err
-	}
-
-	return session, nil
+	return gob.NewDecoder(bytes.NewBuffer(reply)).Decode(session)
 }
 
-func (r *SessionStore) SetSession(sessionID id.ID, session *data.Session) error {
+func (r *SessionStore) SetSession(sessionID id.ID, session interface{}) error {
 	conn := r.pool.Get()
 	defer conn.Close()
 
@@ -156,8 +149,4 @@ func (r *SessionStore) RateLimitCount(client string, bucketRate, bucketCapacity 
 	}
 
 	return nil
-}
-
-func init() {
-	gob.Register(&data.Session{})
 }
