@@ -92,7 +92,8 @@ export class ComparisonModal extends Component {
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
             handleCustomClick={this.handleCustomClick.bind(this, 'left')}
             handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'left')}
-            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'left')}/>
+            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'left')}
+            />
             </Col>
             <Col xs={2}>
           <div style={{textAlign:'center'}}>vs</div>
@@ -107,7 +108,8 @@ export class ComparisonModal extends Component {
             handlePresetClick={this.changeCategoriesPreset.bind(this)}
             handleCustomClick={this.handleCustomClick.bind(this, 'right')}
             handleFilterClick={this.props.changeCategoriesCustom.bind(this, 'right')}
-            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'right')}/>
+            updateSearchLogic={this.props.updateSearchLogic.bind(this, 'right')}
+            />
             </Col>
           </Row>
         </Modal.Body>
