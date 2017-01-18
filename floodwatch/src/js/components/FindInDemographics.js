@@ -2,7 +2,7 @@
 import _ from 'lodash';
 
 import type {PersonResponse} from '../api/types';
-import type {Preset, Filter, DisabledCheck} from './filtertypes'
+import type {Preset, Filter, DisabledCheck, FilterJSON, DemographicEntry} from './filtertypes'
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
@@ -43,7 +43,7 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
     }
    
     const filteredDemographics = _.filter(DemographicKeys.demographic_keys, function(dk) {
-      return _.find(userData.demographic_ids, function(di) {
+      return _.find(userData.demographic_ids, function(di: DemographicEntry) {
         if (dk.id === di) {
           return di
         }
@@ -51,7 +51,7 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
     })
 
     const thisKey = DemographicKeys.category_to_id[filter.name]
-    const found = _.find(filteredDemographics, function(fd) {
+    const found = _.find(filteredDemographics, function(fd: FilterJSON) {
       return (fd.category_id == thisKey)
     })
 
@@ -103,7 +103,7 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
 
   // and now the rest
   const filteredDemographics = _.filter(DemographicKeys.demographic_keys, function(dk) {
-    return _.find(userData.demographic_ids, function(di) {
+    return _.find(userData.demographic_ids, function(di: string) {
       if (dk.id === di) {
         return di
       }
@@ -111,7 +111,7 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
   })
 
   const thisKey = DemographicKeys.category_to_id[category]
-  const found = _.find(filteredDemographics, function(fd) {
+  const found = _.find(filteredDemographics, function(fd: FilterJSON) {
     return (fd.category_id == thisKey)
   })
 

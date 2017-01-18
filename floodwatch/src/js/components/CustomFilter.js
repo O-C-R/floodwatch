@@ -161,7 +161,7 @@ type LocationPropsType = {
   selection: Filter
 };
 
-function setInitialStateLocation(props) {
+function setInitialStateLocation(props: LocationPropsType) {
   return {
     value: '',
     items: [],
