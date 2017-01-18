@@ -91,7 +91,7 @@ export class OptionDropdown extends Component {
       } else {
         return  <MenuItem key={i}
                       disabled={requirements.disabled}>
-                      {item.name} (Requires info)
+                      {item.name} (Requires profile information)
                 </MenuItem>
 
       }
