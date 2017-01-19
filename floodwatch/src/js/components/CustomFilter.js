@@ -51,8 +51,7 @@ export class CustomFilter extends Component {
     if (this.props.filter.name === 'country') {
       return (
         <div className="filter-option">
-        <h4>Filter by {this.props.filter.name} code</h4>
-        <p>Use a two-letter country code (e.g. US, FR, DE)</p>
+        <h4>Filter by {this.props.filter.name}</h4>
         <div>
         <CountryFilter selection={this.props.mySelection} handleFilterClick={this.props.handleFilterClick}/>
         </div>
