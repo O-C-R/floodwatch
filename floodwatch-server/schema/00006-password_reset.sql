@@ -3,7 +3,7 @@
 CREATE TABLE person.verification (
   person_id bytea REFERENCES person.person (id),
   password_reset_token bytea,
-  password_reset_token_expiry
+  password_reset_token_expiry timestamp
 );
 
 CREATE UNIQUE INDEX person_verification_person_id ON person.verification (person_id);
