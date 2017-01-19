@@ -232,7 +232,7 @@ export class DemographicContainer extends Component {
       <div>
         {(this.state.successMsg || this.state.errorMsg) &&
           <ListGroup>
-            {(this.state.success &&
+            {(this.state.successMsg &&
               <ListGroupItem bsStyle="success">{this.state.successMsg}</ListGroupItem>
             )}
             {(this.state.errorMsg &&

@@ -9,10 +9,16 @@
 			"revisionTime": "2016-09-19T16:03:58Z"
 		},
 		{
-			"checksumSHA1": "eBz8je8VaROXaGyKjtxFIhm5gaY=",
+			"checksumSHA1": "U9tvXTtjMb28Yf9vFPWwvlQpyPw=",
 			"path": "github.com/O-C-R/auth/id",
-			"revision": "a3d2273b6cbf2984380430232d115feebfbc6020",
-			"revisionTime": "2016-09-19T16:03:58Z"
+			"revision": "59b363626eab103c3b52c64996124b25c817c6b1",
+			"revisionTime": "2016-12-08T17:59:49Z"
+		},
+		{
+			"checksumSHA1": "0z3U2o+k4ZA+Qep4F6MZnTBSI88=",
+			"path": "github.com/O-C-R/auth/session",
+			"revision": "59b363626eab103c3b52c64996124b25c817c6b1",
+			"revisionTime": "2016-12-08T17:59:49Z"
 		},
 		{
 			"checksumSHA1": "O08jvEvOP6/zzDCjiFKRBGXCzVs=",

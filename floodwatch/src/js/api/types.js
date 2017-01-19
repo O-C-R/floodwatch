@@ -24,7 +24,7 @@ export type FilterRequestItem = {
     max?: number
   },
   location?: {
-    countryCodes: Array<number>
+    countryCodes: Array<string>
   },
   demographics?: Array<DemographicFilterItem>
 };

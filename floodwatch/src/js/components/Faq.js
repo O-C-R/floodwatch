@@ -21,6 +21,9 @@ export class Faq extends Component {
             <p>This process isn't 100% perfect: occasionally we'll find an ad that wasn't categorized correctly. However, we find it works for classifying most ads, and that any false positives are washed out by correctly-classified ads in the stack visualization.</p>
             <p>There are some ads we just can't classify, too. At the moment, we're able to categorize 86% of the images that come to us through Floodwatch. (We consider the remainder image of ads "Unknown," or potentially not an ad, and don't show them on the visualization.) We're continually refining our process to increase this accuracy further.</p>
 
+            <h3 className="header"><a className="anchor" name="filtering">Why are certain presets and filters grayed out?</a></h3>
+            <p>In order to compare by a given demographic characteristic (age, gender, location, etc.), you need to provide your own demographic information for that category in your Profile.</p>
+
             <h3 className="header"><a className="anchor" name="info">Why am I being asked for my demographic information? Do I have to give any?</a></h3>
             <p>The reason why we ask for demographic information is because advertisers base their advertising decisions on what demographic they believe you to be--a practice that can easily turn discriminatory.</p>
             <p>Advertisers are constantly looking to refine their demographic profile of a given person in order to serve them the ads they think “fit” their interest group. For certain factors, that’s an acceptable practice: for example, it makes sense to serve more sports advertising to people who visit more sports websites. </p>

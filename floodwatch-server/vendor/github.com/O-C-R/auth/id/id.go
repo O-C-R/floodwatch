@@ -71,6 +71,7 @@ func (id *ID) Scan(src interface{}) error {
 	return id.UnmarshalBinary(data)
 }
 
+// Value implements the driver Valuer interface.
 func (id ID) Value() (driver.Value, error) {
 	return id[:], nil
 }
