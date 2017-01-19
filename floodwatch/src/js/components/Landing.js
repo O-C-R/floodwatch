@@ -43,6 +43,7 @@ export class Landing extends Component {
                   <li>Capture the ads that you see</li>
                   <li>Compare your breakdown to other demographics</li>
                 </ul>
+                <p>The more demographic information you volunteer, the more tools you'll have to examine and filter ad data. No demographic data? No worries! Floodwatch's core functionality of ad-tracking and categorization is available to everyone, regardless of donated data.</p>
               </div>
             </div>
 
@@ -64,7 +65,7 @@ export class Landing extends Component {
 
             <div className="panel">
               <div className="panel-body">
-                <p>Some users may recognize Floodwatch from its first version in 2014: <a href="https://ocr.nyc/user-focused-tools/2014/06/15/floodwatch/" target="_blank">Floodwatch version 1</a>. v1 is now deprecated in favor of v2, which will provide even better functionality, features, design, and stability for our users and researchers. v2 is currently in beta.</p>
+                <p>Some users may recognize Floodwatch from its  <a href="https://ocr.nyc/user-focused-tools/2014/06/15/floodwatch/" target="_blank">first version</a> in 2014. v1 is now deprecated in favor of v2, which will provide even better functionality, features, design, and stability for our users and researchers. v2 is currently in beta.</p>
                 <p>Floodwatch is still being developed by <a href="https://ocr.nyc">The Office for Creative Research</a>. Have questions? Email us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
               </div>
             </div>
