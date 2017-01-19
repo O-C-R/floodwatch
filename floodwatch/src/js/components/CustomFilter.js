@@ -146,14 +146,7 @@ export class CustomFilter extends Component {
 type LocationStateType = {
   value: string,
   items: Array<Object>,
-  highlightedStyle: {
-    fontWeight: number
-  },
-  regularStyle: {
-    fontWeight: number
-  },
-  loading?: boolean,
-  isDescriptionOpen: boolean
+  loading?: boolean
 };
 
 type LocationPropsType = {
@@ -164,18 +157,9 @@ type LocationPropsType = {
 function setInitialStateLocation(props: LocationPropsType) {
   return {
     value: '',
-    items: [],
-    highlightedStyle: {
-      fontWeight:700
-    },
-    regularStyle: {
-      fontWeight:400
-    },
-    isDescriptionOpen: false
+    items: []
   }
 }
-
-
 
 export class CountryFilter extends Component {
   state: LocationStateType;
@@ -227,7 +211,7 @@ export class CountryFilter extends Component {
 
           renderItem={(item, isHighlighted) => (
             <div className={"autocomplete_options " + (isHighlighted && "current")}>
-            {item.feature.cc}
+            {item.feature.displayName} ({item.feature.cc})
             </div>
           )}
         />

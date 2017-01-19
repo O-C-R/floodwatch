@@ -78,7 +78,6 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
 export function shouldCustomBeDisabled(category: string, userData: PersonResponse) {
   let disabled = true;
 
-  console.log(category)
   if (!userData) {
     return
   }
