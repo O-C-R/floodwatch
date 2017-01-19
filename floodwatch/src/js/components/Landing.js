@@ -60,6 +60,15 @@ export class Landing extends Component {
                 <p>Still have questions? Read through our <a href="/faq#faq">FAQ</a> and <a href="/faq#privacy">Privacy Policy</a>.</p>
               </div>
             </div>
+
+
+            <div className="panel">
+              <div className="panel-body">
+                <p>Some users may recognize Floodwatch from its first version in 2014: <a href="https://ocr.nyc/user-focused-tools/2014/06/15/floodwatch/" target="_blank">Floodwatch version 1</a>. v1 is now deprecated in favor of v2, which will provide even better functionality, features, design, and stability for our users and researchers. v2 is currently in beta.</p>
+                <p>Floodwatch is still being developed by <a href="https://ocr.nyc">The Office for Creative Research</a>. Have questions? Email us at <a href="mailto:floodwatch@ocr.nyc" className="underlined" target="_top">floodwatch@ocr.nyc</a>.</p>
+              </div>
+            </div>
+
           </Col>
         </Row>
       </div>
