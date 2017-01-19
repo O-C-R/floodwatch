@@ -8,7 +8,8 @@ import {FWApiClient, AuthenticationError, APIError} from '../api/api';
 import history from '../common/history';
 
 type Props = {
-  location: Location
+  location: Location,
+  loginChanged: () => void
 };
 type State = {
   token: string,
@@ -63,9 +64,6 @@ export class ResetPassword extends Component {
 
     try {
       await FWApiClient.get().completePasswordReset(this.state.token, this.state.password);
-      FWApiClient.get().onLogout();
-
-      history.push('/login');
     } catch (error) {
       let foundError = false;
       if (error instanceof APIError) {
@@ -85,6 +83,17 @@ export class ResetPassword extends Component {
       if (!foundError) {
         this.setState({ error: 'An unknown error occurred, please contact us for more support.' });
       }
+
+      return;
+    }
+
+    try {
+      FWApiClient.get().onLogout();
+      this.props.loginChanged();
+
+      history.push('/login');
+    } catch (error) {
+      console.error(error);
     }
   }
 
