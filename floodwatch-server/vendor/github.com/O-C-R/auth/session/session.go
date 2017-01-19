@@ -92,6 +92,7 @@ return 0
 
 var (
 	InvalidStringError           = errors.New("Must provide a string-like object")
+	NoSessionFoundError          = errors.New("No session found")
 	RateLimitExceededError       = errors.New("rate limit exceeded")
 	redisError                   = errors.New("redis error")
 	tokenBucketScript            = redis.NewScript(1, tokenBucket)
@@ -206,12 +207,23 @@ func (r *SessionStore) Session(sessionID, session interface{}) error {
 	if err != nil {
 		return err
 	}
-	reply, err := redis.Bytes(conn.Do("GET", sessionKey(sessionIdStr)))
+
+	reply, err := conn.Do("GET", sessionKey(sessionIdStr))
 	if err != nil {
 		return err
 	}
 
-	return gob.NewDecoder(bytes.NewBuffer(reply)).Decode(session)
+	// Nil replies generate an error in redis.Bytes, head that off here.
+	if reply == nil {
+		return NoSessionFoundError
+	}
+
+	parsed, err := redis.Bytes(reply, err)
+	if err != nil {
+		return err
+	}
+
+	return gob.NewDecoder(bytes.NewBuffer(parsed)).Decode(session)
 }
 
 func (r *SessionStore) SetSession(sessionID, groupId, session interface{}) error {

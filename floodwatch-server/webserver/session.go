@@ -21,7 +21,11 @@ func NewSessionAuthenticator(sessionStore *session.SessionStore) *SessionAuthent
 func (u *SessionAuthenticator) AuthenticateToken(sessionID id.ID) (info interface{}, authentic bool, err error) {
 	fwSession := &data.Session{}
 	if err := u.sessionStore.Session(sessionID, fwSession); err != nil {
-		return nil, false, err
+		if err == session.NoSessionFoundError {
+			return nil, false, nil
+		} else {
+			return nil, false, err
+		}
 	}
 
 	return fwSession, true, nil
