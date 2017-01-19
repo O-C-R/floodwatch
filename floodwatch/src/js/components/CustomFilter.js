@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import $ from 'jquery';
-import { Button, FormGroup, Radio } from 'react-bootstrap';
+import { Button, FormGroup, Radio, Well } from 'react-bootstrap';
 import _ from 'lodash'
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
@@ -89,7 +89,7 @@ export class CustomFilter extends Component {
         }
       }
 
-      elems.push(<div key={i} className="custom-option">
+      elems.push(<div key={i} className={"custom-option checkbox " + (checked ? "checked" : '')}>
                   <Button href="#" active={checked}
                           disabled={this.props.shouldBeDisabled.disabled}
                           onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
@@ -121,18 +121,22 @@ export class CustomFilter extends Component {
     let or, and, nor;
     
     if (this.props.filter.name !== 'age' && this.props.filter.name !== 'country') {
-      or = <Radio className="logic-option" checked={logicSelection === 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of these</Radio>;
-      and = <Radio className="logic-option" checked={logicSelection === 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of these</Radio>
-      nor = <Radio className="logic-option" checked={logicSelection === 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of these</Radio>
+      or = <Radio className="logic-option" checked={logicSelection === 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of the following</Radio>;
+      and = <Radio className="logic-option" checked={logicSelection === 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of the following</Radio>
+      nor = <Radio className="logic-option" checked={logicSelection === 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of the following</Radio>
+    } else {
+      return <div></div>
     }
 
     let select = <div>
+                  <Well bsSize="small">
                   <p>Show me people who chose</p>
                   <FormGroup onChange={this.updateSearchLogic.bind(this)}>
                     {or}
                     {and}
                     {nor}
                   </FormGroup>
+                  </Well>
                 </div>
 
     return select
