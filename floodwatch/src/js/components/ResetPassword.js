@@ -63,6 +63,8 @@ export class ResetPassword extends Component {
 
     try {
       await FWApiClient.get().completePasswordReset(this.state.token, this.state.password);
+      FWApiClient.get().onLogout();
+
       history.push('/login');
     } catch (error) {
       let foundError = false;
