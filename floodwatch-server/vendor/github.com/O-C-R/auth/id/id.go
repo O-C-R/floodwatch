@@ -3,7 +3,7 @@ package id
 import (
 	"crypto/rand"
 	"database/sql/driver"
-	"encoding/base32"
+	"encoding/hex"
 	"errors"
 )
 
@@ -39,17 +39,17 @@ func (id *ID) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-// MarshalText returns a base32-encoded slice of bytes.
+// MarshalText returns a hex-encoded slice of bytes.
 func (id ID) MarshalText() (text []byte, err error) {
-	data := make([]byte, base32.StdEncoding.EncodedLen(len(id)))
-	base32.StdEncoding.Encode(data, id[:])
+	data := make([]byte, hex.EncodedLen(len(id)))
+	hex.Encode(data, id[:])
 	return data, nil
 }
 
-// UnmarshalText sets the value of the ID based on a base32-encoded slice of bytes.
+// UnmarshalText sets the value of the ID based on a hex-encoded slice of bytes.
 func (id *ID) UnmarshalText(text []byte) error {
-	data := make([]byte, base32.StdEncoding.DecodedLen(len(text)))
-	if _, err := base32.StdEncoding.Decode(data, text); err != nil {
+	data := make([]byte, hex.DecodedLen(len(text)))
+	if _, err := hex.Decode(data, text); err != nil {
 		return err
 	}
 
@@ -58,7 +58,7 @@ func (id *ID) UnmarshalText(text []byte) error {
 
 // String returns a hex-encoded string.
 func (id ID) String() string {
-	return base32.StdEncoding.EncodeToString(id[:])
+	return hex.EncodeToString(id[:])
 }
 
 // Scan sets the value of the ID based on an interface.
