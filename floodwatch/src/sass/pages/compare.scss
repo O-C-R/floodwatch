@@ -84,3 +84,23 @@
 		}
 	}
 }
+
+.filter-option {
+	.btn {
+		padding-left:40px;
+		box-shadow:none; 
+		border:none; 
+		background-color:white;
+	}
+
+	margin-bottom:40px;
+}
+
+.comparison-container {
+	button {
+		box-shadow:none; 
+		background-color:white;
+	    border: solid 2px #f2f3f4;
+	    border-radius: 3px;
+	}
+}
