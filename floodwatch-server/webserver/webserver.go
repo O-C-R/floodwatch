@@ -10,8 +10,9 @@ import (
 	"strconv"
 
 	"github.com/O-C-R/auth/httpauth"
+	"github.com/O-C-R/auth/session"
 	"github.com/O-C-R/singlepage"
-	"github.com/aws/aws-sdk-go/aws/session"
+	awsSession "github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -60,8 +61,8 @@ type Options struct {
 	RedirectAddr string
 	Backend      *backend.Backend
 
-	SessionStore                *backend.SessionStore
-	AWSSession                  *session.Session
+	SessionStore                *session.SessionStore
+	AWSSession                  *awsSession.Session
 	S3Bucket                    string
 	SQSClassifierInputQueueURL  string
 	SQSClassifierOutputQueueURL string
@@ -96,7 +97,10 @@ func New(options *Options) (*Webserver, error) {
 
 	apiRouter.Handle("/register", RateLimitHandler(Register(options), options, 10/60e9, 30)).Methods("POST")
 	apiRouter.Handle("/login", RateLimitHandler(Login(options), options, 10/60e9, 30)).Methods("POST")
-	apiRouter.Handle("/logout", Logout(options)).Methods("POST")
+	apiRouter.Handle("/logout", secureRoute(Logout(options), auth, secure)).Methods("POST")
+
+	apiRouter.Handle("/reset_password/start", StartPasswordReset(options)).Methods("POST")
+	apiRouter.Handle("/reset_password/complete", ResetPassword(options)).Methods("POST")
 
 	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
 	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")

@@ -101,3 +101,19 @@ func (p *Person) NewPersonResponse(demographicIds []int) PersonResponse {
 
 	return res
 }
+
+type PersonVerification struct {
+	PersonId                 id.ID     `db:"person_id"`
+	PasswordResetToken       id.ID     `db:"password_reset_token"`
+	PasswordResetTokenExpiry time.Time `db:"password_reset_token_expiry"`
+}
+
+type PersonStartPasswordResetRequest struct {
+	Username *string `json:"username"`
+	Email    *string `json:"email"`
+}
+
+type PersonPasswordResetRequest struct {
+	PasswordResetToken string `json:"password_reset_token"`
+	Password           string `json:"password"`
+}

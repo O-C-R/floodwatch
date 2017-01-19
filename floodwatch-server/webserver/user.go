@@ -18,10 +18,14 @@ func Logout(options *Options) http.Handler {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(204)
 			return
+		} else if err != nil {
+			Error(w, err, 500)
+			return
 		}
 
-		if err != nil {
-			Error(w, err, 500)
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
 			return
 		}
 
@@ -79,7 +83,7 @@ func Login(options *Options) http.Handler {
 		}
 
 		session := data.NewSession(person.ID)
-		if err := options.SessionStore.SetSession(sessionID, session); err != nil {
+		if err := options.SessionStore.SetSession(sessionID, person.ID, session); err != nil {
 			Error(w, err, 500)
 			return
 		}
@@ -154,6 +158,112 @@ func Register(options *Options) http.Handler {
 		}
 
 		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
+// TODO: handle email requests
+// TODO: send emails
+func StartPasswordReset(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		passwordResetRequest := data.PersonStartPasswordResetRequest{}
+		err := decoder.Decode(&passwordResetRequest)
+		defer req.Body.Close()
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		var person *data.Person
+		if passwordResetRequest.Username != nil {
+			person, err = options.Backend.UserByUsername(*passwordResetRequest.Username)
+			if err != nil {
+				Error(w, nil, 404)
+				return
+			}
+		} else {
+			Error(w, nil, 400)
+			return
+		}
+
+		resetToken, err := id.New()
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personValidation := &data.PersonVerification{
+			PersonId:                 person.ID,
+			PasswordResetToken:       resetToken,
+			PasswordResetTokenExpiry: time.Now().Add(time.Hour * 8),
+		}
+
+		err = options.Backend.UpsertPersonVerification(personValidation)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	})
+}
+
+// TODO: better errors
+func ResetPassword(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		decoder := json.NewDecoder(req.Body)
+		passwordResetRequest := data.PersonPasswordResetRequest{}
+		err := decoder.Decode(&passwordResetRequest)
+		defer req.Body.Close()
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		resetToken := id.ID{}
+		if err := resetToken.UnmarshalText([]byte(passwordResetRequest.PasswordResetToken)); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		personVerification, err := options.Backend.GetPersonVerification(resetToken)
+		if err != nil {
+			Error(w, err, 404)
+			return
+		}
+
+		if personVerification.PasswordResetTokenExpiry.Before(time.Now()) {
+			Error(w, err, 403)
+			return
+		}
+
+		person, err := options.Backend.Person(personVerification.PersonId)
+		if err != nil {
+			Error(w, err, 404)
+			return
+		}
+
+		if err := person.SetPassword(passwordResetRequest.Password); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		err = options.Backend.UpdatePerson(person)
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		if err := options.Backend.DeletePersonVerification(person.ID); err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		if err := options.SessionStore.InvalidateSessions(person.ID); err != nil {
 			Error(w, err, 500)
 			return
 		}
