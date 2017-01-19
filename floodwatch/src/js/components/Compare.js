@@ -49,8 +49,13 @@ export function createSentence(options: Array<Filter>): string {
     let choices = ''
 
     let wrappedChoices = opt.choices;
+
     if (opt.name == 'age') {
       wrappedChoices = wrappedChoices.map(c => `${c} years old`);
+    }
+
+    if (opt.name == 'country') {
+      wrappedChoices = wrappedChoices.map(c => `currently living in ${c}`);
     }
 
     if (opt.logic === 'nor') {
@@ -59,7 +64,6 @@ export function createSentence(options: Array<Filter>): string {
       choices = logic + choices
     } else {
       choices = wrappedChoices.join(' ' + opt.logic + ' ')
-
     }
 
     sentence = sentence + ((index > 0) ? ", and " : " ") + choices;
@@ -203,6 +207,8 @@ export class CompareContainer extends Component {
       demographics: []
     };
 
+
+
     for (const f of filter) {
       if (f.name === 'age') {
         if (f.choices[0]) {
@@ -214,7 +220,9 @@ export class CompareContainer extends Component {
           }
         }
       } else if (f.name === 'country') {
-        // TK
+        obj.location = {
+          countryCodes: f.choices
+        }
       } else {
         const arr = [];
         const myCategoryId = DemographicKeys.category_to_id[f.name];
@@ -264,7 +272,7 @@ export class CompareContainer extends Component {
     for (let i = 0; i < curInfo.length; i++) {
       if (curInfo[i].name === info.name)  {
         if (checked) {
-          if (info.name === 'age') { // special case for age
+          if (info.name === 'age' || info.name === 'country') { // special case for age
             curInfo[i].choices = info.choices // treat it like a radio button: only 1 choice allowed
           } else {
             curInfo[i].choices = _.union(curInfo[i].choices, info.choices)
