@@ -41,7 +41,7 @@ export class Navigation extends Component {
         <div className="container">
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="#">Floodwatch</a>
+              <a href="/">Floodwatch</a>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>

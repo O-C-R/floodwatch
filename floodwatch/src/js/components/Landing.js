@@ -43,7 +43,7 @@ export class Landing extends Component {
                   <li>Capture the ads that you see</li>
                   <li>Compare your breakdown to other demographics</li>
                 </ul>
-                <p>The more demographic information you volunteer, the more tools you'll have to examine and filter ad data. No demographic data? No worries! Floodwatch's core functionality of ad-tracking and categorization is available to everyone, regardless of donated data.</p>
+                <p>The more demographic information you volunteer, the more tools you'll have to examine and filter ad data. But Floodwatch's core functionality of ad-tracking and categorization is available to everyone, regardless of whether they donate data.</p>
               </div>
             </div>
 
