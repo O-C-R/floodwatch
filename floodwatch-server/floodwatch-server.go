@@ -72,6 +72,7 @@ func main() {
 		Addr:            config.sessionStoreAddr,
 		Password:        config.sessionStorePassword,
 		SessionDuration: time.Hour * 24 * 365,
+		MaxSessions:     100,
 	})
 	if err != nil {
 		log.Fatal(err)

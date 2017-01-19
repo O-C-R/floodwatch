@@ -18,10 +18,14 @@ func Logout(options *Options) http.Handler {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(204)
 			return
+		} else if err != nil {
+			Error(w, err, 500)
+			return
 		}
 
-		if err != nil {
-			Error(w, err, 500)
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
 			return
 		}
 
@@ -79,7 +83,7 @@ func Login(options *Options) http.Handler {
 		}
 
 		session := data.NewSession(person.ID)
-		if err := options.SessionStore.SetSession(sessionID, session); err != nil {
+		if err := options.SessionStore.SetSession(sessionID, person.ID, session); err != nil {
 			Error(w, err, 500)
 			return
 		}
@@ -232,11 +236,6 @@ func ResetPassword(options *Options) http.Handler {
 			return
 		}
 
-		if personVerification.PasswordResetToken.String() != passwordResetRequest.PasswordResetToken {
-			Error(w, err, 403)
-			return
-		}
-
 		if personVerification.PasswordResetTokenExpiry.Before(time.Now()) {
 			Error(w, err, 403)
 			return
@@ -264,7 +263,10 @@ func ResetPassword(options *Options) http.Handler {
 			return
 		}
 
-		// TODO: invalidate sessions
+		if err := options.SessionStore.InvalidateSessions(person.ID); err != nil {
+			Error(w, err, 500)
+			return
+		}
 
 		w.WriteHeader(http.StatusNoContent)
 	})
