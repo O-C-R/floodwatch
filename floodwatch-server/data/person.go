@@ -33,15 +33,16 @@ func compareHashAndPassword(hashedPassword []byte, password string) ([]byte, err
 }
 
 type Person struct {
-	ID          id.ID     `db:"id" json:"-"`
-	Username    string    `db:"username" json:"username"`
-	Email       string    `db:"email" json:"-"`
-	Password    []byte    `db:"password" json:"-"`
-	Admin       bool      `db:"admin" json:"admin"`
-	BirthYear   *int      `db:"birth_year" json:"birth_year"`
-	TwofishesID *string   `db:"twofishes_id" json:"twofishes_id"`
-	CountryCode *string   `db:"country_code" json:"country_code"`
-	LastSeen    time.Time `db:"last_seen" json:"last_seen"`
+	ID          id.ID      `db:"id" json:"-"`
+	Username    string     `db:"username" json:"username"`
+	Email       string     `db:"email" json:"-"`
+	Password    []byte     `db:"password" json:"-"`
+	Admin       bool       `db:"admin" json:"admin"`
+	BirthYear   *int       `db:"birth_year" json:"birth_year"`
+	TwofishesID *string    `db:"twofishes_id" json:"twofishes_id"`
+	CountryCode *string    `db:"country_code" json:"country_code"`
+	LastSeen    time.Time  `db:"last_seen" json:"last_seen"`
+	CreatedAt   *time.Time `db:"created_at" json:"created_at"`
 }
 
 func (p *Person) SetPassword(password string) error {
@@ -79,13 +80,14 @@ type PersonDemographic struct {
 }
 
 type PersonResponse struct {
-	Username       string    `json:"username"`
-	Admin          bool      `json:"admin"`
-	BirthYear      *int      `json:"birth_year"`
-	TwofishesID    *string   `json:"twofishes_id"`
-	CountryCode    *string   `json:"country_code"`
-	DemographicIDs []int     `json:"demographic_ids"`
-	LastSeen       time.Time `json:"last_seen"`
+	Username       string     `json:"username"`
+	Admin          bool       `json:"admin"`
+	BirthYear      *int       `json:"birth_year"`
+	TwofishesID    *string    `json:"twofishes_id"`
+	CountryCode    *string    `json:"country_code"`
+	DemographicIDs []int      `json:"demographic_ids"`
+	LastSeen       time.Time  `json:"last_seen"`
+	CreatedAt      *time.Time `json:"created_at"`
 }
 
 func (p *Person) NewPersonResponse(demographicIds []int) PersonResponse {
@@ -97,6 +99,7 @@ func (p *Person) NewPersonResponse(demographicIds []int) PersonResponse {
 		CountryCode:    p.CountryCode,
 		DemographicIDs: demographicIds,
 		LastSeen:       p.LastSeen,
+		CreatedAt:      p.CreatedAt,
 	}
 
 	return res

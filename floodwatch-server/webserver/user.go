@@ -135,11 +135,13 @@ func Register(options *Options) http.Handler {
 			return
 		}
 
+		now := time.Now()
 		person := &data.Person{
-			ID:       userID,
-			Username: username,
-			Email:    req.FormValue("email"),
-			LastSeen: time.Now(),
+			ID:        userID,
+			Username:  username,
+			Email:     req.FormValue("email"),
+			LastSeen:  now,
+			CreatedAt: &now,
 		}
 
 		if err := person.SetPassword(password); err != nil {
