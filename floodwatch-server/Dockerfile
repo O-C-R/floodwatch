@@ -1,4 +1,4 @@
-FROM golang:1.7.3
+FROM golang:1.7.5
 ENV CGO_ENABLED=0
 ADD . /go/src/github.com/O-C-R/floodwatch/floodwatch-server
 WORKDIR /go/src/github.com/O-C-R/floodwatch/floodwatch-server
