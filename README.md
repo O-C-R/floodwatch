@@ -3,13 +3,13 @@
 ### Server deploy
 
 ```bash
-./build.bash TAG # defaults to current git branchname
-./deploy.bash TAG [SERVER...]
+./scripts/build.bash TAG # defaults to current git branchname
+./scripts/deploy.bash TAG [SERVER...]
 ```
 
 e.g.
 
 ```bash
-./build.bash develop
-./deploy.bash develop floodwatch-server-staging.floodwatch.me
+./scripts/build.bash develop
+./scripts/deploy.bash develop floodwatch-server-staging.floodwatch.me
 ```

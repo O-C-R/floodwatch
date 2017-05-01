@@ -3,7 +3,7 @@ set -ex
 cd `dirname $0`
 
 deploy () {
-	scp floodwatch-server.service core@$1:~/
+	scp systemd/floodwatch-server.service core@$1:~/
 	ssh core@$1 "set -ex \
 		&& docker pull ocrnyc/floodwatch-server:$2 \
     && docker tag ocrnyc/floodwatch-server:$2 ocrnyc/floodwatch-server \
