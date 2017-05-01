@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import {Modal, Button, Row, Col } from 'react-bootstrap'
 
-import {createSentence} from './Compare'
+import {createSentence} from './comparisontools'
 import {ModalSegment} from './ModalSegment';
 
 import type {Filter, Preset, FilterLogic} from './filtertypes'

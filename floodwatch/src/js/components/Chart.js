@@ -48,7 +48,6 @@ export class Chart extends Component {
 
   constructor(props: PropsType) {
     super(props);
-
     this.state = initialState()
   }
 
@@ -283,7 +282,7 @@ export class Chart extends Component {
     percentages.exit().remove()
     grads.exit().remove()
 
-    }
+    } 
   }
 
   render() {
