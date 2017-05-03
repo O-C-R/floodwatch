@@ -27,6 +27,24 @@ data "aws_iam_policy_document" "floodwatch-server" {
       "${aws_sqs_queue.classifier-output.arn}",
     ]
   }
+
+  statement {
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail"
+    ]
+    resources = [
+      "*"
+    ]
+    condition {
+      test     = "StringEquals"
+      variable = "ses:FromAddress"
+
+      values = [
+        "support@floodwatch.me"
+      ]
+    }
+  }
 }
 
 resource "aws_iam_role" "floodwatch-server" {
