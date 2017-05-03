@@ -105,6 +105,12 @@
 			"revisionTime": "2016-10-13T20:17:12Z"
 		},
 		{
+			"checksumSHA1": "GagdZDltslcVrQgkVuCVFMNgL58=",
+			"path": "github.com/aws/aws-sdk-go/aws/endpoints",
+			"revision": "0accf32f7d4f008ba6b524da34a92d346e955acd",
+			"revisionTime": "2017-05-02T14:56:27Z"
+		},
+		{
 			"checksumSHA1": "zj/tcFGKoyr/gmkx0hVBtOkWa3k=",
 			"path": "github.com/aws/aws-sdk-go/aws/request",
 			"revision": "0accf32f7d4f008ba6b524da34a92d346e955acd",

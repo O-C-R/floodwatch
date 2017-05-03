@@ -1,6 +1,5 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
 
 deploy () {
 	scp systemd/floodwatch-server.service core@$1:~/

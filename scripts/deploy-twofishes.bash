@@ -1,6 +1,5 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
 
 deploy () {
 	scp systemd/twofishes.service core@$1:~/
