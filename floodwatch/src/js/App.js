@@ -15,6 +15,7 @@ import {ProfilePage} from './components/Profile';
 import {Faq} from './components/Faq';
 import {Compare} from './components/Compare';
 import {Landing} from './components/Landing';
+import {ForgotPassword} from './components/ForgotPassword';
 import {ResetPassword} from './components/ResetPassword';
 
 function requireNoAuth(nextState, replace): void {
@@ -61,7 +62,7 @@ export class App extends Component {
             <Route path="demographics" component={RegisterDemographics} />
           </Route>
 
-          // TODO: <Route path="/forgot_password" />
+          <Route path="/forgot_password" component={ForgotPassword} />
           <Route path="/reset_password" component={ResetPassword} />
 
           <Route path="compare" component={Compare} onEnter={requireAuth} />

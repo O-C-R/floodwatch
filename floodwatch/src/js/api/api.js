@@ -249,7 +249,11 @@ export class FWApiClient extends APIClient {
     return this.postJSON('/api/ads/filtered', f);
   }
 
-  async completePasswordReset(token: string, password: string): Promise<FilterResponse> {
+  startPasswordReset(email: string): Promise<void> {
+    return this.postJSON('/api/reset_password/start', { email });
+  }
+
+  completePasswordReset(token: string, password: string): Promise<void> {
     return this.postJSON('/api/reset_password/complete', {
       password_reset_token: token,
       password

@@ -18,6 +18,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/email"
 )
 
 const (
@@ -60,6 +61,7 @@ type Options struct {
 	Addr         string
 	RedirectAddr string
 	Backend      *backend.Backend
+	Emailer      email.Emailer
 
 	SessionStore                *session.SessionStore
 	AWSSession                  *awsSession.Session
@@ -69,6 +71,7 @@ type Options struct {
 	Insecure                    bool
 	StaticPath                  string
 	TwofishesHost               string
+	FromEmail                   string
 }
 
 type Webserver struct {

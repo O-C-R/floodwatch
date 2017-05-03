@@ -2,7 +2,7 @@
 set -ex
 cd `dirname $0`
 
-docker build -t floodwatch-server-build . 
+docker build -t floodwatch-server-build .
 
 rm -rf build
 mkdir build

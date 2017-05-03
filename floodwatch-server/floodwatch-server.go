@@ -14,6 +14,7 @@ import (
 	awsSession "github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/email"
 	"github.com/O-C-R/floodwatch/floodwatch-server/webserver"
 )
 
@@ -33,6 +34,8 @@ type Config struct {
 
 	TwofishesHost string `split_words:"true"`
 	RedirectAddr  string `default:"127.0.0.1:8081" split_words:"true"`
+	Hostname      string `default:"http://localhost:8080"`
+	FromEmail     string `default:"test@test.com" split_words:"true"`
 	Insecure      bool   `default:"false"`
 }
 
@@ -79,15 +82,20 @@ func main() {
 		log.Fatal(err)
 	}
 
+	emailer := email.NewAWSSESEmailer(awsSession, config.Hostname, config.FromEmail)
+
 	options := &webserver.Options{
-		Addr:                        config.Addr,
-		RedirectAddr:                config.RedirectAddr,
-		Backend:                     b,
+		Addr:         config.Addr,
+		RedirectAddr: config.RedirectAddr,
+		Backend:      b,
+		Emailer:      emailer,
+
 		SessionStore:                sessionStore,
 		AWSSession:                  awsSession,
 		S3Bucket:                    config.S3Bucket,
 		SQSClassifierInputQueueURL:  config.SQSClassifierInputQueueURL,
 		SQSClassifierOutputQueueURL: config.SQSClassifierOutputQueueURL,
+		FromEmail:                   config.FromEmail,
 		Insecure:                    config.Insecure,
 		StaticPath:                  config.StaticPath,
 		TwofishesHost:               config.TwofishesHost,

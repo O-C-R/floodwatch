@@ -168,8 +168,6 @@ func Register(options *Options) http.Handler {
 	})
 }
 
-// TODO: handle email requests
-// TODO: send emails
 func StartPasswordReset(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		decoder := json.NewDecoder(req.Body)
@@ -181,6 +179,14 @@ func StartPasswordReset(options *Options) http.Handler {
 			return
 		}
 
+		if passwordResetRequest.Username == nil && passwordResetRequest.Email == nil {
+			errs := make(map[string]string)
+			errs["username"] = "Must supply a username or an email"
+			errs["email"] = "Must supply a username or an email"
+			InvalidForm(w, errs)
+			return
+		}
+
 		var person *data.Person
 		if passwordResetRequest.Username != nil {
 			person, err = options.Backend.UserByUsername(*passwordResetRequest.Username)
@@ -188,9 +194,14 @@ func StartPasswordReset(options *Options) http.Handler {
 				Error(w, nil, 404)
 				return
 			}
-		} else {
-			Error(w, nil, 400)
-			return
+		}
+
+		if passwordResetRequest.Email != nil {
+			person, err = options.Backend.UserByEmail(*passwordResetRequest.Email)
+			if err != nil {
+				Error(w, nil, 404)
+				return
+			}
 		}
 
 		resetToken, err := id.New()
@@ -209,6 +220,14 @@ func StartPasswordReset(options *Options) http.Handler {
 		if err != nil {
 			Error(w, err, 500)
 			return
+		}
+
+		if len(person.Email) > 0 {
+			err = options.Emailer.SendResetPassword(person.Email, resetToken)
+			if err != nil {
+				Error(w, err, 500)
+				return
+			}
 		}
 
 		w.WriteHeader(http.StatusNoContent)
