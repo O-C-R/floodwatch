@@ -107,8 +107,6 @@ export class Main extends Component {
 
     const navs = this.state.user ? SIGNED_IN_NAVS : SIGNED_OUT_NAVS;
 
-    const navElem = (window.location.pathname !== "/generate") ? <Navigation navs={navs} /> : null;
-
     return (
       <Grid fluid style={{position:'relative', height: '100%'}}>
         <Row id="row-top">
@@ -118,7 +116,7 @@ export class Main extends Component {
               <span style={{ paddingRight: '10px' }}>Install the extension to get started</span>
               <Button bsStyle="primary" bsSize="small" onClick={this.installClick.bind(this)}>Add to Chrome</Button>
           </Alert> }
-          {navElem}
+          <Navigation navs={navs} />
         </Row>
         <Row style={{height: '85%'}}>
           {this.props.children && React.cloneElement(this.props.children, {

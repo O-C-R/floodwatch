@@ -11,16 +11,12 @@ import type {VisibilityMap} from './Compare'
 
 
 export class Generate extends Component {
-blank() {
-
-}
   render() {
     let curData;
     if (url.parse(window.location.href, true).query.data) {
         curData = JSON.parse(url.parse(window.location.href, true).query.data);
     }
 
-    console.log(curData.dataA)
     let visibilityMap = getVisibilityMap(curData.dataA, curData.dataB)
     const lVal = curData.curTopic ? curData.dataA[curData.curTopic] : 0;
     const rVal = curData.curTopic ? curData.dataB[curData.curTopic] : 0;
@@ -41,8 +37,8 @@ blank() {
               currentTopic={curData.curTopic}
               side={"left"}
               sentence={lSentence}
-              mouseEnterHandler={this.blank}
-              mouseLeaveHandler={this.blank}
+              mouseEnterHandler={()=>{}}
+              mouseLeaveHandler={()=>{}}
               />
           </Col>
           <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding:0 }}>
@@ -52,8 +48,8 @@ blank() {
               currentTopic={curData.curTopic}
               side={"right"}
               sentence={rSentence}
-              mouseEnterHandler={this.blank}
-              mouseLeaveHandler={this.blank}
+              mouseEnterHandler={()=>{}}
+              mouseLeaveHandler={()=>{}}
               />
           </Col>
         </Row>

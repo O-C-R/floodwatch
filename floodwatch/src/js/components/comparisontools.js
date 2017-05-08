@@ -9,7 +9,6 @@ import type {Preset, Filter, FilterLogic} from './filtertypes'
 import type {VisibilityMap} from './Compare'
 
 export function getVisibilityMap(lD, rD): VisibilityMap {
-  console.log(lD)
     let visibilityMap = {}
 
     for (let key in lD) {
