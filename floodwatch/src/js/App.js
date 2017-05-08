@@ -14,6 +14,7 @@ import {Login} from './components/Login';
 import {ProfilePage} from './components/Profile';
 import {Faq} from './components/Faq';
 import {Compare} from './components/Compare';
+import {Generate} from './components/Generate'
 import {Landing} from './components/Landing';
 import {ForgotPassword} from './components/ForgotPassword';
 import {ResetPassword} from './components/ResetPassword';
@@ -66,8 +67,10 @@ export class App extends Component {
           <Route path="/reset_password" component={ResetPassword} />
 
           <Route path="compare" component={Compare} onEnter={requireAuth} />
+          
           <Route path="profile" component={ProfilePage} onEnter={requireAuth} />
         </Route>
+        <Route path="/generate" component={Generate}/>
       </Router>
     );
   }

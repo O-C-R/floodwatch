@@ -13,6 +13,10 @@
 @import "pages/compare";
 @import "pages/profile";
 
+html, body, #root{
+	height:100%;
+}
+
 * {
 	font-size: inherit;
 	font-family: inherit;
