@@ -1,9 +1,8 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
 
 deploy () {
-	scp twofishes.service core@$1:~/
+	scp systemd/twofishes.service core@$1:~/
 	ssh core@$1 'set -ex \
 		&& docker pull fsqio/twofishes \
 		&& sudo mv ~/twofishes.service /etc/systemd/system/ \

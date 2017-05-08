@@ -1,6 +1,5 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 

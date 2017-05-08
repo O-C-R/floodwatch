@@ -1,6 +1,7 @@
 // @flow
 
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {Row, Col} from 'react-bootstrap';
 
 import {FWApiClient, AuthenticationError} from '../api/api';
@@ -87,7 +88,16 @@ export class Login extends Component {
                 <div className="form-group">
                   <input type="password" className="form-control" id="password" placeholder="Password" required={true} value={this.state.password} onChange={this.setFormState.bind(this)} />
                 </div>
-                <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
+                <Row>
+                  <Col xs={12} sm={6}>
+                    <button type="submit" className="btn btn-primary" id="loginInput">Login</button>
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <div className="pull-right">
+                      <Link to="/forgot_password">Forgot your password?</Link>
+                    </div>
+                  </Col>
+                </Row>
               </form>
             </div>
           </div>
