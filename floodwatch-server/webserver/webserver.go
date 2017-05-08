@@ -107,8 +107,8 @@ func New(options *Options) (*Webserver, error) {
 
 	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
 	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")
-	apiRouter.Handle("/ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
-	apiRouter.Handle("/ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {

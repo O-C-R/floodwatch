@@ -246,7 +246,7 @@ export class FWApiClient extends APIClient {
   }
 
   async getFilteredAdCounts(f: FilterRequest): Promise<FilterResponse> {
-    return this.postJSON('/api/ads/filtered', f);
+    return this.postJSON('/api/recorded_ads/filtered', f);
   }
 
   startPasswordReset(email: string): Promise<void> {
