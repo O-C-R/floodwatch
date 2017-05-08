@@ -66,7 +66,7 @@ EOF
 
 resource "aws_iam_instance_profile" "floodwatch-server" {
   name = "floodwatch-server"
-  roles = ["${aws_iam_role.floodwatch-server.name}"]
+  role = "${aws_iam_role.floodwatch-server.name}"
 }
 
 resource "aws_iam_role_policy" "floodwatch-server" {
@@ -130,7 +130,7 @@ resource "aws_iam_role_policy" "floodwatch-classification" {
 
 resource "aws_iam_instance_profile" "floodwatch-classification" {
   name = "floodwatch-classification"
-  roles = ["${aws_iam_role.floodwatch-classification.name}"]
+  role = "${aws_iam_role.floodwatch-classification.name}"
 }
 
 data "aws_iam_policy_document" "floodwatch-classification-spot-fleet" {

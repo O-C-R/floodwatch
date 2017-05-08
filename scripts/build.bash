@@ -1,5 +1,6 @@
 #!/bin/bash
 set -ex
+cd `dirname $0`
 
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
@@ -10,14 +11,16 @@ else
   TAG=":$TAG"
 fi
 
-rm -rf docker/static docker/floodwatch-server
+rm -rf ../docker/build
+mkdir -p ../docker/build
 
-./floodwatch-server/build.bash
-cp -r floodwatch-server/build/floodwatch-server docker/
+../floodwatch-server/build.bash
+cp -r ../floodwatch-server/build/floodwatch-server ../docker/build/
+cp -r ../floodwatch-server/templates ../docker/build/templates
 
-./floodwatch/build.bash
-cp -r floodwatch/build docker/static
+../floodwatch/build.bash
+cp -r ../floodwatch/build ../docker/build/static
 
-cd docker
+cd ../docker
 docker build -t ocrnyc/floodwatch-server$TAG .
 docker push ocrnyc/floodwatch-server$TAG

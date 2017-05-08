@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -20,11 +21,11 @@ import (
 
 type Config struct {
 	Addr       string `default:"127.0.0.1:8080"`
-	StaticPath string `split_words:"true"`
-	BackendURL string `default:"postgres://localhost/floodwatch?sslmode=disable" split_words:"true"`
+	StaticPath string `envconfig:"STATIC_PATH"`
+	BackendURL string `default:"postgres://localhost/floodwatch?sslmode=disable" envconfig:"BACKEND_URL"`
 
-	SessionStoreAddr     string `default:"localhost:6379" split_words:"true"`
-	SessionStorePassword string `split_words:"true"`
+	SessionStoreAddr     string `default:"localhost:6379" envconfig:"SESSION_STORE_ADDRESS"`
+	SessionStorePassword string `envconfig:"SESSION_STORE_PASSWORD"`
 
 	AWSProfile                  string `default:"floodwatch" envconfig:"AWS_PROFILE"`
 	AWSRegion                   string `default:"us-east-1" envconfig:"AWS_REGION"`
@@ -32,10 +33,10 @@ type Config struct {
 	SQSClassifierInputQueueURL  string `envconfig:"SQS_CLASSIFIER_INPUT_QUEUE_URL"`
 	SQSClassifierOutputQueueURL string `envconfig:"SQS_CLASSIFIER_OUTPUT_QUEUE_URL"`
 
-	TwofishesHost string `split_words:"true"`
-	RedirectAddr  string `default:"127.0.0.1:8081" split_words:"true"`
+	TwofishesHost string `envconfig:"TWOFISHES_HOST"`
+	RedirectAddr  string `default:"127.0.0.1:8000" envconfig:"REDIRECT_ADDR"`
 	Hostname      string `default:"http://localhost:8080"`
-	FromEmail     string `default:"test@test.com" split_words:"true"`
+	FromEmail     string `default:"test@test.com" envconfig:"FROM_EMAIL"`
 	Insecure      bool   `default:"false"`
 }
 
@@ -55,6 +56,8 @@ func main() {
 	if err := envconfig.Process("fw", &config); err != nil {
 		panic(err)
 	}
+
+	fmt.Printf("CONFIG:\n%+v\n", config)
 
 	b, err := backend.New(config.BackendURL)
 	if err != nil {
