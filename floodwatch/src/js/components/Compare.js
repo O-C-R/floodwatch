@@ -26,13 +26,11 @@ export type UnstackedData = {
   [key: string]: number
 };
 
-
-
 export class Compare extends Component {
   render() {
     return (
-      <Row>
-        <Col xs={12}>
+      <Row style={{height: '100%'}}>
+        <Col xs={12} style={{height: '100%'}}>
         <CompareContainer/>
         </Col>
       </Row>
@@ -48,7 +46,8 @@ type StateType = {
   rightData: UnstackedData,
   currentTopic: ?string,
   modalVisible: boolean,
-  userData: PersonResponse
+  userData: PersonResponse,
+  updateCurrentTopic: boolean
 };
 
 
@@ -61,7 +60,8 @@ function CompareContainerInitialState(): Object {
     rightData: {},
     visibilityMap: {},
     currentTopic: null,
-    modalVisible: false
+    modalVisible: false,
+    updateCurrentTopic: true
   }
 }
 
@@ -99,14 +99,15 @@ export class CompareContainer extends Component {
         rightData,
         visibilityMap,
         currentTopic: null,
-        userData: UserData
+        userData: UserData,
+        updateCurrentTopic: true
       })
     }
     init();
   }
 
   mouseEnterHandler(newTopic: string): void {
-    if (newTopic !== "Other") {
+    if (newTopic !== "Other" && this.state.updateCurrentTopic) {
       this.setState({
         currentTopic: newTopic
       })
@@ -114,9 +115,27 @@ export class CompareContainer extends Component {
   }
 
   mouseLeaveHandler() {
-    this.setState({
-      currentTopic: null
-    })
+    if (this.state.updateCurrentTopic) {
+      this.setState({
+        currentTopic: null
+      })  
+    }
+  }
+
+  mouseClickHandler(newTopic: string): void {
+    if (newTopic !== "Other") {
+      if (this.state.updateCurrentTopic) {
+        this.setState({
+          currentTopic: newTopic,
+          updateCurrentTopic: false
+        })  
+      } else {
+        this.setState({
+          currentTopic: newTopic,
+          updateCurrentTopic: false
+        })  
+      }
+    }
   }
 
   updateSearchLogic(side: string, logic: FilterLogic, filtername: string) {
@@ -289,14 +308,7 @@ export class CompareContainer extends Component {
     })
   }
 
-  render() {
-    const lVal = this.state.currentTopic ? this.state.leftData[this.state.currentTopic] : 0;
-    const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
-    const sentence = generateDifferenceSentence(this.state.leftOptions, this.state.rightOptions, lVal, rVal, this.state.currentTopic)
-
-    const lSentence = createSentence(this.state.leftOptions);
-    const rSentence = createSentence(this.state.rightOptions);
-
+  shareComparison(): void {
     let obj = {
       filterA: this.state.leftOptions,
       dataA: this.state.leftData,
@@ -305,11 +317,31 @@ export class CompareContainer extends Component {
       curTopic: this.state.currentTopic,
     }
 
-    console.log(JSON.stringify(obj))
+    let url = window.location.origin + "/generate?data=" + JSON.stringify(obj);
+
+    window.open(url);
+  }
+
+  clearTopic(event) {
+    if (event.target.tagName != "rect") {
+      this.setState({
+        currentTopic: null,
+        updateCurrentTopic: true
+      })
+    }
+  }
+
+  render() {
+    const lVal = this.state.currentTopic ? this.state.leftData[this.state.currentTopic] : 0;
+    const rVal = this.state.currentTopic ? this.state.rightData[this.state.currentTopic] : 0;
+    const sentence = generateDifferenceSentence(this.state.leftOptions, this.state.rightOptions, lVal, rVal, this.state.currentTopic)
+
+    const lSentence = createSentence(this.state.leftOptions);
+    const rSentence = createSentence(this.state.rightOptions);
 
     return (
-      <div className="main compare">
-        <Row className="chart-container">
+      <div className="main compare" onClick={this.clearTopic.bind(this)} style={{height: '100%'}}>
+        <Row className="chart-container" >
           <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding:0 }}>
             <Chart
               side="left"
@@ -317,7 +349,9 @@ export class CompareContainer extends Component {
               sentence={lSentence}
               visibilityMap={this.state.visibilityMap}
               currentTopic={this.state.currentTopic}
+              noOutline={this.state.updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseClickHandler={this.mouseClickHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
           </Col>
           <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding:0 }}>
@@ -327,7 +361,9 @@ export class CompareContainer extends Component {
               sentence={rSentence}
               visibilityMap={this.state.visibilityMap}
               currentTopic={this.state.currentTopic}
+              noOutline={this.state.updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+              mouseClickHandler={this.mouseClickHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}/>
           </Col>
         </Row>
@@ -339,7 +375,8 @@ export class CompareContainer extends Component {
                 <h3 className="chart-sentence">{sentence}</h3>
 
                 <div className="chart-actions">
-                  <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change comparison</button>
+                  <button className="chart-actions_toggleCompare btn btn-primary button" onClick={this.toggleComparisonModal.bind(this)}>Change demographics</button>
+                  <button className="btn btn-default button" onClick={this.shareComparison.bind(this)}>Share</button>
                 </div>
               </Col>
             </Row>

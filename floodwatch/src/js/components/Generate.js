@@ -31,7 +31,7 @@ blank() {
     const sentence = generateDifferenceSentence(curData.filterA, curData.filterB, lVal, rVal, curData.curTopic)
 
     return (
-      <Row>
+      <Row className="main generate">
         <Col xs={12}>
         <Row className="chart-container">
           <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding:0 }}>

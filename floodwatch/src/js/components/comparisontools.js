@@ -5,8 +5,11 @@ const otherBreakDown = 0.02
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import _ from 'lodash';
+import type {Preset, Filter, FilterLogic} from './filtertypes'
+import type {VisibilityMap} from './Compare'
 
 export function getVisibilityMap(lD, rD): VisibilityMap {
+  console.log(lD)
     let visibilityMap = {}
 
     for (let key in lD) {
@@ -23,7 +26,7 @@ export function getVisibilityMap(lD, rD): VisibilityMap {
     return visibilityMap;
 }
 
-export function generateDifferenceSentence(lO, rO, lVal: number, rVal: number, currentTopic: string): string {
+export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: string): string {
     let sentence = '';
     const prc = Math.floor(calculatePercentDiff(lVal, rVal))
 

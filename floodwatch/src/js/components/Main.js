@@ -110,7 +110,7 @@ export class Main extends Component {
     const navElem = (window.location.pathname !== "/generate") ? <Navigation navs={navs} /> : null;
 
     return (
-      <Grid fluid style={{position:'relative'}}>
+      <Grid fluid style={{position:'relative', height: '100%'}}>
         <Row id="row-top">
           { this.state.message && <Alert bsStyle="info">{this.state.message}</Alert> }
           { this.state.user && !this.state.message && !this.state.extensionInstalled && !this.state.extensionInstallMsgDismissed &&
@@ -120,7 +120,7 @@ export class Main extends Component {
           </Alert> }
           {navElem}
         </Row>
-        <Row>
+        <Row style={{height: '85%'}}>
           {this.props.children && React.cloneElement(this.props.children, {
             showMessage: this.showMessage.bind(this),
             loginChanged: this.loadUserFromServer.bind(this),

@@ -18,7 +18,7 @@ type StackedData = Array<{
   y: number,
   height: number,
   value: number
-}>
+}>;
 
 type PropsType = {
   side: string,
@@ -27,16 +27,17 @@ type PropsType = {
   visibilityMap: VisibilityMap,
   currentTopic: ?string,
   mouseEnterHandler: (topic: string) => void,
-  mouseLeaveHandler: (topic: string) => void
+  mouseLeaveHandler: (topic: string) => void,
+  mouseClickHandler: (topic: string) => void
 };
 
 type StateType = {
   height: number,
   svg?: any,
-  defs? : any
+  defs?: any
 };
 
-function initialState():StateType {
+function initialState(): StateType {
   return {
     height : 500
   }
@@ -61,7 +62,7 @@ export class Chart extends Component {
     })
   }
 
-  processData(data: UnstackedData, visibilityMap: VisibilityMap):StackedData {
+  processData(data: UnstackedData, visibilityMap: VisibilityMap): StackedData {
     let processedData = []
     let totalValue = 0;
     let other = 0;
@@ -74,7 +75,7 @@ export class Chart extends Component {
 
     for (let catId in data) {
 
-      if (visibilityMap[catId] === "show") {
+      if (visibilityMap[catId] === 'show') {
 
         let obj = {
           name : TopicKeys[catId],
@@ -86,7 +87,7 @@ export class Chart extends Component {
         processedData.push(obj)
         totalValue += data[catId]
 
-      } else if (visibilityMap[catId] === "other") {
+      } else if (visibilityMap[catId] === 'other') {
 
         other += data[catId]
         totalValue += data[catId]
@@ -100,7 +101,7 @@ export class Chart extends Component {
      *
      */
 
-    processedData.sort((a,b):number => {
+    processedData.sort((a,b): number => {
       if (a.value < b.value) return 1
       if (a.value > b.value) return -1
       else return 0
@@ -114,8 +115,8 @@ export class Chart extends Component {
 
     processedData.push(
       {
-        name : "Other",
-        id : "Other",
+        name : 'Other',
+        id : 'Other',
         value : other,
         y : 0,
         height : 0
@@ -150,67 +151,71 @@ export class Chart extends Component {
     return processedData
   }
 
-  drawChart(data:StackedData) {
+  drawChart(data: StackedData) {
     if (this.state.svg && this.state.defs) {
       const svg = this.state.svg
       const defs = this.state.defs
 
-    let rects = svg.selectAll('rect').data(data)
-    let names = svg.selectAll('text.name').data(data)
-    let percentages = svg.selectAll('text.percentage').data(data)
-    let grads = defs.selectAll('linearGradient').data(data)
+      let rects = svg.selectAll('rect').data(data)
+      let names = svg.selectAll('text.name').data(data)
+      let percentages = svg.selectAll('text.percentage').data(data)
+      let grads = defs.selectAll('linearGradient').data(data)
 
     // Enter
-    rects.enter().append('rect')
+      rects.enter().append('rect')
       .attr('x', 0)
-      .attr('width', "100%")
+      .attr('width', '100%')
       .on('mouseenter', (d) => {
         this.props.mouseEnterHandler(d.id)
       })
       .on('mouseleave', (d) => {
         this.props.mouseLeaveHandler(d.id)
       })
+      .on('click', (d) => {
+        this.props.mouseClickHandler(d.id)
+      })
       .attr('fill', (d, i) => {
-        return "url(#"+ this.props.side + i +")"
+        return 'url(#'+ this.props.side + i +')'
       })
 
-    names.enter().append('text')
+      names.enter().append('text')
       .attr('fill', '#FFF')
       .attr('text-anchor', 'middle')
-      .attr('x', "50%")
+      .attr('x', '50%')
       .attr('class', (d) => {
         if (d.height < 20) return 'name xsmall'
         if (d.height < 30) return 'name small'
         return 'name'
       })
 
-    percentages.enter().append('text')
+      percentages.enter().append('text')
       .attr('fill', '#FFF')
       .attr('text-anchor', 'middle')
-      .attr('x', "50%")
-      .attr('class', "percentage")
+      .attr('x', '50%')
+      .attr('class', 'percentage')
 
-    grads.enter().append('linearGradient')
+      grads.enter().append('linearGradient')
       .attr('id', (d, i) => {
         return this.props.side + i
       })
-      .selectAll("stop")
-        .data( (d) => {
-          if ( this.props.side === "right" ) return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
+      .selectAll('stop')
+        .data((d) => {
+          if (this.props.side === 'right') return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
           else return [ { offset : 0, color : colors[d.name][1] }, { offset : 1, color : colors[d.name][0] }]
 
         })
-        .enter().append("stop")
+        .enter().append('stop')
         .attr('class', (d) => {
-          return "color_" + d.offset
+          return 'color_' + d.offset
         })
-            .attr("offset", function(d) { return d.offset; })
-            .attr("stop-color", function(d) { return d.color; });
+            .attr('offset', function(d) { return d.offset; })
+            .attr('stop-color', function(d) { return d.color; });
 
     // Update
-    rects
+      rects
       .transition()
         .duration(200)
+        .attr('stroke-width', 0)
         .attr('fill-opacity', (d) => {
           if(this.props.currentTopic === null) {
             return 1
@@ -223,10 +228,17 @@ export class Chart extends Component {
           return (d.height >= 1.5 ? d.height : 0)
         })
         .attr('y', (d, i) => {
-            return d.y
+          return d.y
+        })
+        .attr('stroke', 'yellow')
+        .attr('stroke-width', (d) => {
+          if (this.props.noOutline == false && this.props.currentTopic === d.id) {
+            return 2
+          }
+          return 0
         })
 
-    names
+      names
       .text((d) => {
         return d.name
       })
@@ -245,9 +257,9 @@ export class Chart extends Component {
         return d.y + d.height / 2 + 4
       })
 
-    percentages
+      percentages
       .text((d) => {
-        return Math.floor(d.value*100) + "%"
+        return Math.floor(d.value*100) + '%'
       })
       .transition()
       .duration(200)
@@ -259,30 +271,30 @@ export class Chart extends Component {
         return d.y + d.height / 2 + 20
       })
 
-    grads
-        .selectAll("stop")
-        .data( (d) => {
-          if ( this.props.side === "right" ) return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
+      grads
+        .selectAll('stop')
+        .data((d) => {
+          if (this.props.side === 'right') return [ { offset : 0, color : colors[d.name][0] }, { offset : 1, color : colors[d.name][1] }]
           else return [ { offset : 0, color : colors[d.name][1] }, { offset : 1, color : colors[d.name][0] }]
-      })
+        })
 
         .transition()
         .duration(200)
 
-      .attr("offset", (d) => {
+      .attr('offset', (d) => {
         return d.offset
       })
-      .attr("stop-color", (d) => {
+      .attr('stop-color', (d) => {
         return d.color
       })
 
-    // Exit
-    rects.exit().remove()
-    names.exit().remove()
-    percentages.exit().remove()
-    grads.exit().remove()
+      // Exit
+      rects.exit().remove()
+      names.exit().remove()
+      percentages.exit().remove()
+      grads.exit().remove()
 
-    } 
+    }
   }
 
   render() {
