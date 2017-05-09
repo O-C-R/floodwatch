@@ -20,8 +20,8 @@ import (
 )
 
 type Config struct {
-	Addr       string `default:"127.0.0.1:8080"`
-	StaticPath string `envconfig:"STATIC_PATH"`
+	Addr       string `default:"0.0.0.0:8080"`
+	StaticPath string `default:"./static" envconfig:"STATIC_PATH"`
 	BackendURL string `default:"postgres://localhost/floodwatch?sslmode=disable" envconfig:"BACKEND_URL"`
 
 	SessionStoreAddr     string `default:"localhost:6379" envconfig:"SESSION_STORE_ADDRESS"`
@@ -34,7 +34,7 @@ type Config struct {
 	SQSClassifierOutputQueueURL string `envconfig:"SQS_CLASSIFIER_OUTPUT_QUEUE_URL"`
 
 	TwofishesHost string `envconfig:"TWOFISHES_HOST"`
-	RedirectAddr  string `default:"127.0.0.1:8000" envconfig:"REDIRECT_ADDR"`
+	RedirectAddr  string `default:"0.0.0.0:8000" envconfig:"REDIRECT_ADDR"`
 	Hostname      string `default:"http://localhost:8080"`
 	FromEmail     string `default:"test@test.com" envconfig:"FROM_EMAIL"`
 	Insecure      bool   `default:"false"`
