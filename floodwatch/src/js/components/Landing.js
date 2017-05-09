@@ -11,12 +11,12 @@ export class Landing extends Component {
 
   render() {
     const divStyle = {
-      backgroundImage: "url('static/img/home-back.png')",
+      backgroundImage: 'url(\'static/img/home-back.png\')',
     };
 
     return (
       <div className="home">
-        <div className="home_header" style={{backgroundImage: "url('static/img/home-back.png')"}}>
+        <div className="home_header" style={{backgroundImage: 'url(\'static/img/home-back.png\')'}}>
           <Row>
             <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
               <div className="panel-container">

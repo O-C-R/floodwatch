@@ -8,7 +8,7 @@ import history from '../common/history';
 import {ProfileExplanation, DemographicContainer} from './Profile';
 
 type State = {
-  saving: boolean;
+  saving: boolean
 };
 
 function initialState(): State {

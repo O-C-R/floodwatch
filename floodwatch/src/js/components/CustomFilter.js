@@ -46,7 +46,7 @@ export class CustomFilter extends Component {
     }
 
     let myOptions;
-    
+
 
     if (this.props.filter.name === 'country') {
       return (
@@ -73,7 +73,7 @@ export class CustomFilter extends Component {
         })
       }
     }
-  
+
     _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {
 
       const obj = {
@@ -89,7 +89,7 @@ export class CustomFilter extends Component {
         }
       }
 
-      elems.push(<div key={i} className={"custom-option checkbox " + (checked ? "checked" : '')}>
+      elems.push(<div key={i} className={'custom-option checkbox ' + (checked ? 'checked' : '')}>
                   <Button href="#" active={checked}
                           disabled={this.props.shouldBeDisabled.disabled}
                           onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
@@ -98,7 +98,7 @@ export class CustomFilter extends Component {
                   </Button>
 
               </div>)
-      
+
     })
 
     let select = this.generateLogicSelectors();
@@ -119,7 +119,7 @@ export class CustomFilter extends Component {
     const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or'
 
     let or, and, nor;
-    
+
     if (this.props.filter.name !== 'age' && this.props.filter.name !== 'country') {
       or = <Radio className="logic-option" checked={logicSelection === 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of the following</Radio>;
       and = <Radio className="logic-option" checked={logicSelection === 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of the following</Radio>
@@ -194,7 +194,7 @@ export class CountryFilter extends Component {
           inputProps={{name:'country', id: 'location-autocomplete', className: 'autocomplete_input form-control'}}
           value={this.state.value}
           items={this.state.items}
-          wrapperProps={{className:"autocomplete"}}
+          wrapperProps={{className:'autocomplete'}}
           getItemValue={(item) => item.feature.cc}
 
           onChange={(event, value) => {
@@ -213,7 +213,7 @@ export class CountryFilter extends Component {
           }}
 
           renderItem={(item, isHighlighted) => (
-            <div className={"autocomplete_options " + (isHighlighted && "current")}>
+            <div className={'autocomplete_options ' + (isHighlighted && 'current')}>
             {item.feature.displayName} ({item.feature.cc})
             </div>
           )}

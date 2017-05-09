@@ -72,7 +72,7 @@ function setInitialStateProfile() {
 }
 
 type DemographicContainerProps = {
-  onSuccess?: Function;
+  onSuccess?: Function
 };
 
 type DemographicContainerState = {
@@ -148,12 +148,12 @@ export class DemographicContainer extends Component {
           this.props.onSuccess();
         }
 
-        this.statusHandler("success", "Successfully saved changes!")
+        this.statusHandler('success', 'Successfully saved changes!')
       } else {
-        this.statusHandler("error", "Profile not loaded, please reload this page.");
+        this.statusHandler('error', 'Profile not loaded, please reload this page.');
       }
     } catch (e) {
-      this.statusHandler("error", "Error while trying to save changes. Please check your connection.");
+      this.statusHandler('error', 'Error while trying to save changes. Please check your connection.');
     }
   }
 
