@@ -293,7 +293,7 @@ func ResetPassword(options *Options) http.Handler {
 	})
 }
 
-func FetchPersonResponse(b *backend.Backend, userId id.ID) (*data.PersonResponse, error) {
+func fetchPersonResponse(b *backend.Backend, userId id.ID) (*data.PersonResponse, error) {
 	person, err := b.Person(userId)
 	if err != nil {
 		return nil, err
@@ -316,7 +316,7 @@ func PersonCurrent(options *Options) http.Handler {
 			return
 		}
 
-		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
+		personResponse, err := fetchPersonResponse(options.Backend, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 			return
@@ -389,7 +389,7 @@ func UpdatePersonDemographics(options *Options) http.Handler {
 			return
 		}
 
-		personResponse, err := FetchPersonResponse(options.Backend, session.UserID)
+		personResponse, err := fetchPersonResponse(options.Backend, session.UserID)
 		if err != nil {
 			Error(w, err, 500)
 			return

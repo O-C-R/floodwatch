@@ -16,6 +16,7 @@ import (
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
 	"github.com/O-C-R/floodwatch/floodwatch-server/email"
+	"github.com/O-C-R/floodwatch/floodwatch-server/screenshot"
 	"github.com/O-C-R/floodwatch/floodwatch-server/webserver"
 )
 
@@ -38,6 +39,8 @@ type Config struct {
 	Hostname      string `default:"http://localhost:8080"`
 	FromEmail     string `default:"test@test.com" envconfig:"FROM_EMAIL"`
 	Insecure      bool   `default:"false"`
+
+	ChromeExe string `envconfig:"CHROME_EXE"`
 }
 
 var help bool
@@ -86,12 +89,15 @@ func main() {
 	}
 
 	emailer := email.NewAWSSESEmailer(awsSession, config.Hostname, config.FromEmail)
+	screenshotter := screenshot.Screenshotter{config.ChromeExe}
 
 	options := &webserver.Options{
 		Addr:         config.Addr,
 		RedirectAddr: config.RedirectAddr,
 		Backend:      b,
 		Emailer:      emailer,
+		Hostname:     config.Hostname,
+		Screenshot:   screenshotter,
 
 		SessionStore:                sessionStore,
 		AWSSession:                  awsSession,

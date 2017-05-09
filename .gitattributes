@@ -1,2 +1,2 @@
 config/*.env filter=git-crypt diff=git-crypt
-config/local.env filter=none
+config/*.public.env filter=none

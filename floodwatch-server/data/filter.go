@@ -42,3 +42,17 @@ type FilterResponse struct {
 	FilterB         *FilterResponseItem `json:"filterB"`
 	CalculationTime *int                `json:"calcTime,omitempty"`
 }
+
+type GenerateRequest struct {
+	FilterA  PersonFilter `json:"filterA"`
+	FilterB  PersonFilter `json:"filterB"`
+	CurTopic int          `json:"curTopic"`
+}
+
+type GenerateData struct {
+	FilterA  PersonFilter        `json:"filterA"`
+	FilterB  PersonFilter        `json:"filterB"`
+	DataA    *FilterResponseItem `json:"dataA"`
+	DataB    *FilterResponseItem `json:"dataB"`
+	CurTopic int                 `json:"curTopic"`
+}

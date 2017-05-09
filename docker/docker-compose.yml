@@ -3,7 +3,7 @@ services:
   server:
     build: ./
     restart: always
-    env_file: ../config/local.env
+    env_file: ../config/compose.public.env
     depends_on:
       - postgres
       - redis

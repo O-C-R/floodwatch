@@ -1,10 +1,13 @@
 package webserver
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/O-C-R/auth/id"
@@ -285,5 +288,60 @@ func FilteredAdStats(options *Options) http.Handler {
 		}
 
 		WriteJSON(w, res)
+	})
+}
+
+func GenerateScreenshot(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
+			return
+		}
+
+		decoder := json.NewDecoder(req.Body)
+		var generateRequest data.GenerateRequest
+		err := decoder.Decode(&generateRequest)
+		if err != nil {
+			Error(w, err, 500)
+		}
+		defer req.Body.Close()
+
+		resA, err := options.Backend.FilteredAds(generateRequest.FilterA, session.UserID)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		resB, err := options.Backend.FilteredAds(generateRequest.FilterB, session.UserID)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		generateData := data.GenerateData{
+			FilterA:  generateRequest.FilterA,
+			FilterB:  generateRequest.FilterA,
+			DataA:    resA,
+			DataB:    resB,
+			CurTopic: generateRequest.CurTopic,
+		}
+
+		buf := new(bytes.Buffer)
+		encoder := json.NewEncoder(buf)
+		err = encoder.Encode(generateData)
+
+		dataParam := buf.String()
+		dataParam = strings.TrimSpace(dataParam)
+		dataParam = url.QueryEscape(dataParam)
+
+		generateUrl := fmt.Sprintf("%s/generate?data=%s", options.Hostname, dataParam)
+		log.Printf("Generating image for: %s\n", generateUrl)
+
+		screenshotData, err := options.Screenshot.Capture(generateUrl)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		w.Header().Set("content-type", "image/png")
+		w.Write(screenshotData)
 	})
 }

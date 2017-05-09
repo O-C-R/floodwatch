@@ -19,6 +19,7 @@ import (
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
 	"github.com/O-C-R/floodwatch/floodwatch-server/email"
+	"github.com/O-C-R/floodwatch/floodwatch-server/screenshot"
 )
 
 const (
@@ -62,6 +63,8 @@ type Options struct {
 	RedirectAddr string
 	Backend      *backend.Backend
 	Emailer      email.Emailer
+	Hostname     string
+	Screenshot   screenshot.Screenshotter
 
 	SessionStore                *session.SessionStore
 	AWSSession                  *awsSession.Session
@@ -115,6 +118,7 @@ func New(options *Options) (*Webserver, error) {
 	// The /recorded_ads endpoint is for getting ads out of the
 	// server. Named this way to avoid ad blockers.
 	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads/screenshot", secureRoute(GenerateScreenshot(options), auth, secure)).Methods("POST")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
