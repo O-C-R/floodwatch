@@ -13,7 +13,6 @@ export function getVisibilityMap(lD, rD): VisibilityMap {
 
   let comparisonData = {}
   if (_.isEmpty(lD) && !_.isEmpty(rD)) {
-    console.log('hi')
     comparisonData = _.cloneDeep(rD)
   } else if (!_.isEmpty(lD)) {
     comparisonData = _.cloneDeep(lD)
