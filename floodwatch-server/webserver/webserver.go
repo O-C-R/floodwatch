@@ -107,7 +107,13 @@ func New(options *Options) (*Webserver, error) {
 
 	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
 	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")
-	apiRouter.Handle("/recorded_ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
+
+	// The /ads endpoint is for pushing ads to the server - it's
+	// baked into the FW extension.
+	apiRouter.Handle("/ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
+
+	// The /recorded_ads endpoint is for getting ads out of the
+	// server. Named this way to avoid ad blockers.
 	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 
 	url, err := url.Parse(options.TwofishesHost)
