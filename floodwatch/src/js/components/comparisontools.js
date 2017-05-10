@@ -1,53 +1,60 @@
 //@flow
 
-const unknownId = "16"
-const otherBreakDown = 0.02
+const UNKNOWN_ID = '16'
+const OTHER_BREAKDOWN = 0.02
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import _ from 'lodash';
 import type {Preset, Filter, FilterLogic} from './filtertypes'
-import type {VisibilityMap} from './Compare'
+import type {VisibilityMap, UnstackedData} from './Compare'
 
-export function getVisibilityMap(lD, rD): VisibilityMap {
-    let visibilityMap = {}
+export function getVisibilityMap(lD: UnstackedData, rD: UnstackedData): VisibilityMap {
+  let visibilityMap = {}
 
-    for (let key in lD) {
-      if (key !== unknownId) { // Hide cats (16 is unknown)
-        if ((lD[key] > otherBreakDown) || (lD[key] > otherBreakDown)) { // Make sure cats are above some percentage for both side
-          visibilityMap[key] = "show"
-        } else {
-          visibilityMap[key] = "other"
-        }
+  let comparisonData = {}
+  if (_.isEmpty(lD) && !_.isEmpty(rD)) {
+    comparisonData = _.cloneDeep(rD)
+  } else if (!_.isEmpty(lD)) {
+    comparisonData = _.cloneDeep(lD)
+  }
+
+  for (let key in comparisonData) {
+    if (key !== UNKNOWN_ID) { // Hide cats (16 is unknown)
+      if ((comparisonData[key] > OTHER_BREAKDOWN) || (comparisonData[key] > OTHER_BREAKDOWN)) { // Make sure cats are above some percentage for both side
+        visibilityMap[key] = 'show'
       } else {
-        visibilityMap[key] = "hide"
+        visibilityMap[key] = 'other'
       }
+    } else {
+      visibilityMap[key] = 'hide'
     }
-    return visibilityMap;
+  }
+  return visibilityMap;
 }
 
-export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: string): string {
-    let sentence = '';
-    const prc = Math.floor(calculatePercentDiff(lVal, rVal))
+export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: ?string): string {
+  let sentence = '';
+  const prc = Math.floor(calculatePercentDiff(lVal, rVal))
 
     // Math.sign isn't supported on Chromium fwiw
-    if (prc === -Infinity) {
-      sentence = `On average, ${createSentence(lO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(rO)}.`
-    } else if (prc === 100) {
-      sentence = `On average, ${createSentence(rO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(lO)}.`
-    } else if (prc < 0) {
-      sentence = `On average, ${createSentence(lO)} see ${Math.abs(prc)}% less ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
-    } else if (prc > 0) {
-      sentence = `On average, ${createSentence(lO)} see ${prc}% more ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
-    } else if (prc === 0) {
-      sentence = `${createSentence(lO)} and ${createSentence(rO)} see the same amount of ${TopicKeys[currentTopic]} ads.`;
-    }
+  if (prc === -Infinity) {
+    sentence = `On average, ${createSentence(lO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(rO)}.`
+  } else if (prc === 100) {
+    sentence = `On average, ${createSentence(rO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(lO)}.`
+  } else if (prc < 0) {
+    sentence = `On average, ${createSentence(lO)} see ${Math.abs(prc)}% less ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
+  } else if (prc > 0) {
+    sentence = `On average, ${createSentence(lO)} see ${prc}% more ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
+  } else if (prc === 0) {
+    sentence = `${createSentence(lO)} and ${createSentence(rO)} see the same amount of ${TopicKeys[currentTopic]} ads.`;
+  }
 
-    return sentence;
+  return sentence;
 }
 
 export function createSentence(options: Array<Filter>): string {
-  let sentence = 'Floodwatch users'; 
-  
+  let sentence = 'Floodwatch users';
+
   if (options[0] == undefined) {
     sentence = 'All ' + sentence;
     return sentence;
@@ -83,7 +90,7 @@ export function createSentence(options: Array<Filter>): string {
       choices = wrappedChoices.join(' ' + opt.logic + ' ')
     }
 
-    sentence = sentence + ((index > 0) ? ", and " : " ") + choices;
+    sentence = sentence + ((index > 0) ? ', and ' : ' ') + choices;
   })
 
   return sentence

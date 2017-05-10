@@ -23,7 +23,7 @@ export type DemographicEntry = {
   name: string,
   category_id: number,
   id: number
-}
+};
 
 export type FilterJSON = {
   name: string,

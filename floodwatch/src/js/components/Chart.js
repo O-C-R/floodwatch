@@ -299,7 +299,6 @@ export class Chart extends Component {
 
   render() {
     const processedData = this.processData(this.props.data, this.props.visibilityMap);
-
     let error;
     if (processedData.length <= 1) {
       error = <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>

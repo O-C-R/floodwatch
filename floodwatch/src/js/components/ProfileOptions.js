@@ -51,7 +51,7 @@ export class AgeOption extends Component {
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
           <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
-            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+            className={'profile-page_learnmore ' + (this.state.isDescriptionOpen ? 'open' : '')}>
               <span className="glyphicon glyphicon-info-sign"></span></a>
           </h4>
           { this.props.filter.instruction &&
@@ -154,7 +154,7 @@ export class LocationOption extends Component {
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
           <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
-            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}><
+            className={'profile-page_learnmore ' + (this.state.isDescriptionOpen ? 'open' : '')}><
             span className="glyphicon glyphicon-info-sign"></span></a>
           </h4>
           { this.props.filter.instruction &&
@@ -169,7 +169,7 @@ export class LocationOption extends Component {
           inputProps={{name:'country', id: 'location-autocomplete', className: 'autocomplete_input form-control'}}
           value={this.state.value}
           items={this.state.items}
-          wrapperProps={{className:"autocomplete"}}
+          wrapperProps={{className:'autocomplete'}}
           getItemValue={(item) => item.feature.displayName}
 
           onChange={(event, value) => {
@@ -183,7 +183,7 @@ export class LocationOption extends Component {
           }}
 
           renderItem={(item, isHighlighted) => (
-            <div className={"autocomplete_options " + (isHighlighted && "current")}>
+            <div className={'autocomplete_options ' + (isHighlighted && 'current')}>
             {item.feature.displayName}
             </div>
           )}
@@ -237,7 +237,7 @@ export class DefaultOption extends Component {
         }
 
         return (
-            <div key={key} className={"custom-option checkbox " + (checked ? "checked" : '')}>
+            <div key={key} className={'custom-option checkbox ' + (checked ? 'checked' : '')}>
               <label>
                 <input
                 type="checkbox"
@@ -255,7 +255,7 @@ export class DefaultOption extends Component {
       <div className="profile-page_option panel-body">
         <div className="profile-page_option_header">
           <h4>{this.props.filter.question} <a onClick={this.toggleDescriptionVisibility.bind(this)}
-            className={"profile-page_learnmore " + (this.state.isDescriptionOpen ? "open" : '')}>
+            className={'profile-page_learnmore ' + (this.state.isDescriptionOpen ? 'open' : '')}>
             <span className="glyphicon glyphicon-info-sign"></span></a>
           </h4>
           { this.props.filter.instruction &&

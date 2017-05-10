@@ -19,8 +19,8 @@ import Filters from '../../stubbed_data/filter_response.json';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 export type VisibilityMap = {
-  [catId : string]: "show" | "hide" | "other"
-}
+  [catId: string]: "show" | "hide" | "other"
+};
 
 export type UnstackedData = {
   [key: string]: number
@@ -107,7 +107,7 @@ export class CompareContainer extends Component {
   }
 
   mouseEnterHandler(newTopic: string): void {
-    if (newTopic !== "Other" && this.state.updateCurrentTopic) {
+    if (newTopic !== 'Other' && this.state.updateCurrentTopic) {
       this.setState({
         currentTopic: newTopic
       })
@@ -118,22 +118,22 @@ export class CompareContainer extends Component {
     if (this.state.updateCurrentTopic) {
       this.setState({
         currentTopic: null
-      })  
+      })
     }
   }
 
   mouseClickHandler(newTopic: string): void {
-    if (newTopic !== "Other") {
+    if (newTopic !== 'Other') {
       if (this.state.updateCurrentTopic) {
         this.setState({
           currentTopic: newTopic,
           updateCurrentTopic: false
-        })  
+        })
       } else {
         this.setState({
           currentTopic: newTopic,
           updateCurrentTopic: false
-        })  
+        })
       }
     }
   }
@@ -175,8 +175,6 @@ export class CompareContainer extends Component {
       demographics: []
     };
 
-
-
     for (const f of filter) {
       if (f.name === 'age') {
         if (f.choices[0]) {
@@ -206,7 +204,6 @@ export class CompareContainer extends Component {
         }
       }
     }
-
     return obj
   }
 
@@ -310,20 +307,20 @@ export class CompareContainer extends Component {
 
   shareComparison(): void {
     let obj = {
-      filterA: this.state.leftOptions,
+      filterA: this.generateFilterRequestItem(this.state.leftOptions),
       dataA: this.state.leftData,
-      filterB: this.state.rightOptions,
+      filterB: this.generateFilterRequestItem(this.state.rightOptions),
       dataB: this.state.rightData,
       curTopic: this.state.currentTopic,
     }
 
-    let url = window.location.origin + "/generate?data=" + JSON.stringify(obj);
+    let url = window.location.origin + '/generate?data=' + JSON.stringify(obj);
 
     window.open(url);
   }
 
   clearTopic(event) {
-    if (event.target.tagName != "rect") {
+    if (event.target.tagName != 'rect') {
       this.setState({
         currentTopic: null,
         updateCurrentTopic: true

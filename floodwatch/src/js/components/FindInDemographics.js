@@ -41,7 +41,7 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
         }
       }
     }
-   
+
     const filteredDemographics = _.filter(DemographicKeys.demographic_keys, function(dk) {
       return _.find(userData.demographic_ids, function(di: DemographicEntry) {
         if (dk.id === di) {
@@ -58,7 +58,7 @@ export function shouldPresetBeDisabled(userData: PersonResponse, preset: Preset)
     if (found) {
       thisFilter.disabled = false;
     }
-    
+
     return thisFilter
   })
 
@@ -82,7 +82,7 @@ export function shouldCustomBeDisabled(category: string, userData: PersonRespons
     return
   }
 
-  // age works a lil differently 
+  // age works a lil differently
   if (category === 'age') {
     if (userData.birth_year) {
       return {

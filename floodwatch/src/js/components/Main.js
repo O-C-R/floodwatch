@@ -79,7 +79,7 @@ export class Main extends Component {
 
   installClick() {
     chrome.webstore.install(
-      "https://chrome.google.com/webstore/detail/oiilbnnfccienlfahiecfglojnkhpgaf",
+      'https://chrome.google.com/webstore/detail/oiilbnnfccienlfahiecfglojnkhpgaf',
       () => { this.setState({ extensionInstalled: true }) },
       (err) => { console.error(err); }
     );
@@ -124,7 +124,7 @@ export class Main extends Component {
             loginChanged: this.loadUserFromServer.bind(this),
             handleLogout: this.handleLogout.bind(this),
             user: this.state.user
-           })}
+          })}
          </Row>
       </Grid>
     );

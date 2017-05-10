@@ -8,7 +8,7 @@ import history from '../common/history';
 import {FWApiClient} from '../api/api';
 
 type NavigationProps = {
-  navs: Array<{ to?: string; name: string, action?: Function }>;
+  navs: Array<{ to?: string, name: string, action?: Function }>
 };
 
 type NavigationState = {

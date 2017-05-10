@@ -21,5 +21,5 @@ module.exports = {
   'Automotive' : ['#c80018', '#f12b42'],
   'Apparel' : ['#ffae00', '#ffc618'],
   'Development / Design / Web-Services' : ['#ff5a00', '#fd730e'],
-  "Other": ["#89a4af", "#9cb5bf"]
+  'Other': ['#89a4af', '#9cb5bf']
 }
