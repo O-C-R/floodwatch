@@ -41,7 +41,7 @@
     "sass-watch": "chokidar 'src/sass/**/*.scss' --initial -c 'yarn run sass-build'",
     "sass-build": "node-sass src/sass/App.scss > src/css/app.css",
     "lint": "./node_modules/eslint/bin/eslint.js src",
-    "pretty": "prettier --single-quote --trailing-comma es5 --parser flow --write \"src/**/*.js\"",
+    "pretty": "prettier --single-quote --trailing-comma es5 --jsx-bracket-same-line true --parser flow --write \"src/**/*.js\"",
     "fix": "yarn pretty && yarn lint -- --fix"
   }
 }

@@ -8,7 +8,7 @@ import history from './common/history';
 
 import { Main } from './components/Main';
 
-import { Register } from './components/Register';
+import Register from './components/Register';
 import { RegisterDemographics } from './components/RegisterDemographics';
 import { Login } from './components/Login';
 import { ProfilePage } from './components/Profile';

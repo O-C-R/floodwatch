@@ -334,7 +334,7 @@ export class CompareContainer extends Component {
     window.open(url);
   }
 
-  clearTopic(event) {
+  clearTopic(event: Event) {
     if (event.target.tagName != 'rect') {
       this.setState({
         currentTopic: null,

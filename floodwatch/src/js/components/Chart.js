@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 import colors from './colors';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
-import { createSentence } from './Compare';
+import { createSentence } from './comparisontools';
 
 import type { UnstackedData, VisibilityMap } from './Compare';
 

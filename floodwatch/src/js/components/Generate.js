@@ -31,8 +31,9 @@ type StateType = {
 
 function initialState(): StateType {
   let curData = null;
-  if (url.parse(window.location.href, true).query.data) {
-    curData = JSON.parse(url.parse(window.location.href, true).query.data);
+  const location = url.parse(window.location.href, true);
+  if (location.query && location.query.data) {
+    curData = JSON.parse(location.query.data);
   } else {
     curData = {};
   }
@@ -71,7 +72,7 @@ function initialState(): StateType {
 export class Generate extends Component {
   state: StateType;
 
-  constructor(props: PropsType) {
+  constructor(props: any) {
     super(props);
     this.state = initialState();
   }

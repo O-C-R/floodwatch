@@ -58,7 +58,9 @@ export class Main extends Component {
 
   detectExtension(): void {
     const hasExtension = () => {
-      if (document.body.getAttribute('data-fw-frame-id') != null) {
+      const body = document.body;
+
+      if (body && body.getAttribute('data-fw-frame-id') != null) {
         setTimeout(() => this.setState({ extensionInstalled: true }), 1);
       } else {
         setTimeout(hasExtension, 100);
