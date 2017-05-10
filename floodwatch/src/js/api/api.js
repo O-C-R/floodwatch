@@ -3,8 +3,13 @@
 import 'whatwg-fetch';
 import log from 'loglevel';
 
-import {BaseError} from '../common/util';
-import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographics} from './types';
+import { BaseError } from '../common/util';
+import type {
+  PersonResponse,
+  FilterRequest,
+  FilterResponse,
+  PersonDemographics,
+} from './types';
 
 export class APIError extends BaseError {
   response: ?Response;
@@ -39,7 +44,7 @@ export class APIClient {
       res = await fetch(url.toString(), {
         method: 'POST',
         credentials: 'include',
-        body
+        body,
       });
     } catch (e) {
       log.error(e);
@@ -76,7 +81,7 @@ export class APIClient {
     try {
       res = await fetch(url.toString(), {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       });
     } catch (e) {
       log.error(e);
@@ -114,7 +119,7 @@ export class APIClient {
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
     if (res.status === 204) {
-      return null
+      return null;
     }
     return res.json();
   }
@@ -216,11 +221,17 @@ export class FWApiClient extends APIClient {
     }
   }
 
-  async updatePersonDemographics(options: PersonDemographics): Promise<PersonResponse> {
+  async updatePersonDemographics(
+    options: PersonDemographics,
+  ): Promise<PersonResponse> {
     return this.postJSON('/api/person/demographics', options);
   }
 
-  async register(username: string, email: ?string, password: string): Promise<void> {
+  async register(
+    username: string,
+    email: ?string,
+    password: string,
+  ): Promise<void> {
     await this.postForm('/api/register', { username, email, password });
   }
 
@@ -231,13 +242,15 @@ export class FWApiClient extends APIClient {
   }
 
   async getLocationOptions(place: string) {
-    const res = this.getJSON('/api/twofishes?query=' + place + '&maxInterpretations=5')
-    return res
+    const res = this.getJSON(
+      `/api/twofishes?query=${place}&maxInterpretations=5`,
+    );
+    return res;
   }
 
   async getDecodedLocation(id: string) {
-    const res = this.getJSON('/api/twofishes?slug=' + id)
-    return res
+    const res = this.getJSON(`/api/twofishes?slug=${id}`);
+    return res;
   }
 
   async logout(): Promise<void> {
@@ -256,7 +269,7 @@ export class FWApiClient extends APIClient {
   completePasswordReset(token: string, password: string): Promise<void> {
     return this.postJSON('/api/reset_password/complete', {
       password_reset_token: token,
-      password
+      password,
     });
   }
 }

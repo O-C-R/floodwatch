@@ -1,18 +1,23 @@
 // @flow
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import $ from 'jquery';
 import { Button, FormGroup, Radio, Well } from 'react-bootstrap';
-import _ from 'lodash'
+import _ from 'lodash';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import FilterResponse from '../../stubbed_data/filter_response.json';
 
-import type {FilterJSON, DisabledCheck, Filter, FilterLogic} from './filtertypes.js'
-import type {DemographicDictionary} from './FindInDemographics'
+import type {
+  FilterJSON,
+  DisabledCheck,
+  Filter,
+  FilterLogic,
+} from './filtertypes.js';
+import type { DemographicDictionary } from './FindInDemographics';
 import Autocomplete from 'react-autocomplete';
 
-import {FWApiClient} from '../api/api';
+import { FWApiClient } from '../api/api';
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
@@ -20,67 +25,68 @@ type PropType = {
   filter: FilterJSON,
   shouldBeDisabled: DisabledCheck,
   mySelection: Filter,
-  side: string
+  side: string,
 };
 
 export class CustomFilter extends Component {
   props: PropType;
 
   updateSearchLogic(event: any) {
-    this.props.updateSearchLogic(event.target.value, event.target.name.split(this.props.side)[1])
+    this.props.updateSearchLogic(
+      event.target.value,
+      event.target.name.split(this.props.side)[1],
+    );
   }
 
   render() {
-    let elems = [];
+    const elems = [];
 
     if (this.props.shouldBeDisabled.disabled) {
-      elems.push(`Unlock by adding your ${this.props.filter.name} information to your profile.`)
+      elems.push(
+        `Unlock by adding your ${this.props.filter.name} information to your profile.`,
+      );
       return (
         <div className="filter-option">
-        <h4>Filter by {this.props.filter.name}</h4>
-        <div>
-        {elems}
+          <h4>Filter by {this.props.filter.name}</h4>
+          <div>
+            {elems}
+          </div>
         </div>
-        </div>
-      )
+      );
     }
 
     let myOptions;
 
-
     if (this.props.filter.name === 'country') {
       return (
         <div className="filter-option">
-        <h4>Filter by {this.props.filter.name}</h4>
-        <div>
-        <CountryFilter selection={this.props.mySelection} handleFilterClick={this.props.handleFilterClick}/>
+          <h4>Filter by {this.props.filter.name}</h4>
+          <div>
+            <CountryFilter
+              selection={this.props.mySelection}
+              handleFilterClick={this.props.handleFilterClick}
+            />
+          </div>
         </div>
-        </div>
-      )
+      );
     } else if (this.props.filter.name === 'age') {
-      const age = _.find(FilterResponse.filters, (opt: FilterJSON) => {
-        return opt.name == 'age'
-      })
-      myOptions = _.map(age.options, (opt: string) => {
-        return {
-          name: opt,
-        }
-      })
-    } else {
-      if (this.props.filter.category_id) {
-        myOptions = _.filter(DemographicKeys.demographic_keys, (opt: DemographicDictionary) => {
-          return opt.category_id === this.props.filter.category_id
-        })
-      }
+      const age = _.find(FilterResponse.filters, (opt: FilterJSON) => opt.name == 'age');
+      myOptions = _.map(age.options, (opt: string) => ({
+        name: opt,
+      }));
+    } else if (this.props.filter.category_id) {
+      myOptions = _.filter(
+          DemographicKeys.demographic_keys,
+          (opt: DemographicDictionary) => opt.category_id === this.props.filter.category_id,
+        );
     }
 
     _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {
-
       const obj = {
-        'name': this.props.filter.name,
-        'choices': [opt.name],
-        'logic': (this.props.mySelection) ? this.props.mySelection.logic : 'or'
-      }
+        name: this.props.filter.name,
+        choices: [opt.name],
+        logic: this.props.mySelection ? this.props.mySelection.logic : 'or',
+      };
 
       let checked = false;
       if (this.props.mySelection) {
@@ -89,79 +95,124 @@ export class CustomFilter extends Component {
         }
       }
 
-      elems.push(<div key={i} className={'custom-option checkbox ' + (checked ? 'checked' : '')}>
-                  <Button href="#" active={checked}
-                          disabled={this.props.shouldBeDisabled.disabled}
-                          onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
-                          name={this.props.filter.name}>
-                  {opt.name}
-                  </Button>
+      elems.push(
+        <div
+          key={i}
+          className={`custom-option checkbox ${checked ? 'checked' : ''}`}
+        >
+          <Button
+            href="#"
+            active={checked}
+            disabled={this.props.shouldBeDisabled.disabled}
+            onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
+            name={this.props.filter.name}
+          >
+            {opt.name}
+          </Button>
 
-              </div>)
+        </div>,
+      );
+    });
 
-    })
-
-    let select = this.generateLogicSelectors();
-    elems.unshift(select)
+    const select = this.generateLogicSelectors();
+    elems.unshift(select);
 
     return (
       <div className="filter-option">
-      <h4>Filter by {this.props.filter.name}</h4>
-      <div>
-      {elems}
+        <h4>Filter by {this.props.filter.name}</h4>
+        <div>
+          {elems}
+        </div>
       </div>
-      </div>
-    )
-
+    );
   }
 
   generateLogicSelectors(): React$Element<*> {
-    const logicSelection = (this.props.mySelection) ? this.props.mySelection.logic : 'or'
+    const logicSelection = this.props.mySelection
+      ? this.props.mySelection.logic
+      : 'or';
 
-    let or, and, nor;
+    let or,
+      and,
+      nor;
 
-    if (this.props.filter.name !== 'age' && this.props.filter.name !== 'country') {
-      or = <Radio className="logic-option" checked={logicSelection === 'or'} name={this.props.side + this.props.filter.name} inline readOnly value="or">Any of the following</Radio>;
-      and = <Radio className="logic-option" checked={logicSelection === 'and'} name={this.props.side + this.props.filter.name} inline readOnly value="and">All of the following</Radio>
-      nor = <Radio className="logic-option" checked={logicSelection === 'nor'} name={this.props.side + this.props.filter.name} inline readOnly value="nor">None of the following</Radio>
+    if (
+      this.props.filter.name !== 'age' &&
+      this.props.filter.name !== 'country'
+    ) {
+      or = (
+        <Radio
+          className="logic-option"
+          checked={logicSelection === 'or'}
+          name={this.props.side + this.props.filter.name}
+          inline
+          readOnly
+          value="or"
+        >
+          Any of the following
+        </Radio>
+      );
+      and = (
+        <Radio
+          className="logic-option"
+          checked={logicSelection === 'and'}
+          name={this.props.side + this.props.filter.name}
+          inline
+          readOnly
+          value="and"
+        >
+          All of the following
+        </Radio>
+      );
+      nor = (
+        <Radio
+          className="logic-option"
+          checked={logicSelection === 'nor'}
+          name={this.props.side + this.props.filter.name}
+          inline
+          readOnly
+          value="nor"
+        >
+          None of the following
+        </Radio>
+      );
     } else {
-      return <div></div>
+      return <div />;
     }
 
-    let select = <div>
-                  <Well bsSize="small">
-                  <p>Show me people who chose</p>
-                  <FormGroup onChange={this.updateSearchLogic.bind(this)}>
-                    {or}
-                    {and}
-                    {nor}
-                  </FormGroup>
-                  </Well>
-                </div>
+    const select = (
+      <div>
+        <Well bsSize="small">
+          <p>Show me people who chose</p>
+          <FormGroup onChange={this.updateSearchLogic.bind(this)}>
+            {or}
+            {and}
+            {nor}
+          </FormGroup>
+        </Well>
+      </div>
+    );
 
-    return select
+    return select;
   }
-
 }
-
-
 
 type LocationStateType = {
   value: string,
   items: Array<Object>,
-  loading?: boolean
+  loading?: boolean,
 };
 
 type LocationPropsType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
-  selection: Filter
+  selection: Filter,
 };
 
 function setInitialStateLocation(props: LocationPropsType) {
   return {
     value: '',
-    items: []
-  }
+    items: [],
+  };
 }
 
 export class CountryFilter extends Component {
@@ -175,14 +226,14 @@ export class CountryFilter extends Component {
 
   componentWillReceiveProps(nextProps: LocationPropsType) {
     if (nextProps.selection) {
-      this.setState({value: nextProps.selection.choices[0]})
+      this.setState({ value: nextProps.selection.choices[0] });
     }
   }
 
   async updateList(value: string) {
     const val = await FWApiClient.get().getLocationOptions(value);
     if (val.interpretations.length > 0) {
-      this.setState({items: val.interpretations, loading: false});
+      this.setState({ items: val.interpretations, loading: false });
     }
   }
 
@@ -190,35 +241,38 @@ export class CountryFilter extends Component {
     return (
       <div className="profile-page_option panel-body">
         <Autocomplete
-          menuStyle={{zIndex: 1000}}
-          inputProps={{name:'country', id: 'location-autocomplete', className: 'autocomplete_input form-control'}}
+          menuStyle={{ zIndex: 1000 }}
+          inputProps={{
+            name: 'country',
+            id: 'location-autocomplete',
+            className: 'autocomplete_input form-control',
+          }}
           value={this.state.value}
           items={this.state.items}
-          wrapperProps={{className:'autocomplete'}}
-          getItemValue={(item) => item.feature.cc}
-
+          wrapperProps={{ className: 'autocomplete' }}
+          getItemValue={item => item.feature.cc}
           onChange={(event, value) => {
-            this.setState({ value, loading:true})
+            this.setState({ value, loading: true });
             this.updateList(value);
           }}
-
           onSelect={(value, item) => {
-            this.setState({value: value, items: [item]})
+            this.setState({ value, items: [item] });
             const filterObj = {
               name: 'country',
               choices: [item.feature.cc],
               logic: 'or',
-            }
-            this.props.handleFilterClick(filterObj, true)
+            };
+            this.props.handleFilterClick(filterObj, true);
           }}
-
           renderItem={(item, isHighlighted) => (
-            <div className={'autocomplete_options ' + (isHighlighted && 'current')}>
-            {item.feature.displayName} ({item.feature.cc})
+            <div
+              className={`autocomplete_options ${isHighlighted && 'current'}`}
+            >
+              {item.feature.displayName} ({item.feature.cc})
             </div>
           )}
         />
       </div>
-    )
+    );
   }
 }

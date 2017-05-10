@@ -1,10 +1,20 @@
 // @flow
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Col, Row, Button, Form, FormGroup, FormControl, ControlLabel, Alert, HelpBlock } from 'react-bootstrap';
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  FormGroup,
+  FormControl,
+  ControlLabel,
+  Alert,
+  HelpBlock,
+} from 'react-bootstrap';
 
-import {FWApiClient, APIError} from '../api/api';
+import { FWApiClient, APIError } from '../api/api';
 import history from '../common/history';
 
 type State = {
@@ -14,7 +24,7 @@ type State = {
   passwordRepeated: string,
   passwordFeedback: ?string,
   email: ?string,
-  error: ?string
+  error: ?string,
 };
 
 function initialState() {
@@ -25,13 +35,13 @@ function initialState() {
     passwordRepeated: '',
     passwordFeedback: '',
     email: '',
-    error: null
+    error: null,
   };
 }
 
 type Props = {
   showMessage: (msg: string, timeout?: number) => void,
-  loginChanged: () => Promise<void>
+  loginChanged: () => Promise<void>,
 };
 
 export class Register extends Component {
@@ -48,8 +58,8 @@ export class Register extends Component {
       const id = e.target.id;
       const stateChange = {};
 
-      if(e.target.type === 'checkbox') {
-        stateChange[id] = e.target.checked ? true : false;
+      if (e.target.type === 'checkbox') {
+        stateChange[id] = !!e.target.checked;
       } else {
         stateChange[id] = e.target.value;
       }
@@ -64,23 +74,29 @@ export class Register extends Component {
 
       this.setState({ [id]: val });
 
-      if (this.state.passwordFeedback
-          && this.state.passwordRepeated == this.state.password) {
+      if (
+        this.state.passwordFeedback &&
+        this.state.passwordRepeated == this.state.password
+      ) {
         this.setState({ passwordFeedback: '' });
       }
     }
   }
 
   async handleSubmit(e: Event) {
-    e.preventDefault()
+    e.preventDefault();
 
     if (this.state.password != this.state.passwordRepeated) {
-      this.setState({ passwordFeedback:'Passwords do not match.' });
+      this.setState({ passwordFeedback: 'Passwords do not match.' });
       return;
     }
 
     try {
-      await FWApiClient.get().register(this.state.username, this.state.email, this.state.password);
+      await FWApiClient.get().register(
+        this.state.username,
+        this.state.email,
+        this.state.password,
+      );
       await FWApiClient.get().login(this.state.username, this.state.password);
       await this.props.loginChanged();
 
@@ -92,23 +108,31 @@ export class Register extends Component {
 
       if (error instanceof APIError) {
         const apiError: APIError = error;
-        if (apiError.response && error.response.status == 400 && apiError.body) {
+        if (
+          apiError.response &&
+          error.response.status == 400 &&
+          apiError.body
+        ) {
           try {
             const errors: Object = JSON.parse(apiError.body);
 
             this.setState({
-              usernameFeedback: errors['username'],
-              passwordFeedback: errors['password'],
-              error: ''
+              usernameFeedback: errors.username,
+              passwordFeedback: errors.password,
+              error: '',
             });
           } catch (e) {
-            this.setState({ error: apiError.body })
+            this.setState({ error: apiError.body });
           }
         } else {
-          this.setState({ error: 'A unknown API error occurred, please contact us at floodwatch@ocr.nyc!' })
+          this.setState({
+            error: 'A unknown API error occurred, please contact us at floodwatch@ocr.nyc!',
+          });
         }
       } else {
-        this.setState({ error: 'A unknown error occurred, please contact us at floodwatch@ocr.nyc!' })
+        this.setState({
+          error: 'A unknown error occurred, please contact us at floodwatch@ocr.nyc!',
+        });
       }
     }
   }
@@ -126,11 +150,13 @@ export class Register extends Component {
 
             <Row>
               <Form horizontal onSubmit={this.handleSubmit.bind(this)}>
-                { this.state.error &&
+                {this.state.error &&
                   <Alert bsStyle="danger">
                     <strong>Registration failed.</strong> {this.state.error}
-                  </Alert> }
-                <FormGroup className={(this.state.usernameFeedback ? 'has-danger' : '')}>
+                  </Alert>}
+                <FormGroup
+                  className={this.state.usernameFeedback ? 'has-danger' : ''}
+                >
                   <Col componentClass={ControlLabel} sm={2} xs={12}>
                     <label htmlFor="username">Username</label>
                   </Col>
@@ -140,15 +166,18 @@ export class Register extends Component {
                       id="username"
                       name="username"
                       placeholder="Username"
-                      required={true}
+                      required
                       maxLength="120"
                       pattern="\S{3,}"
                       value={this.state.username}
                       onChange={this.setFormState.bind(this)}
-                      ref="username" />
-                    { this.state.usernameFeedback &&
-                      <HelpBlock>{this.state.usernameFeedback}</HelpBlock> }
-                    <small id="usernameHelp" className="form-text text-muted">Usernames cannot contain spaces.</small>
+                      ref="username"
+                    />
+                    {this.state.usernameFeedback &&
+                      <HelpBlock>{this.state.usernameFeedback}</HelpBlock>}
+                    <small id="usernameHelp" className="form-text text-muted">
+                      Usernames cannot contain spaces.
+                    </small>
                   </Col>
                 </FormGroup>
                 <FormGroup className="form-group">
@@ -156,43 +185,70 @@ export class Register extends Component {
                     <label htmlFor="email">Email</label><br />
                   </Col>
                   <Col sm={10} xs={12}>
-                    <input type="email" className="form-control" id="email" placeholder="Email" value={this.state.email} onChange={this.setFormState.bind(this)} />
-                    <small className="form-text text-muted">Optional - for password recovery.</small>
+                    <input
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      placeholder="Email"
+                      value={this.state.email}
+                      onChange={this.setFormState.bind(this)}
+                    />
+                    <small className="form-text text-muted">
+                      Optional - for password recovery.
+                    </small>
                   </Col>
                 </FormGroup>
-                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
+                <FormGroup
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}
+                >
                   <Col componentClass={ControlLabel} sm={2} xs={12}>
                     <label htmlFor="password">Password</label>
                   </Col>
                   <Col sm={10} xs={12}>
-                    <FormControl type="password"
-                      className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                    <FormControl
+                      type="password"
+                      className={
+                        this.state.passwordFeedback ? 'form-control-danger' : ''
+                      }
                       id="password"
                       placeholder="Password"
                       name="password"
-                      required={true}
+                      required
                       minLength={10}
                       value={this.state.password}
-                      onChange={this.onPasswordChange.bind(this)} />
+                      onChange={this.onPasswordChange.bind(this)}
+                    />
                   </Col>
                 </FormGroup>
-                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
+                <FormGroup
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}
+                >
                   <Col sm={10} smOffset={2} xs={12}>
-                    <FormControl type="password"
-                      className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                    <FormControl
+                      type="password"
+                      className={
+                        this.state.passwordFeedback ? 'form-control-danger' : ''
+                      }
                       id="passwordRepeated"
                       name="passwordRepeated"
                       placeholder="Retype Password"
-                      required={true}
+                      required
                       value={this.state.passwordRepeated}
-                      onChange={this.onPasswordChange.bind(this)} />
-                    { this.state.passwordFeedback &&
-                      <HelpBlock>{this.state.passwordFeedback}</HelpBlock> }
+                      onChange={this.onPasswordChange.bind(this)}
+                    />
+                    {this.state.passwordFeedback &&
+                      <HelpBlock>{this.state.passwordFeedback}</HelpBlock>}
                   </Col>
                 </FormGroup>
                 <FormGroup>
                   <Col sm={10} smOffset={2} xs={12}>
-                    <Button type="submit" className="btn btn-primary" id="loginInput">Register</Button>
+                    <Button
+                      type="submit"
+                      className="btn btn-primary"
+                      id="loginInput"
+                    >
+                      Register
+                    </Button>
                   </Col>
                 </FormGroup>
               </Form>

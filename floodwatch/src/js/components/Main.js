@@ -1,14 +1,23 @@
 // @flow
-import React, {Component} from 'react';
-import {Grid, Nav, Navbar, NavItem, Row, Col, Button, Alert} from 'react-bootstrap';
-import {LinkContainer} from 'react-router-bootstrap';
+import React, { Component } from 'react';
+import {
+  Grid,
+  Nav,
+  Navbar,
+  NavItem,
+  Row,
+  Col,
+  Button,
+  Alert,
+} from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 import '../../css/app.css';
 
 import history from '../common/history';
-import {FWApiClient} from '../api/api';
+import { FWApiClient } from '../api/api';
 
-import {Navigation} from './Navigation';
+import { Navigation } from './Navigation';
 
 const chrome = window.chrome;
 
@@ -17,7 +26,7 @@ type MainState = {
   message: ?string,
   messageClearTimeout: ?number,
   extensionInstalled: boolean,
-  extensionInstallMsgDismissed: boolean
+  extensionInstallMsgDismissed: boolean,
 };
 
 export class Main extends Component {
@@ -31,7 +40,7 @@ export class Main extends Component {
       message: null,
       messageClearTimeout: null,
       extensionInstalled: false,
-      extensionInstallMsgDismissed: false
+      extensionInstallMsgDismissed: false,
     };
 
     this.loadUserFromServer();
@@ -40,8 +49,8 @@ export class Main extends Component {
 
   async loadUserFromServer(): Promise<void> {
     try {
-      const user = await FWApiClient.get().getCurrentPerson()
-      this.setState({ user: user });
+      const user = await FWApiClient.get().getCurrentPerson();
+      this.setState({ user });
     } catch (e) {
       this.setState({ user: null });
     }
@@ -54,7 +63,7 @@ export class Main extends Component {
       } else {
         setTimeout(hasExtension, 100);
       }
-    }
+    };
     hasExtension();
   }
 
@@ -66,7 +75,10 @@ export class Main extends Component {
     }
 
     if (timeout) {
-      const messageClearTimeout = setTimeout(() => this.setState({ message: null }), timeout);
+      const messageClearTimeout = setTimeout(
+        () => this.setState({ message: null }),
+        timeout,
+      );
       this.setState({ messageClearTimeout });
     }
   }
@@ -80,8 +92,12 @@ export class Main extends Component {
   installClick() {
     chrome.webstore.install(
       'https://chrome.google.com/webstore/detail/oiilbnnfccienlfahiecfglojnkhpgaf',
-      () => { this.setState({ extensionInstalled: true }) },
-      (err) => { console.error(err); }
+      () => {
+        this.setState({ extensionInstalled: true });
+      },
+      (err) => {
+        console.error(err);
+      },
     );
   }
 
@@ -95,37 +111,54 @@ export class Main extends Component {
       { name: 'Compare', to: '/compare' },
       { name: 'Profile', to: '/profile' },
       { name: 'FAQ', to: '/faq' },
-      { name: 'Logout', to: '/logout', action: this.handleLogout.bind(this) }
+      { name: 'Logout', to: '/logout', action: this.handleLogout.bind(this) },
     ];
 
     const SIGNED_OUT_NAVS = [
       { name: 'Home', to: '/' },
       { name: 'Login', to: '/login' },
       { name: 'Register', to: '/register' },
-      { name: 'FAQ', to: '/faq' }
+      { name: 'FAQ', to: '/faq' },
     ];
 
     const navs = this.state.user ? SIGNED_IN_NAVS : SIGNED_OUT_NAVS;
 
     return (
-      <Grid fluid style={{position:'relative', height: '100%'}}>
+      <Grid fluid style={{ position: 'relative', height: '100%' }}>
         <Row id="row-top">
-          { this.state.message && <Alert bsStyle="info">{this.state.message}</Alert> }
-          { this.state.user && !this.state.message && !this.state.extensionInstalled && !this.state.extensionInstallMsgDismissed &&
-            <Alert bsStyle="info" className="text-center" onDismiss={this.dismissInstallClick.bind(this)}>
-              <span style={{ paddingRight: '10px' }}>Install the extension to get started</span>
-              <Button bsStyle="primary" bsSize="small" onClick={this.installClick.bind(this)}>Add to Chrome</Button>
-          </Alert> }
+          {this.state.message &&
+            <Alert bsStyle="info">{this.state.message}</Alert>}
+          {this.state.user &&
+            !this.state.message &&
+            !this.state.extensionInstalled &&
+            !this.state.extensionInstallMsgDismissed &&
+            <Alert
+              bsStyle="info"
+              className="text-center"
+              onDismiss={this.dismissInstallClick.bind(this)}
+            >
+              <span style={{ paddingRight: '10px' }}>
+                Install the extension to get started
+              </span>
+              <Button
+                bsStyle="primary"
+                bsSize="small"
+                onClick={this.installClick.bind(this)}
+              >
+                Add to Chrome
+              </Button>
+            </Alert>}
           <Navigation navs={navs} />
         </Row>
-        <Row style={{height: '85%'}}>
-          {this.props.children && React.cloneElement(this.props.children, {
-            showMessage: this.showMessage.bind(this),
-            loginChanged: this.loadUserFromServer.bind(this),
-            handleLogout: this.handleLogout.bind(this),
-            user: this.state.user
-          })}
-         </Row>
+        <Row style={{ height: '85%' }}>
+          {this.props.children &&
+            React.cloneElement(this.props.children, {
+              showMessage: this.showMessage.bind(this),
+              loginChanged: this.loadUserFromServer.bind(this),
+              handleLogout: this.handleLogout.bind(this),
+              user: this.state.user,
+            })}
+        </Row>
       </Grid>
     );
   }

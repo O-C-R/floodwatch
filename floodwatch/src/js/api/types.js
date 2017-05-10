@@ -2,18 +2,18 @@
 
 export type PersonResponse = {
   username: string,
-  demographic_ids: Array<number>
+  demographic_ids: Array<number>,
 };
 
 export type PersonDemographics = {
   birth_year: number,
   twofishes_id: string,
-  demographic_ids: Array<number>
+  demographic_ids: Array<number>,
 };
 
 export type DemographicFilterItem = {
   operator: 'nor' | 'and' | 'or',
-  values: Array<number>
+  values: Array<number>,
 };
 
 // Set either personal: true, or some set of the other options.
@@ -21,17 +21,17 @@ export type FilterRequestItem = {
   personal?: boolean,
   age?: {
     min?: number,
-    max?: number
+    max?: number,
   },
   location?: {
-    countryCodes: Array<string>
+    countryCodes: Array<string>,
   },
-  demographics?: Array<DemographicFilterItem>
+  demographics?: Array<DemographicFilterItem>,
 };
 
 export type FilterRequest = {
   filterA: FilterRequestItem,
-  filterB: FilterRequestItem
+  filterB: FilterRequestItem,
 };
 
 export type AdCategoryId = string;
@@ -39,10 +39,10 @@ export type AdCategoryId = string;
 export type FilterResponse = {
   filterA: {
     categories: { [key: AdCategoryId]: number },
-    totalCount: number
+    totalCount: number,
   },
   filterB: {
     categories: { [key: AdCategoryId]: number },
-    totalCount: number
-  }
+    totalCount: number,
+  },
 };

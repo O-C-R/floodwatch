@@ -1,46 +1,60 @@
-//@flow
+// @flow
 
-const UNKNOWN_ID = '16'
-const OTHER_BREAKDOWN = 0.02
+const UNKNOWN_ID = '16';
+const OTHER_BREAKDOWN = 0.02;
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import _ from 'lodash';
-import type {Preset, Filter, FilterLogic} from './filtertypes'
-import type {VisibilityMap, UnstackedData} from './Compare'
+import type { Preset, Filter, FilterLogic } from './filtertypes';
+import type { VisibilityMap, UnstackedData } from './Compare';
 
-export function getVisibilityMap(lD: UnstackedData, rD: UnstackedData): VisibilityMap {
-  let visibilityMap = {}
+export function getVisibilityMap(
+  lD: UnstackedData,
+  rD: UnstackedData,
+): VisibilityMap {
+  const visibilityMap = {};
 
-  let comparisonData = {}
+  let comparisonData = {};
   if (_.isEmpty(lD) && !_.isEmpty(rD)) {
-    comparisonData = _.cloneDeep(rD)
+    comparisonData = _.cloneDeep(rD);
   } else if (!_.isEmpty(lD)) {
-    comparisonData = _.cloneDeep(lD)
+    comparisonData = _.cloneDeep(lD);
   }
 
-  for (let key in comparisonData) {
-    if (key !== UNKNOWN_ID) { // Hide cats (16 is unknown)
-      if ((comparisonData[key] > OTHER_BREAKDOWN) || (comparisonData[key] > OTHER_BREAKDOWN)) { // Make sure cats are above some percentage for both side
-        visibilityMap[key] = 'show'
+  for (const key in comparisonData) {
+    if (key !== UNKNOWN_ID) {
+      // Hide cats (16 is unknown)
+      if (
+        comparisonData[key] > OTHER_BREAKDOWN ||
+        comparisonData[key] > OTHER_BREAKDOWN
+      ) {
+        // Make sure cats are above some percentage for both side
+        visibilityMap[key] = 'show';
       } else {
-        visibilityMap[key] = 'other'
+        visibilityMap[key] = 'other';
       }
     } else {
-      visibilityMap[key] = 'hide'
+      visibilityMap[key] = 'hide';
     }
   }
   return visibilityMap;
 }
 
-export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: ?string): string {
+export function generateDifferenceSentence(
+  lO: Array<Filter>,
+  rO: Array<Filter>,
+  lVal: number,
+  rVal: number,
+  currentTopic: ?string,
+): string {
   let sentence = '';
-  const prc = Math.floor(calculatePercentDiff(lVal, rVal))
+  const prc = Math.floor(calculatePercentDiff(lVal, rVal));
 
-    // Math.sign isn't supported on Chromium fwiw
+  // Math.sign isn't supported on Chromium fwiw
   if (prc === -Infinity) {
-    sentence = `On average, ${createSentence(lO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(rO)}.`
+    sentence = `On average, ${createSentence(lO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(rO)}.`;
   } else if (prc === 100) {
-    sentence = `On average, ${createSentence(rO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(lO)}.`
+    sentence = `On average, ${createSentence(rO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(lO)}.`;
   } else if (prc < 0) {
     sentence = `On average, ${createSentence(lO)} see ${Math.abs(prc)}% less ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
   } else if (prc > 0) {
@@ -56,7 +70,7 @@ export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
 
   if (options[0] == undefined) {
-    sentence = 'All ' + sentence;
+    sentence = `All ${sentence}`;
     return sentence;
   }
 
@@ -64,13 +78,13 @@ export function createSentence(options: Array<Filter>): string {
     return 'You';
   }
 
-  sentence += ' who are '
+  sentence += ' who are ';
 
-  _.forEach(options, function(opt: Filter, index: number) {
+  _.forEach(options, (opt: Filter, index: number) => {
     if (opt.choices.length == 0) return;
 
-    let logic = ''
-    let choices = ''
+    let logic = '';
+    let choices = '';
 
     let wrappedChoices = opt.choices;
 
@@ -84,22 +98,21 @@ export function createSentence(options: Array<Filter>): string {
 
     if (opt.logic === 'nor') {
       logic = 'Non-';
-      choices = wrappedChoices.join(' and Non-')
-      choices = logic + choices
+      choices = wrappedChoices.join(' and Non-');
+      choices = logic + choices;
     } else {
-      choices = wrappedChoices.join(' ' + opt.logic + ' ')
+      choices = wrappedChoices.join(` ${opt.logic} `);
     }
 
-    sentence = sentence + ((index > 0) ? ', and ' : ' ') + choices;
-  })
+    sentence = sentence + (index > 0 ? ', and ' : ' ') + choices;
+  });
 
-  return sentence
+  return sentence;
 }
 
 function calculatePercentDiff(a: number, b: number): number {
-  const abs = (a-b)
+  const abs = a - b;
   const denom = Math.abs(b);
-  const prc = (abs/denom)*100
-  return prc
+  const prc = abs / denom * 100;
+  return prc;
 }
-

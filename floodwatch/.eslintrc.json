@@ -10,5 +10,15 @@
   ],
   "env": {
     "browser": true
+  },
+  "rules": {
+    // This whole app is react, .js is fine.
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+
+    // Until we have ES7 decorators, using bind still can make sense.
+    "react/jsx-no-bind": 0,
+
+    // Some loops are still clearer this way
+    "no-plusplus": 0
   }
 }

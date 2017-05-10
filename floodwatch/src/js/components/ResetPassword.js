@@ -1,22 +1,32 @@
 // @flow
 
-import React, {Component} from 'react';
-import { Col, Row, Button, Form, FormGroup, FormControl, ControlLabel, Alert, HelpBlock } from 'react-bootstrap';
-import {Location} from 'react-router';
+import React, { Component } from 'react';
+import {
+  Col,
+  Row,
+  Button,
+  Form,
+  FormGroup,
+  FormControl,
+  ControlLabel,
+  Alert,
+  HelpBlock,
+} from 'react-bootstrap';
+import { Location } from 'react-router';
 
-import {FWApiClient, AuthenticationError, APIError} from '../api/api';
+import { FWApiClient, AuthenticationError, APIError } from '../api/api';
 import history from '../common/history';
 
 type Props = {
   location: Location,
-  loginChanged: () => void
+  loginChanged: () => void,
 };
 type State = {
   token: string,
   password: string,
   passwordRepeated: string,
   passwordFeedback: ?string,
-  error: ?string
+  error: ?string,
 };
 
 export class ResetPassword extends Component {
@@ -36,7 +46,7 @@ export class ResetPassword extends Component {
       password: '',
       passwordRepeated: '',
       passwordFeedback: null,
-      error: null
+      error: null,
     };
   }
 
@@ -45,8 +55,8 @@ export class ResetPassword extends Component {
       const id = e.target.id;
       const stateChange = {};
 
-      if(e.target.type === 'checkbox') {
-        stateChange[id] = e.target.checked ? true : false;
+      if (e.target.type === 'checkbox') {
+        stateChange[id] = !!e.target.checked;
       } else {
         stateChange[id] = e.target.value;
       }
@@ -63,7 +73,10 @@ export class ResetPassword extends Component {
     }
 
     try {
-      await FWApiClient.get().completePasswordReset(this.state.token, this.state.password);
+      await FWApiClient.get().completePasswordReset(
+        this.state.token,
+        this.state.password,
+      );
     } catch (error) {
       let foundError = false;
       if (error instanceof APIError) {
@@ -71,17 +84,23 @@ export class ResetPassword extends Component {
         if (apiError.response) {
           const responseStatus = apiError.response.status;
           if (responseStatus == 404) {
-            this.setState({ error: 'Your password reset token wasn\'t found, or that account was deleted.' });
+            this.setState({
+              error: "Your password reset token wasn't found, or that account was deleted.",
+            });
             foundError = true;
           } else if (responseStatus == 403) {
-            this.setState({ error: 'Your password reset token expired, you should request another password reset.' });
+            this.setState({
+              error: 'Your password reset token expired, you should request another password reset.',
+            });
             foundError = true;
           }
         }
       }
 
       if (!foundError) {
-        this.setState({ error: 'An unknown error occurred, please contact us for more support.' });
+        this.setState({
+          error: 'An unknown error occurred, please contact us for more support.',
+        });
       }
 
       return;
@@ -102,42 +121,58 @@ export class ResetPassword extends Component {
       <Row>
         <Col xs={12} xsOffset={0} sm={6} smOffset={3}>
           {this.state.error &&
-            <div className="alert alert-danger" role="alert">{this.state.error}</div> }
+            <div className="alert alert-danger" role="alert">
+              {this.state.error}
+            </div>}
 
           <div className="panel">
             <div className="panel-container">
               <h1>Reset Password</h1>
 
               <form onSubmit={this.handleSubmit.bind(this)}>
-                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
-                  <FormControl type="password"
-                    className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                <FormGroup
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}
+                >
+                  <FormControl
+                    type="password"
+                    className={
+                      this.state.passwordFeedback ? 'form-control-danger' : ''
+                    }
                     id="password"
                     placeholder="Password"
                     name="password"
-                    required={true}
+                    required
                     minLength={10}
                     value={this.state.password}
-                    onChange={this.setFormState.bind(this)} />
+                    onChange={this.setFormState.bind(this)}
+                  />
                 </FormGroup>
-                <FormGroup className={(this.state.passwordFeedback ? 'has-danger' : '')}>
-                  <FormControl type="password"
-                    className={this.state.passwordFeedback ? 'form-control-danger' : ''}
+                <FormGroup
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}
+                >
+                  <FormControl
+                    type="password"
+                    className={
+                      this.state.passwordFeedback ? 'form-control-danger' : ''
+                    }
                     id="passwordRepeated"
                     name="passwordRepeated"
                     placeholder="Retype Password"
-                    required={true}
+                    required
                     value={this.state.passwordRepeated}
-                    onChange={this.setFormState.bind(this)} />
-                  { this.state.passwordFeedback &&
-                    <HelpBlock>{this.state.passwordFeedback}</HelpBlock> }
+                    onChange={this.setFormState.bind(this)}
+                  />
+                  {this.state.passwordFeedback &&
+                    <HelpBlock>{this.state.passwordFeedback}</HelpBlock>}
                 </FormGroup>
-                <button type="submit" className="btn btn-primary">Complete</button>
+                <button type="submit" className="btn btn-primary">
+                  Complete
+                </button>
               </form>
             </div>
           </div>
         </Col>
       </Row>
-    )
+    );
   }
 }

@@ -1,28 +1,31 @@
 // @flow
 
-export type PresetsAndFilters = { //FilterObject
+export type PresetsAndFilters = {
+  // FilterObject
   presets: Array<Preset>,
-  filters: Array<Filter>
+  filters: Array<Filter>,
 };
 
-export type Preset = { // FilterOptionsType
+export type Preset = {
+  // FilterOptionsType
   name: string,
   filters: Array<Filter>,
-  always_available?: boolean
+  always_available?: boolean,
 };
 
 export type FilterLogic = 'or' | 'nor' | 'and';
 
-export type Filter = { // FilterType
+export type Filter = {
+  // FilterType
   name: string,
   choices: Array<string>,
-  logic: FilterLogic
+  logic: FilterLogic,
 };
 
 export type DemographicEntry = {
   name: string,
   category_id: number,
-  id: number
+  id: number,
 };
 
 export type FilterJSON = {
@@ -31,10 +34,10 @@ export type FilterJSON = {
   question: string,
   type: string,
   why: string,
-  category_id?: number
+  category_id?: number,
 };
 
 export type DisabledCheck = {
   disabled: boolean,
-  name: string
+  name: string,
 };

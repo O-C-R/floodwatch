@@ -1,19 +1,19 @@
 // @flow
 
-import React, {Component} from 'react';
-import {withRouter} from 'react-router';
-import {Col} from 'react-bootstrap';
-import {FWApiClient} from '../api/api';
+import React, { Component } from 'react';
+import { withRouter } from 'react-router';
+import { Col } from 'react-bootstrap';
+import { FWApiClient } from '../api/api';
 import history from '../common/history';
-import {ProfileExplanation, DemographicContainer} from './Profile';
+import { ProfileExplanation, DemographicContainer } from './Profile';
 
 type State = {
-  saving: boolean
+  saving: boolean,
 };
 
 function initialState(): State {
   return {
-    saving: false
+    saving: false,
   };
 }
 
