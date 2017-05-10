@@ -323,8 +323,7 @@ export class Chart extends Component {
           </Col>
           <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
             <div
-              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`}
-            />
+              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>
@@ -340,11 +339,9 @@ export class Chart extends Component {
             md={8}
             mdPull={4}
             className="chart"
-            style={{ padding: '2px' }}
-          >
+            style={{ padding: '2px' }}>
             <div
-              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`}
-            />
+              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>

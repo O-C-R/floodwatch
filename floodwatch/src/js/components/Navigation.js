@@ -47,8 +47,7 @@ export class Navigation extends Component {
             <Nav
               pullRight
               onSelect={this.handleSelect.bind(this)}
-              activeHref={window.location.pathname}
-            >
+              activeHref={window.location.pathname}>
               {this.props.navs.map((nav, key) => (
                 <NavItem eventKey={key} key={key} href={nav.to}>
                   {nav.name}

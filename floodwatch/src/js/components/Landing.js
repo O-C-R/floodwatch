@@ -25,8 +25,7 @@ export class Landing extends Component {
       <div className="home">
         <div
           className="home_header"
-          style={{ backgroundImage: "url('static/img/home-back.png')" }}
-        >
+          style={{ backgroundImage: "url('static/img/home-back.png')" }}>
           <Row>
             <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
               <div className="panel-container">
@@ -39,8 +38,7 @@ export class Landing extends Component {
                 </p>
                 <Button
                   className="btn btn-primary"
-                  onClick={this.handleJoinUs.bind(this)}
-                >
+                  onClick={this.handleJoinUs.bind(this)}>
                   Join Us
                 </Button>
               </div>
@@ -88,8 +86,7 @@ export class Landing extends Component {
                     {' '}
                     <a
                       href="https://github.com/O-C-R/floodwatch"
-                      target="_blank"
-                    >
+                      target="_blank">
                       open source
                     </a>
                     .
@@ -124,8 +121,7 @@ export class Landing extends Component {
                   {' '}
                   <a
                     href="https://ocr.nyc/user-focused-tools/2014/06/15/floodwatch/"
-                    target="_blank"
-                  >
+                    target="_blank">
                     first version
                   </a>
                   {' '}
@@ -140,8 +136,7 @@ export class Landing extends Component {
                   <a
                     href="mailto:floodwatch@ocr.nyc"
                     className="underlined"
-                    target="_top"
-                  >
+                    target="_top">
                     floodwatch@ocr.nyc
                   </a>
                   .

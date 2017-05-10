@@ -137,16 +137,14 @@ export class Main extends Component {
             <Alert
               bsStyle="info"
               className="text-center"
-              onDismiss={this.dismissInstallClick.bind(this)}
-            >
+              onDismiss={this.dismissInstallClick.bind(this)}>
               <span style={{ paddingRight: '10px' }}>
                 Install the extension to get started
               </span>
               <Button
                 bsStyle="primary"
                 bsSize="small"
-                onClick={this.installClick.bind(this)}
-              >
+                onClick={this.installClick.bind(this)}>
                 Add to Chrome
               </Button>
             </Alert>}

@@ -105,8 +105,7 @@ export class ComparisonModal extends Component {
                 updateSearchLogic={this.props.updateSearchLogic.bind(
                   this,
                   'left',
-                )}
-              />
+                )} />
             </Col>
             <Col xs={2}>
               <div style={{ textAlign: 'center' }}>vs</div>
@@ -130,8 +129,7 @@ export class ComparisonModal extends Component {
                 updateSearchLogic={this.props.updateSearchLogic.bind(
                   this,
                   'right',
-                )}
-              />
+                )} />
             </Col>
           </Row>
         </Modal.Body>

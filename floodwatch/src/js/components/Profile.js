@@ -238,8 +238,7 @@ export class DemographicContainer extends Component {
             handleClick={this.handleClick.bind(this)}
             userData={this.state.userData}
             filter={filter}
-            key={i}
-          />
+            key={i} />
         );
       } else if (filter.name === 'country') {
         return (
@@ -248,8 +247,7 @@ export class DemographicContainer extends Component {
             handleClick={this.handleClick.bind(this)}
             userData={this.state.userData}
             filter={filter}
-            key={i}
-          />
+            key={i} />
         );
       }
       return (
@@ -257,8 +255,7 @@ export class DemographicContainer extends Component {
           handleClick={this.handleClick.bind(this)}
           userData={this.state.userData}
           filter={filter}
-          key={i}
-        />
+          key={i} />
       );
     });
 
@@ -287,8 +284,7 @@ export class DemographicContainer extends Component {
               bsSize="large"
               bsStyle="primary"
               onClick={this.updateUserInfo.bind(this)}
-              id="submit-button"
-            >
+              id="submit-button">
               Save
             </Button>
           </Col>

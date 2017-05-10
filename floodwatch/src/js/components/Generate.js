@@ -87,8 +87,7 @@ export class Generate extends Component {
               smOffset={1}
               xs={10}
               xsOffset={1}
-              style={{ padding: 0 }}
-            >
+              style={{ padding: 0 }}>
               <Chart
                 data={this.state.dataA}
                 visibilityMap={this.state.visibilityMap}
@@ -97,16 +96,14 @@ export class Generate extends Component {
                 sentence={this.state.lSentence}
                 mouseEnterHandler={() => {}}
                 mouseClickHandler={() => {}}
-                mouseLeaveHandler={() => {}}
-              />
+                mouseLeaveHandler={() => {}} />
             </Col>
             <Col
               sm={5}
               smOffset={0}
               xs={10}
               xsOffset={1}
-              style={{ padding: 0 }}
-            >
+              style={{ padding: 0 }}>
               <Chart
                 data={this.state.dataB}
                 visibilityMap={this.state.visibilityMap}
@@ -115,8 +112,7 @@ export class Generate extends Component {
                 sentence={this.state.rSentence}
                 mouseEnterHandler={() => {}}
                 mouseClickHandler={() => {}}
-                mouseLeaveHandler={() => {}}
-              />
+                mouseLeaveHandler={() => {}} />
             </Col>
           </Row>
           <Row>

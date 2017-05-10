@@ -30,6 +30,12 @@
         "everything-else",
         "render"
       ]
+    }],
+
+    // By OCR vote, we're going to align brackets on the same line
+    "react/jsx-closing-bracket-location": [1, {
+      "selfClosing": "after-props",
+      "nonEmpty": "after-props"
     }]
   }
 }

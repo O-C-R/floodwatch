@@ -73,8 +73,7 @@ export class Faq extends Component {
               <a
                 className="underlined"
                 href="https://www.propublica.org/article/facebook-lets-advertisers-exclude-users-by-race"
-                target="_blank"
-              >
+                target="_blank">
                 here
               </a>
               ).
@@ -108,8 +107,7 @@ export class Faq extends Component {
               <a
                 className="underlined"
                 href="https://github.com/O-C-R/floodwatch-extension"
-                target="_blank"
-              >
+                target="_blank">
                 open source
               </a>
               , so if you’re interested in porting Floodwatch to other browsers, feel free to fork it.
@@ -126,8 +124,7 @@ export class Faq extends Component {
               <a
                 href="mailto:floodwatch@ocr.nyc"
                 className="underlined"
-                target="_top"
-              >
+                target="_top">
                 floodwatch@ocr.nyc
               </a>
               {' '}
@@ -136,8 +133,7 @@ export class Faq extends Component {
               <a
                 className="underlined"
                 href="https://github.com/O-C-R/floodwatch-extension"
-                target="_blank"
-              >
+                target="_blank">
                 Github repository
               </a>
               , where you can see if the bug has already been filed or file a new one.
@@ -164,8 +160,7 @@ export class Faq extends Component {
                 <a
                   className="underlined"
                   href="http://dataprivacylab.org/projects/identifiability/paper1.pdf"
-                  target="_blank"
-                >
+                  target="_blank">
                   Source.
                 </a>
                 )
@@ -175,8 +170,7 @@ export class Faq extends Component {
                 <a
                   className="underlined"
                   href="https://www.cs.cornell.edu/~shmat/shmat_oak08netflix.pdf"
-                  target="_blank"
-                >
+                  target="_blank">
                   Source.
                 </a>
                 )
@@ -201,8 +195,7 @@ export class Faq extends Component {
                 <a
                   className="underlined"
                   href="https://github.com/O-C-R/floodwatch-extension"
-                  target="_blank"
-                >
+                  target="_blank">
                   open source
                 </a>
                 .
@@ -221,8 +214,7 @@ export class Faq extends Component {
               <a
                 href="mailto:floodwatch@ocr.nyc"
                 className="underlined"
-                target="_top"
-              >
+                target="_top">
                 floodwatch@ocr.nyc
               </a>
               .
@@ -285,8 +277,7 @@ export class Faq extends Component {
               <a
                 href="mailto:floodwatch@ocr.nyc"
                 className="underlined"
-                target="_top"
-              >
+                target="_top">
                 floodwatch@ocr.nyc
               </a>
               .
@@ -301,8 +292,7 @@ export class Faq extends Component {
               <a
                 href="mailto:floodwatch@ocr.nyc"
                 className="underlined"
-                target="_top"
-              >
+                target="_top">
                 floodwatch@ocr.nyc
               </a>
               .

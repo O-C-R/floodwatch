@@ -43,8 +43,7 @@ export class RequireOverlay extends Component {
         {...this.props}
         id={`requirements-${this.props.myKey}`}
         className="popover"
-        title="Required information"
-      >
+        title="Required information">
         <p>
           To access this information, we ask that you provide your own.
           <br />

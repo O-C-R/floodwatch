@@ -64,8 +64,7 @@ export class CustomOptions extends Component {
           updateSearchLogic={this.props.updateSearchLogic}
           handleFilterClick={this.props.handleFilterClick}
           filter={item}
-          mySelection={thisCategorysSelection}
-        />
+          mySelection={thisCategorysSelection} />
       );
     });
 
@@ -105,8 +104,7 @@ export class OptionDropdown extends Component {
                 this,
                 item,
                 this.props.side,
-              )}
-            >
+              )}>
               {item.name}
             </MenuItem>
           );

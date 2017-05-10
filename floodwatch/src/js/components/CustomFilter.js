@@ -64,8 +64,7 @@ export class CustomFilter extends Component {
           <div>
             <CountryFilter
               selection={this.props.mySelection}
-              handleFilterClick={this.props.handleFilterClick}
-            />
+              handleFilterClick={this.props.handleFilterClick} />
           </div>
         </div>
       );
@@ -102,15 +101,13 @@ export class CustomFilter extends Component {
       elems.push(
         <div
           key={i}
-          className={`custom-option checkbox ${checked ? 'checked' : ''}`}
-        >
+          className={`custom-option checkbox ${checked ? 'checked' : ''}`}>
           <Button
             href="#"
             active={checked}
             disabled={this.props.shouldBeDisabled.disabled}
             onClick={this.props.handleFilterClick.bind(this, obj, !checked)}
-            name={this.props.filter.name}
-          >
+            name={this.props.filter.name}>
             {opt.name}
           </Button>
 
@@ -151,8 +148,7 @@ export class CustomFilter extends Component {
           name={this.props.side + this.props.filter.name}
           inline
           readOnly
-          value="or"
-        >
+          value="or">
           Any of the following
         </Radio>
       );
@@ -163,8 +159,7 @@ export class CustomFilter extends Component {
           name={this.props.side + this.props.filter.name}
           inline
           readOnly
-          value="and"
-        >
+          value="and">
           All of the following
         </Radio>
       );
@@ -175,8 +170,7 @@ export class CustomFilter extends Component {
           name={this.props.side + this.props.filter.name}
           inline
           readOnly
-          value="nor"
-        >
+          value="nor">
           None of the following
         </Radio>
       );
@@ -270,12 +264,10 @@ export class CountryFilter extends Component {
           }}
           renderItem={(item, isHighlighted) => (
             <div
-              className={`autocomplete_options ${isHighlighted && 'current'}`}
-            >
+              className={`autocomplete_options ${isHighlighted && 'current'}`}>
               {item.feature.displayName} ({item.feature.cc})
             </div>
-          )}
-        />
+          )} />
       </div>
     );
   }

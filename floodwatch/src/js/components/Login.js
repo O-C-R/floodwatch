@@ -90,8 +90,7 @@ export class Login extends Component {
                     required
                     value={this.state.username}
                     onChange={this.setFormState.bind(this)}
-                    ref="username"
-                  />
+                    ref="username" />
                 </div>
                 <div className="form-group">
                   <input
@@ -101,16 +100,14 @@ export class Login extends Component {
                     placeholder="Password"
                     required
                     value={this.state.password}
-                    onChange={this.setFormState.bind(this)}
-                  />
+                    onChange={this.setFormState.bind(this)} />
                 </div>
                 <Row>
                   <Col xs={12} sm={6}>
                     <button
                       type="submit"
                       className="btn btn-primary"
-                      id="loginInput"
-                    >
+                      id="loginInput">
                       Login
                     </button>
                   </Col>

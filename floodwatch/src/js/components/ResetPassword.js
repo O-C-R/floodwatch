@@ -131,8 +131,7 @@ export class ResetPassword extends Component {
 
               <form onSubmit={this.handleSubmit.bind(this)}>
                 <FormGroup
-                  className={this.state.passwordFeedback ? 'has-danger' : ''}
-                >
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}>
                   <FormControl
                     type="password"
                     className={
@@ -144,12 +143,10 @@ export class ResetPassword extends Component {
                     required
                     minLength={10}
                     value={this.state.password}
-                    onChange={this.setFormState.bind(this)}
-                  />
+                    onChange={this.setFormState.bind(this)} />
                 </FormGroup>
                 <FormGroup
-                  className={this.state.passwordFeedback ? 'has-danger' : ''}
-                >
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}>
                   <FormControl
                     type="password"
                     className={
@@ -160,8 +157,7 @@ export class ResetPassword extends Component {
                     placeholder="Retype Password"
                     required
                     value={this.state.passwordRepeated}
-                    onChange={this.setFormState.bind(this)}
-                  />
+                    onChange={this.setFormState.bind(this)} />
                   {this.state.passwordFeedback &&
                     <HelpBlock>{this.state.passwordFeedback}</HelpBlock>}
                 </FormGroup>

@@ -156,8 +156,7 @@ export default class Register extends Component {
                     <strong>Registration failed.</strong> {this.state.error}
                   </Alert>}
                 <FormGroup
-                  className={this.state.usernameFeedback ? 'has-danger' : ''}
-                >
+                  className={this.state.usernameFeedback ? 'has-danger' : ''}>
                   <Col componentClass={ControlLabel} sm={2} xs={12}>
                     <label htmlFor="username">Username</label>
                   </Col>
@@ -174,8 +173,7 @@ export default class Register extends Component {
                       onChange={this.setFormState.bind(this)}
                       ref={(r) => {
                         this.usernameInput = r;
-                      }}
-                    />
+                      }} />
                     {this.state.usernameFeedback &&
                       <HelpBlock>{this.state.usernameFeedback}</HelpBlock>}
                     <small id="usernameHelp" className="form-text text-muted">
@@ -194,16 +192,14 @@ export default class Register extends Component {
                       id="email"
                       placeholder="Email"
                       value={this.state.email}
-                      onChange={this.setFormState.bind(this)}
-                    />
+                      onChange={this.setFormState.bind(this)} />
                     <small className="form-text text-muted">
                       Optional - for password recovery.
                     </small>
                   </Col>
                 </FormGroup>
                 <FormGroup
-                  className={this.state.passwordFeedback ? 'has-danger' : ''}
-                >
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}>
                   <Col componentClass={ControlLabel} sm={2} xs={12}>
                     <label htmlFor="password">Password</label>
                   </Col>
@@ -219,13 +215,11 @@ export default class Register extends Component {
                       required
                       minLength={10}
                       value={this.state.password}
-                      onChange={this.onPasswordChange.bind(this)}
-                    />
+                      onChange={this.onPasswordChange.bind(this)} />
                   </Col>
                 </FormGroup>
                 <FormGroup
-                  className={this.state.passwordFeedback ? 'has-danger' : ''}
-                >
+                  className={this.state.passwordFeedback ? 'has-danger' : ''}>
                   <Col sm={10} smOffset={2} xs={12}>
                     <FormControl
                       type="password"
@@ -237,8 +231,7 @@ export default class Register extends Component {
                       placeholder="Retype Password"
                       required
                       value={this.state.passwordRepeated}
-                      onChange={this.onPasswordChange.bind(this)}
-                    />
+                      onChange={this.onPasswordChange.bind(this)} />
                     {this.state.passwordFeedback &&
                       <HelpBlock>{this.state.passwordFeedback}</HelpBlock>}
                   </Col>
@@ -248,8 +241,7 @@ export default class Register extends Component {
                     <Button
                       type="submit"
                       className="btn btn-primary"
-                      id="loginInput"
-                    >
+                      id="loginInput">
                       Register
                     </Button>
                   </Col>

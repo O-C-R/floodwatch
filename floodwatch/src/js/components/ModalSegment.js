@@ -36,8 +36,7 @@ export class ModalSegment extends Component {
           userData={this.props.userData}
           handleFilterClick={this.props.handleFilterClick}
           updateSearchLogic={this.props.updateSearchLogic}
-          currentSelection={this.props.currentSelection}
-        />
+          currentSelection={this.props.currentSelection} />
       );
     }
 
@@ -52,8 +51,7 @@ export class ModalSegment extends Component {
             this.props.side,
           )}
           side={this.props.side}
-          handleCustomClick={this.props.handleCustomClick}
-        />
+          handleCustomClick={this.props.handleCustomClick} />
         {elem}
       </div>
     );

@@ -53,8 +53,7 @@ export class AgeOption extends Component {
         onChange={this.props.updateYear}
         value={value}
         placeholder="YYYY"
-        type="number"
-      />
+        type="number" />
     );
     return (
       <div className="profile-page_option panel-body">
@@ -62,8 +61,7 @@ export class AgeOption extends Component {
           <h4>
             {this.props.filter.question} <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
-            >
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}>
               <span className="glyphicon glyphicon-info-sign" />
             </a>
           </h4>
@@ -169,8 +167,7 @@ export class LocationOption extends Component {
             {' '}
             <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
-            >
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}>
               <span className="glyphicon glyphicon-info-sign" />
             </a>
           </h4>
@@ -202,12 +199,10 @@ export class LocationOption extends Component {
           }}
           renderItem={(item, isHighlighted) => (
             <div
-              className={`autocomplete_options ${isHighlighted && 'current'}`}
-            >
+              className={`autocomplete_options ${isHighlighted && 'current'}`}>
               {item.feature.displayName}
             </div>
-          )}
-        />
+          )} />
       </div>
     );
   }
@@ -261,15 +256,13 @@ export class DefaultOption extends Component {
         return (
           <div
             key={key}
-            className={`custom-option checkbox ${checked ? 'checked' : ''}`}
-          >
+            className={`custom-option checkbox ${checked ? 'checked' : ''}`}>
             <label>
               <input
                 type="checkbox"
                 defaultChecked={checked}
                 name={this.props.filter.name}
-                onClick={this.props.handleClick.bind(this, !checked, opt.id)}
-              />
+                onClick={this.props.handleClick.bind(this, !checked, opt.id)} />
               {' '}
               {opt.name}
             </label>
@@ -284,8 +277,7 @@ export class DefaultOption extends Component {
           <h4>
             {this.props.filter.question} <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
-            >
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}>
               <span className="glyphicon glyphicon-info-sign" />
             </a>
           </h4>

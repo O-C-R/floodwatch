@@ -114,8 +114,7 @@ export class ForgotPassword extends Component {
                     placeholder="email@domain.com"
                     required
                     value={email}
-                    onChange={this.setFormState.bind(this)}
-                  />
+                    onChange={this.setFormState.bind(this)} />
                 </FormGroup>
                 <button type="submit" className="btn btn-primary">
                   Request password reset

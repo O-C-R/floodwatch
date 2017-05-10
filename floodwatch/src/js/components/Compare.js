@@ -365,8 +365,7 @@ export class CompareContainer extends Component {
       <div
         className="main compare"
         onClick={this.clearTopic.bind(this)}
-        style={{ height: '100%' }}
-      >
+        style={{ height: '100%' }}>
         <Row className="chart-container">
           <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Chart
@@ -378,8 +377,7 @@ export class CompareContainer extends Component {
               noOutline={this.state.updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
               mouseClickHandler={this.mouseClickHandler.bind(this)}
-              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}
-            />
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
           </Col>
           <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Chart
@@ -391,8 +389,7 @@ export class CompareContainer extends Component {
               noOutline={this.state.updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
               mouseClickHandler={this.mouseClickHandler.bind(this)}
-              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)}
-            />
+              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
           </Col>
         </Row>
 
@@ -405,14 +402,12 @@ export class CompareContainer extends Component {
                 <div className="chart-actions">
                   <button
                     className="chart-actions_toggleCompare btn btn-primary button"
-                    onClick={this.toggleComparisonModal.bind(this)}
-                  >
+                    onClick={this.toggleComparisonModal.bind(this)}>
                     Change demographics
                   </button>
                   <button
                     className="btn btn-default button"
-                    onClick={this.shareComparison.bind(this)}
-                  >
+                    onClick={this.shareComparison.bind(this)}>
                     Share
                   </button>
                 </div>
@@ -429,8 +424,7 @@ export class CompareContainer extends Component {
           changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
           changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
           updateSearchLogic={this.updateSearchLogic.bind(this)}
-          userData={this.state.userData}
-        />
+          userData={this.state.userData} />
       </div>
     );
   }
