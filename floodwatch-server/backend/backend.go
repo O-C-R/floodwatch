@@ -58,6 +58,8 @@ type Backend struct {
 	upsertImpression sqlutil.ValueFunc
 	upsertSite       sqlutil.ValueFunc
 
+	addGalleryImage sqlutil.ValueFunc
+
 	filterValues *sqlx.Stmt
 }
 
@@ -186,6 +188,11 @@ func New(url string) (*Backend, error) {
 	}
 
 	b.upsertImpression, err = sqlutil.UpsertFunc(b.db.DB, data.Impression{}, `person.impression`, `person_id`, `local_id`)
+	if err != nil {
+		return nil, err
+	}
+
+	b.addGalleryImage, err = sqlutil.InsertFunc(b.db.DB, data.GalleryImage{}, `gallery.image`)
 	if err != nil {
 		return nil, err
 	}
@@ -390,6 +397,10 @@ func (b *Backend) UpsertSite(site *data.Site) (interface{}, error) {
 	return b.upsertSite(site)
 }
 
+func (b *Backend) AddGalleryImage(galleryImage *data.GalleryImage) (interface{}, error) {
+	return b.addGalleryImage(galleryImage)
+}
+
 func (b *Backend) UpdateAdFromClassifier(adID, categoryID interface{}, classificationOutput []byte) error {
 	_, err := b.updateAdFromClassifier.Exec(adID, categoryID, classificationOutput)
 	return err
@@ -490,4 +501,5 @@ func init() {
 	sqlutil.Register(data.AdCategory{}, "ad.category")
 	sqlutil.Register(data.Site{}, "site.site")
 	sqlutil.Register(data.PersonVerification{}, "person.verification")
+	sqlutil.Register(data.GalleryImage{}, "gallery.image")
 }

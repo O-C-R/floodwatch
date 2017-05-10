@@ -292,6 +292,8 @@ func FilteredAdStats(options *Options) http.Handler {
 }
 
 func GenerateScreenshot(options *Options) http.Handler {
+	s3Client := s3.New(options.AWSSession)
+
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
 		if session == nil {
@@ -317,7 +319,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 			Error(w, err, 500)
 		}
 
-		generateData := data.GenerateData{
+		galleryImageData := data.GalleryImageData{
 			FilterA:  generateRequest.FilterA,
 			FilterB:  generateRequest.FilterA,
 			DataA:    resA,
@@ -327,7 +329,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 
 		buf := new(bytes.Buffer)
 		encoder := json.NewEncoder(buf)
-		err = encoder.Encode(generateData)
+		err = encoder.Encode(galleryImageData)
 
 		dataParam := buf.String()
 		dataParam = strings.TrimSpace(dataParam)
@@ -336,12 +338,47 @@ func GenerateScreenshot(options *Options) http.Handler {
 		generateUrl := fmt.Sprintf("%s/generate?data=%s", options.Hostname, dataParam)
 		log.Printf("Generating image for: %s\n", generateUrl)
 
-		screenshotData, err := options.Screenshot.Capture(generateUrl)
+		screenshotImgData, err := options.Screenshot.Capture(generateUrl)
 		if err != nil {
 			Error(w, err, 500)
 		}
 
-		w.Header().Set("content-type", "image/png")
-		w.Write(screenshotData)
+		screenshotID, err := id.New()
+		if err != nil {
+			Error(w, err, 500)
+			return
+		}
+
+		screenshotImgDataReader := bytes.NewReader(screenshotImgData)
+		screenshotIDString := screenshotID.String()
+		key := screenshotIDString + ".png"
+		putObjectInput := &s3.PutObjectInput{
+			Body:          screenshotImgDataReader,
+			Key:           aws.String(key),
+			ContentType:   aws.String("image/png"),
+			CacheControl:  aws.String("max-age=31536000"),
+			ContentLength: aws.Int64(int64(len(screenshotImgData))),
+			Bucket:        aws.String(options.S3GalleryBucket),
+		}
+
+		if _, err := s3Client.PutObject(putObjectInput); err != nil {
+			Error(w, err, 500)
+		}
+
+		galleryImage := &data.GalleryImage{
+			ID:        screenshotID,
+			CreatorID: session.UserID,
+			CreatedAt: time.Now(),
+		}
+		galleryImage.SetData(galleryImageData)
+
+		if _, err := options.Backend.AddGalleryImage(galleryImage); err != nil {
+			Error(w, err, 500)
+		}
+
+		output := make(map[string]interface{})
+		output["url"] = fmt.Sprintf("https://s3.amazonaws.com/%s/%s", options.S3GalleryBucket, key)
+
+		WriteJSON(w, output)
 	})
 }

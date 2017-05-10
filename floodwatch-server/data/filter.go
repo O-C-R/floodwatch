@@ -48,11 +48,3 @@ type GenerateRequest struct {
 	FilterB  PersonFilter `json:"filterB"`
 	CurTopic int          `json:"curTopic"`
 }
-
-type GenerateData struct {
-	FilterA  PersonFilter        `json:"filterA"`
-	FilterB  PersonFilter        `json:"filterB"`
-	DataA    *FilterResponseItem `json:"dataA"`
-	DataB    *FilterResponseItem `json:"dataB"`
-	CurTopic int                 `json:"curTopic"`
-}

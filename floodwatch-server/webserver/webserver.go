@@ -69,6 +69,7 @@ type Options struct {
 	SessionStore                *session.SessionStore
 	AWSSession                  *awsSession.Session
 	S3Bucket                    string
+	S3GalleryBucket             string
 	SQSClassifierInputQueueURL  string
 	SQSClassifierOutputQueueURL string
 	Insecure                    bool

@@ -30,7 +30,8 @@ type Config struct {
 
 	AWSProfile                  string `default:"floodwatch" envconfig:"AWS_PROFILE"`
 	AWSRegion                   string `default:"us-east-1" envconfig:"AWS_REGION"`
-	S3Bucket                    string `envconfig:"S3_BUCKET"`
+	S3Bucket                    string `default:"floodwatch-ads" envconfig:"S3_BUCKET"`
+	S3GalleryBucket             string `default:"floodwatch-gallery" envconfig:"S3_SCREENSHOT_BUCKET"`
 	SQSClassifierInputQueueURL  string `envconfig:"SQS_CLASSIFIER_INPUT_QUEUE_URL"`
 	SQSClassifierOutputQueueURL string `envconfig:"SQS_CLASSIFIER_OUTPUT_QUEUE_URL"`
 
@@ -102,6 +103,7 @@ func main() {
 		SessionStore:                sessionStore,
 		AWSSession:                  awsSession,
 		S3Bucket:                    config.S3Bucket,
+		S3GalleryBucket:             config.S3GalleryBucket,
 		SQSClassifierInputQueueURL:  config.SQSClassifierInputQueueURL,
 		SQSClassifierOutputQueueURL: config.SQSClassifierOutputQueueURL,
 		FromEmail:                   config.FromEmail,
