@@ -70,15 +70,19 @@ export class CustomFilter extends Component {
         </div>
       );
     } else if (this.props.filter.name === 'age') {
-      const age = _.find(FilterResponse.filters, (opt: FilterJSON) => opt.name == 'age');
+      const age = _.find(
+        FilterResponse.filters,
+        (opt: FilterJSON) => opt.name == 'age',
+      );
       myOptions = _.map(age.options, (opt: string) => ({
         name: opt,
       }));
     } else if (this.props.filter.category_id) {
       myOptions = _.filter(
-          DemographicKeys.demographic_keys,
-          (opt: DemographicDictionary) => opt.category_id === this.props.filter.category_id,
-        );
+        DemographicKeys.demographic_keys,
+        (opt: DemographicDictionary) =>
+          opt.category_id === this.props.filter.category_id,
+      );
     }
 
     _.forEach(myOptions, (opt: DemographicDictionary, i: number) => {

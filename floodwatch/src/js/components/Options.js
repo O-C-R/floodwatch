@@ -48,8 +48,10 @@ export class CustomOptions extends Component {
       );
 
       let thisCategorysSelection;
-      const index = _.findIndex(this.props.currentSelection, selection
-      ) => selection.name === item.name);
+      const index = _.findIndex(
+        this.props.currentSelection,
+        selection => selection.name === item.name,
+      );
 
       if (index > -1) {
         thisCategorysSelection = this.props.currentSelection[index];
@@ -89,31 +91,33 @@ export class OptionDropdown extends Component {
   props: OptionDropdownProps;
 
   render() {
-    const elems = this.props.filterData.presets.map((item: Preset, i: number) => {
-      const requirements = shouldPresetBeDisabled(this.props.userData, item);
-      // tk
-      // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
-      if (requirements.disabled === false) {
+    const elems = this.props.filterData.presets.map(
+      (item: Preset, i: number) => {
+        const requirements = shouldPresetBeDisabled(this.props.userData, item);
+        // tk
+        // var myOverlay = <RequireOverlay myKey={i} requirements={requirements.required}/>
+        if (requirements.disabled === false) {
+          return (
+            <MenuItem
+              key={i}
+              disabled={requirements.disabled}
+              onClick={this.props.handlePresetClick.bind(
+                this,
+                item,
+                this.props.side,
+              )}
+            >
+              {item.name}
+            </MenuItem>
+          );
+        }
         return (
-          <MenuItem
-            key={i}
-            disabled={requirements.disabled}
-            onClick={this.props.handlePresetClick.bind(
-              this,
-              item,
-              this.props.side,
-            )}
-          >
-            {item.name}
-          </MenuItem>
-        );
-      }
-      return (
-        <MenuItem key={i} disabled={requirements.disabled}>
+          <MenuItem key={i} disabled={requirements.disabled}>
             {item.name} (Requires profile information)
           </MenuItem>
-      );
-    });
+        );
+      },
+    );
     return (
       <ButtonToolbar>
         <DropdownButton title={this.props.currentSentence} id="sup">

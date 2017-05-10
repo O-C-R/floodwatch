@@ -205,7 +205,10 @@ export class DemographicContainer extends Component {
 
   removeFromDemographicIds(id: number): void {
     const userData = _.cloneDeep(this.state.userData);
-    userData.demographic_ids = _.filter(userData.demographic_ids, o => o !== id);
+    userData.demographic_ids = _.filter(
+      userData.demographic_ids,
+      o => o !== id,
+    );
     this.updateStateAndMessages(userData);
   }
 

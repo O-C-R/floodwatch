@@ -250,9 +250,10 @@ export class CompareContainer extends Component {
             curInfo[i].logic = info.logic;
           }
         } else {
-          curInfo[i].choices = _.filter(curInfo[i].choices, (
-            n: string,
-          ) => n !== info.choices[0]);
+          curInfo[i].choices = _.filter(
+            curInfo[i].choices,
+            (n: string) => n !== info.choices[0],
+          );
         }
 
         found = true;

@@ -14,7 +14,10 @@ export class RequireOverlay extends Component {
     // get list of names
     for (let i = 0; i < this.props.requirements.length; i++) {
       console.log(this.props.requirements[i]);
-      const index = _.findIndex(FilterJSON.filters, o => o.name == this.props.requirements[i].name);
+      const index = _.findIndex(
+        FilterJSON.filters,
+        o => o.name == this.props.requirements[i].name,
+      );
       console.log(index);
       elems.push(
         <p>

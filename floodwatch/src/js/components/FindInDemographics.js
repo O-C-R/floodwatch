@@ -53,15 +53,19 @@ export function shouldPresetBeDisabled(
 
     const filteredDemographics = _.filter(
       DemographicKeys.demographic_keys,
-      dk => _.find(userData.demographic_ids, (di: DemographicEntry) => {
-        if (dk.id === di) {
-          return di;
-        }
-      }),
+      dk =>
+        _.find(userData.demographic_ids, (di: DemographicEntry) => {
+          if (dk.id === di) {
+            return di;
+          }
+        }),
     );
 
     const thisKey = DemographicKeys.category_to_id[filter.name];
-    const found = _.find(filteredDemographics, (fd: FilterJSON) => fd.category_id == thisKey);
+    const found = _.find(
+      filteredDemographics,
+      (fd: FilterJSON) => fd.category_id == thisKey,
+    );
 
     if (found) {
       thisFilter.disabled = false;
@@ -111,9 +115,8 @@ export function shouldCustomBeDisabled(
   }
 
   // and now the rest
-  const filteredDemographics = _.filter(
-    DemographicKeys.demographic_keys,
-    dk => _.find(userData.demographic_ids, (di: string) => {
+  const filteredDemographics = _.filter(DemographicKeys.demographic_keys, dk =>
+    _.find(userData.demographic_ids, (di: string) => {
       if (dk.id === di) {
         return di;
       }
@@ -121,7 +124,10 @@ export function shouldCustomBeDisabled(
   );
 
   const thisKey = DemographicKeys.category_to_id[category];
-  const found = _.find(filteredDemographics, (fd: FilterJSON) => fd.category_id == thisKey);
+  const found = _.find(
+    filteredDemographics,
+    (fd: FilterJSON) => fd.category_id == thisKey,
+  );
 
   if (found) {
     disabled = false;

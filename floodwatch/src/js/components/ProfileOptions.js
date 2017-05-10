@@ -62,10 +62,7 @@ export class AgeOption extends Component {
           <h4>
             {this.props.filter.question} <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={
-                `profile-page_learnmore ${
-                  this.state.isDescriptionOpen ? 'open' : ''}`
-              }
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
             >
               <span className="glyphicon glyphicon-info-sign" />
             </a>
@@ -172,10 +169,7 @@ export class LocationOption extends Component {
             {' '}
             <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={
-                `profile-page_learnmore ${
-                  this.state.isDescriptionOpen ? 'open' : ''}`
-              }
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
             >
               <span className="glyphicon glyphicon-info-sign" />
             </a>
@@ -249,7 +243,10 @@ export class DefaultOption extends Component {
   render() {
     let elems;
     if (this.props.userData) {
-      const myOptions = _.filter(DemographicKeys.demographic_keys, key => key.category_id === this.props.filter.category_id);
+      const myOptions = _.filter(
+        DemographicKeys.demographic_keys,
+        key => key.category_id === this.props.filter.category_id,
+      );
       elems = myOptions.map((opt: DemographicDictionary, key: number) => {
         const val = _.find(
           DemographicKeys.demographic_keys,
@@ -287,10 +284,7 @@ export class DefaultOption extends Component {
           <h4>
             {this.props.filter.question} <a
               onClick={this.toggleDescriptionVisibility.bind(this)}
-              className={
-                `profile-page_learnmore ${
-                  this.state.isDescriptionOpen ? 'open' : ''}`
-              }
+              className={`profile-page_learnmore ${this.state.isDescriptionOpen ? 'open' : ''}`}
             >
               <span className="glyphicon glyphicon-info-sign" />
             </a>

@@ -53,7 +53,7 @@ export class Navigation extends Component {
                 <NavItem eventKey={key} key={key} href={nav.to}>
                   {nav.name}
                 </NavItem>
-                ))}
+              ))}
             </Nav>
           </Navbar.Collapse>
         </div>

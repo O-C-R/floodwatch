@@ -176,8 +176,14 @@ function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
         });
 
         // get category of first elem to check what name of category is
-        const sampleElem = _.find(DemographicKeys.demographic_keys, dk => dk.id == o.values[0]);
-        const category = _.findKey(DemographicKeys.category_to_id, ci => ci == sampleElem.category_id);
+        const sampleElem = _.find(
+          DemographicKeys.demographic_keys,
+          dk => dk.id == o.values[0],
+        );
+        const category = _.findKey(
+          DemographicKeys.category_to_id,
+          ci => ci == sampleElem.category_id,
+        );
 
         newObj.name = 'category';
 

@@ -141,7 +141,9 @@ export class Chart extends Component {
       item.y = count;
 
       // Correct the offset due to the floor
-      if (index === processedData.length - 1) { item.height = this.state.height - count; }
+      if (index === processedData.length - 1) {
+        item.height = this.state.height - count;
+      }
 
       return item;
     });
@@ -209,8 +211,8 @@ export class Chart extends Component {
             ];
           }
           return [
-              { offset: 0, color: colors[d.name][1] },
-              { offset: 1, color: colors[d.name][0] },
+            { offset: 0, color: colors[d.name][1] },
+            { offset: 1, color: colors[d.name][0] },
           ];
         })
         .enter()
@@ -232,7 +234,7 @@ export class Chart extends Component {
           }
           return 0.1;
         })
-        .attr('height', (d, i) => d.height >= 1.5 ? d.height : 0)
+        .attr('height', (d, i) => (d.height >= 1.5 ? d.height : 0))
         .attr('y', (d, i) => d.y)
         .attr('stroke', 'yellow')
         .attr('stroke-width', (d) => {
@@ -254,7 +256,9 @@ export class Chart extends Component {
         })
         .transition()
         .duration(200)
-        .attr('fill-opacity', d => 1,
+        .attr(
+          'fill-opacity',
+          d => 1,
           // return 0
         )
         .attr('y', (d, i) => d.y + d.height / 2 + 4);
@@ -279,8 +283,8 @@ export class Chart extends Component {
             ];
           }
           return [
-              { offset: 0, color: colors[d.name][1] },
-              { offset: 1, color: colors[d.name][0] },
+            { offset: 0, color: colors[d.name][1] },
+            { offset: 1, color: colors[d.name][0] },
           ];
         })
         .transition()
