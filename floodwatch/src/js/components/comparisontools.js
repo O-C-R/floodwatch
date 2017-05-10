@@ -55,7 +55,6 @@ export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>,
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
 
-  console.log(options)
   if (options[0] == undefined) {
     sentence = 'All ' + sentence;
     return sentence;
