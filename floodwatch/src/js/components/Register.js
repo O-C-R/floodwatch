@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import {
   Col,
   Row,
@@ -44,13 +43,19 @@ type Props = {
   loginChanged: () => Promise<void>,
 };
 
-export class Register extends Component {
+export default class Register extends Component {
   props: Props;
   state: State;
+
+  usernameInput: HTMLInputElement;
 
   constructor(props: Props) {
     super(props);
     this.state = initialState();
+  }
+
+  componentDidMount() {
+    this.usernameInput.focus();
   }
 
   setFormState(e: Event) {
@@ -76,17 +81,19 @@ export class Register extends Component {
 
       if (
         this.state.passwordFeedback &&
-        this.state.passwordRepeated == this.state.password
+        this.state.passwordRepeated === this.state.password
       ) {
         this.setState({ passwordFeedback: '' });
       }
     }
   }
 
-  async handleSubmit(e: Event) {
-    e.preventDefault();
+  async handleSubmit(event: Event) {
+    event.preventDefault();
 
-    if (this.state.password != this.state.passwordRepeated) {
+    const { showMessage, loginChanged } = this.props;
+
+    if (this.state.password !== this.state.passwordRepeated) {
       this.setState({ passwordFeedback: 'Passwords do not match.' });
       return;
     }
@@ -98,19 +105,17 @@ export class Register extends Component {
         this.state.password,
       );
       await FWApiClient.get().login(this.state.username, this.state.password);
-      await this.props.loginChanged();
+      await loginChanged();
 
       this.setState(initialState());
-      this.props.showMessage('Registered successfully!', 2000);
+      showMessage('Registered successfully!', 2000);
       history.push('/register/demographics');
     } catch (error) {
-      console.error(error);
-
       if (error instanceof APIError) {
         const apiError: APIError = error;
         if (
           apiError.response &&
-          error.response.status == 400 &&
+          error.response.status === 400 &&
           apiError.body
         ) {
           try {
@@ -135,10 +140,6 @@ export class Register extends Component {
         });
       }
     }
-  }
-
-  componentDidMount() {
-    ReactDOM.findDOMNode(this.refs.username).focus();
   }
 
   render() {
@@ -171,7 +172,9 @@ export class Register extends Component {
                       pattern="\S{3,}"
                       value={this.state.username}
                       onChange={this.setFormState.bind(this)}
-                      ref="username"
+                      ref={(r) => {
+                        this.usernameInput = r;
+                      }}
                     />
                     {this.state.usernameFeedback &&
                       <HelpBlock>{this.state.usernameFeedback}</HelpBlock>}

@@ -19,6 +19,17 @@
     "react/jsx-no-bind": 0,
 
     // Some loops are still clearer this way
-    "no-plusplus": 0
+    "no-plusplus": 0,
+
+    // Make flow first
+    "react/sort-comp": [1, {
+      "order": [
+        "type-annotations",
+        "static-methods",
+        "lifecycle",
+        "everything-else",
+        "render"
+      ]
+    }]
   }
 }
