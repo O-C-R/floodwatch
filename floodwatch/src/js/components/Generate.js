@@ -2,29 +2,29 @@
 
 import type {Filter, FilterLogic} from './filtertypes'
 import type {PersonResponse, FilterRequestItem} from '../api/types';
-import type {VisibilityMap} from './Compare'
+import type {VisibilityMap, UnstackedData} from './Compare'
 
 import {getVisibilityMap, generateDifferenceSentence, createSentence} from './comparisontools';
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { Chart } from './Chart';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 import url from 'url';
 import _ from 'lodash';
 
 
 type StateType = {
-  filterA: any,
-  filterB: any,
-  dataA: any,
-  dataB: any,
+  filterA: FilterRequestItem,
+  filterB: FilterRequestItem,
+  dataA: UnstackedData,
+  dataB: UnstackedData,
   curTopic: string,
   visibilityMap: VisibilityMap,
   lSentence: string,
   rSentence: string,
   sentence: string
-}
+};
 
 function initialState(): StateType {
   let curData = null;
@@ -34,25 +34,28 @@ function initialState(): StateType {
     curData = {}
   }
 
-  let visibilityMap = getVisibilityMap(curData.dataA, curData.dataB)
+  const visibilityMap = getVisibilityMap(curData.dataA, curData.dataB)
   const lVal = curData.curTopic ? curData.dataA[curData.curTopic] : 0;
   const rVal = curData.curTopic ? curData.dataB[curData.curTopic] : 0;
 
-  const lSentence = createSentence(decodeFilterRequestItem(curData.filterA));
-  const rSentence = createSentence(decodeFilterRequestItem(curData.filterB));
+  const decodedA = decodeFilterRequestItem(curData.filterA);
+  const decodedB = decodeFilterRequestItem(curData.filterB)
 
-  const sentence = generateDifferenceSentence(curData.filterA, curData.filterB, lVal, rVal, curData.curTopic)
+  const lSentence = createSentence(decodedA);
+  const rSentence = createSentence(decodedB);
+
+  const sentence = generateDifferenceSentence(decodedA, decodedB, lVal, rVal, curData.curTopic)
 
   return {
-    dataA: (curData.dataA) ? curData.dataA : {},
-    dataB: (curData.dataB) ? curData.dataB : {},
-    filterA: (curData.filterA) ? curData.filterA : {},
-    filterB: (curData.filterB) ? curData.filterB : {},
-    curTopic: (curData.curTopic) ? curData.curTopic : null,
-    visibilityMap: visibilityMap,
-    lSentence: lSentence,
-    rSentence: rSentence,
-    sentence: sentence
+    dataA: curData.dataA || {},
+    dataB: curData.dataB || {},
+    filterA: curData.filterA || {},
+    filterB: curData.filterB || {},
+    curTopic: curData.curTopic || null,
+    visibilityMap,
+    lSentence,
+    rSentence,
+    sentence
   }
 }
 
@@ -111,7 +114,7 @@ export class Generate extends Component {
 
 function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
   const keys = _.keys(filter)
-  const isPersonal = (_.indexOf(keys, 'personal') > -1);
+  const isPersonal = keys.includes('personal');
 
   if (isPersonal) {
     return [{
@@ -131,7 +134,7 @@ function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
         logic: 'or',
         choices: [str]
       })
-    } 
+    }
     else if (k == 'location') {
       let countries = filter[k].countryCodes;
       optionsArr.push({
@@ -139,35 +142,30 @@ function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
         logic: 'or',
         choices: countries
       })
-    } 
+    }
     else if (k == 'demographics') {
-      if (filter[k].length > 0) {
-        filter[k].forEach((o) => {
-          let newObj = {};
+      filter[k].forEach((o) => {
+        let newObj = {};
 
-          newObj.logic = o.operator;
-          newObj.choices = [];
-          o.values.forEach((v) => {
-            let choice = _.find(DemographicKeys.demographic_keys, (dk) => {
-              return dk.id == v
-            })
-            newObj.choices.push(choice.name);
-          })
-
-          //get category of first elem to check what name of category is
-          let sampleElem = _.find(DemographicKeys.demographic_keys, (dk) => {
-            return dk.id == o.values[0]
-          })
-          let category = _.findKey(DemographicKeys.category_to_id, (ci) => {
-            return (ci == sampleElem.category_id)
-          })
-
-          newObj.name = 'category'
-
-          optionsArr.push(newObj)
+        newObj.logic = o.operator;
+        newObj.choices = [];
+        o.values.forEach((v) => {
+          let choice = _.find(DemographicKeys.demographic_keys, { id: v })
+          newObj.choices.push(choice.name);
         })
 
-      }
+        //get category of first elem to check what name of category is
+        let sampleElem = _.find(DemographicKeys.demographic_keys, (dk) => {
+          return dk.id == o.values[0]
+        })
+        let category = _.findKey(DemographicKeys.category_to_id, (ci) => {
+          return (ci == sampleElem.category_id)
+        })
+
+        newObj.name = 'category'
+
+        optionsArr.push(newObj)
+      })
     }
 
   }

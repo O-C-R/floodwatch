@@ -1,14 +1,14 @@
 //@flow
 
-const unknownId = '16'
-const otherBreakDown = 0.02
+const UNKNOWN_ID = '16'
+const OTHER_BREAKDOWN = 0.02
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import _ from 'lodash';
 import type {Preset, Filter, FilterLogic} from './filtertypes'
-import type {VisibilityMap} from './Compare'
+import type {VisibilityMap, UnstackedData} from './Compare'
 
-export function getVisibilityMap(lD, rD): VisibilityMap {
+export function getVisibilityMap(lD: UnstackedData, rD: UnstackedData): VisibilityMap {
   let visibilityMap = {}
 
   let comparisonData = {}
@@ -19,8 +19,8 @@ export function getVisibilityMap(lD, rD): VisibilityMap {
   }
 
   for (let key in comparisonData) {
-    if (key !== unknownId) { // Hide cats (16 is unknown)
-      if ((comparisonData[key] > otherBreakDown) || (comparisonData[key] > otherBreakDown)) { // Make sure cats are above some percentage for both side
+    if (key !== UNKNOWN_ID) { // Hide cats (16 is unknown)
+      if ((comparisonData[key] > OTHER_BREAKDOWN) || (comparisonData[key] > OTHER_BREAKDOWN)) { // Make sure cats are above some percentage for both side
         visibilityMap[key] = 'show'
       } else {
         visibilityMap[key] = 'other'
@@ -32,7 +32,7 @@ export function getVisibilityMap(lD, rD): VisibilityMap {
   return visibilityMap;
 }
 
-export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: string): string {
+export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>, lVal: number, rVal: number, currentTopic: ?string): string {
   let sentence = '';
   const prc = Math.floor(calculatePercentDiff(lVal, rVal))
 
@@ -54,6 +54,8 @@ export function generateDifferenceSentence(lO: Array<Filter>, rO: Array<Filter>,
 
 export function createSentence(options: Array<Filter>): string {
   let sentence = 'Floodwatch users';
+
+  console.log(options)
   if (options[0] == undefined) {
     sentence = 'All ' + sentence;
     return sentence;
