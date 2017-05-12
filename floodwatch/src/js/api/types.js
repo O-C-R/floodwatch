@@ -37,12 +37,21 @@ export type FilterRequest = {
 export type AdCategoryId = string;
 
 export type FilterResponse = {
-  filterA: {
-    categories: { [key: AdCategoryId]: number },
-    totalCount: number,
-  },
-  filterB: {
-    categories: { [key: AdCategoryId]: number },
-    totalCount: number,
-  },
+  categories: { [key: AdCategoryId]: number },
+  totalCount: number,
+};
+
+export type FiltersResponse = {
+  filterA: FilterResponse,
+  filterB: FilterResponse,
+};
+
+export type GalleryImageRequest = {
+  filterA: FilterRequestItem,
+  filterB: FilterRequestItem,
+  curTopic: ?string,
+};
+
+export type GalleryImageResponse = {
+  url: string,
 };

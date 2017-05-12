@@ -57,8 +57,8 @@ function initialState(): StateType {
   );
 
   return {
-    dataA: curData.dataA || {},
-    dataB: curData.dataB || {},
+    dataA: curData.dataA || { categories: {}, totalCount: 0 },
+    dataB: curData.dataB || { categories: {}, totalCount: 0 },
     filterA: curData.filterA || {},
     filterB: curData.filterB || {},
     curTopic: curData.curTopic || null,
@@ -79,7 +79,7 @@ export class Generate extends Component {
 
   render() {
     return (
-      <Row className="main generate">
+      <Row className="main generate container-fluid">
         <Col xs={12}>
           <Row className="chart-container">
             <Col

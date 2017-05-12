@@ -27,20 +27,9 @@ export type VisibilityMap = {
 };
 
 export type UnstackedData = {
-  [key: string]: number,
+  categories: { [key: string]: number },
+  totalCount: number,
 };
-
-export class Compare extends Component {
-  render() {
-    return (
-      <Row style={{ height: '100%' }}>
-        <Col xs={12} style={{ height: '100%' }}>
-          <CompareContainer />
-        </Col>
-      </Row>
-    );
-  }
-}
 
 type StateType = {
   leftOptions: Array<Filter>,
@@ -54,7 +43,7 @@ type StateType = {
   updateCurrentTopic: boolean,
 };
 
-function CompareContainerInitialState(): Object {
+function CompareContainerInitialState(): StateType {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
@@ -67,7 +56,7 @@ function CompareContainerInitialState(): Object {
   };
 }
 
-export class CompareContainer extends Component {
+export class Compare extends Component {
   state: StateType;
 
   constructor(): void {
@@ -87,13 +76,9 @@ export class CompareContainer extends Component {
         filterB: cleanedFilterB,
       });
 
-      const leftData = AdBreakdown.filterA.categories;
-      const rightData = AdBreakdown.filterB.categories;
+      const leftData = AdBreakdown.filterA;
+      const rightData = AdBreakdown.filterB;
       const visibilityMap = getVisibilityMap(leftData, rightData);
-
-      const FilterATopic = d3
-        .entries(AdBreakdown.filterA.categories)
-        .sort((a, b) => d3.descending(a.value, b.value))[0];
 
       const UserData = await FWApiClient.get().getCurrentPerson();
 
@@ -320,18 +305,15 @@ export class CompareContainer extends Component {
     });
   }
 
-  shareComparison(): void {
-    const obj = {
+  async shareComparison(): Promise<void> {
+    const req = {
       filterA: this.generateFilterRequestItem(this.state.leftOptions),
-      dataA: this.state.leftData,
       filterB: this.generateFilterRequestItem(this.state.rightOptions),
-      dataB: this.state.rightData,
       curTopic: this.state.currentTopic,
     };
 
-    const url = `${window.location.origin}/generate?data=${JSON.stringify(obj)}`;
-
-    window.open(url);
+    const res = await FWApiClient.get().requestGalleryImage(req);
+    const win = window.open(res.url, '_blank');
   }
 
   clearTopic(event: Event) {
@@ -366,7 +348,7 @@ export class CompareContainer extends Component {
         className="main compare"
         onClick={this.clearTopic.bind(this)}
         style={{ height: '100%' }}>
-        <Row className="chart-container">
+        <div className="chart-container">
           <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Chart
               side="left"
@@ -391,30 +373,28 @@ export class CompareContainer extends Component {
               mouseClickHandler={this.mouseClickHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
           </Col>
-        </Row>
+        </div>
 
-        <Row>
-          <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
-            <Row>
-              <Col md={8} mdOffset={2}>
-                <h3 className="chart-sentence">{sentence}</h3>
+        <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
+          <Row>
+            <Col md={8} mdOffset={2}>
+              <h3 className="chart-sentence">{sentence}</h3>
 
-                <div className="chart-actions">
-                  <button
-                    className="chart-actions_toggleCompare btn btn-primary button"
-                    onClick={this.toggleComparisonModal.bind(this)}>
-                    Change demographics
-                  </button>
-                  <button
-                    className="btn btn-default button"
-                    onClick={this.shareComparison.bind(this)}>
-                    Share
-                  </button>
-                </div>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+              <div className="chart-actions">
+                <button
+                  className="chart-actions_toggleCompare btn btn-primary button"
+                  onClick={this.toggleComparisonModal.bind(this)}>
+                  Change demographics
+                </button>
+                <button
+                  className="btn btn-default button"
+                  onClick={this.shareComparison.bind(this)}>
+                  Share
+                </button>
+              </div>
+            </Col>
+          </Row>
+        </Col>
 
         <ComparisonModal
           visible={this.state.modalVisible}

@@ -12,13 +12,16 @@ export function getVisibilityMap(
   lD: UnstackedData,
   rD: UnstackedData,
 ): VisibilityMap {
+  const { categories: ldCategories } = lD;
+  const { categories: rdCategories } = rD;
+
   const visibilityMap = {};
 
   let comparisonData = {};
-  if (_.isEmpty(lD) && !_.isEmpty(rD)) {
-    comparisonData = _.cloneDeep(rD);
-  } else if (!_.isEmpty(lD)) {
-    comparisonData = _.cloneDeep(lD);
+  if (_.isEmpty(ldCategories) && !_.isEmpty(rdCategories)) {
+    comparisonData = _.cloneDeep(rdCategories);
+  } else if (!_.isEmpty(ldCategories)) {
+    comparisonData = _.cloneDeep(ldCategories);
   }
 
   for (const key in comparisonData) {

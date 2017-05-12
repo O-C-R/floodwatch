@@ -77,20 +77,20 @@ export class Chart extends Component {
      *
      */
 
-    for (const catId in data) {
+    for (const catId in data.categories) {
       if (visibilityMap[catId] === 'show') {
         const obj = {
           name: TopicKeys[catId],
-          value: data[catId],
+          value: data.categories[catId],
           id: catId,
           y: 0,
           height: 0,
         };
         processedData.push(obj);
-        totalValue += data[catId];
+        totalValue += data.categories[catId];
       } else if (visibilityMap[catId] === 'other') {
-        other += data[catId];
-        totalValue += data[catId];
+        other += data.categories[catId];
+        totalValue += data.categories[catId];
       }
     }
 
@@ -308,7 +308,13 @@ export class Chart extends Component {
     let error;
     if (processedData.length <= 1) {
       error = (
-        <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
+        <Col
+          xs={12}
+          className="chart"
+          style={{
+            padding: '2px',
+            textAlign: this.props.side,
+          }}>
           Whoops! Not enough data for this demographic category - try another comparison.
         </Col>
       );

@@ -1,4 +1,8 @@
-module.exports = {
+// @flow
+
+const categories = require('../../stubbed_data/topic_keys.json');
+
+export const COLORS_BY_NAME = {
   'Beauty / Personal Care': ['#ffdc18', '#ffec18'],
   NGO: ['#7e14c1', '#a93eec'],
   Health: ['#f30072', '#ff278c'],
@@ -23,3 +27,11 @@ module.exports = {
   'Development / Design / Web-Services': ['#ff5a00', '#fd730e'],
   Other: ['#89a4af', '#9cb5bf'],
 };
+
+const allColors = { ...COLORS_BY_NAME };
+for (const categoryId in categories) {
+  const categoryName = categories[categoryId];
+  allColors[categoryId] = COLORS_BY_NAME[categoryName];
+}
+
+export default allColors;

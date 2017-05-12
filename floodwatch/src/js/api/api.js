@@ -7,8 +7,10 @@ import { BaseError } from '../common/util';
 import type {
   PersonResponse,
   FilterRequest,
-  FilterResponse,
+  FiltersResponse,
   PersonDemographics,
+  GalleryImageRequest,
+  GalleryImageResponse,
 } from './types';
 
 export class APIError extends BaseError {
@@ -258,7 +260,7 @@ export class FWApiClient extends APIClient {
     this.onLogout();
   }
 
-  async getFilteredAdCounts(f: FilterRequest): Promise<FilterResponse> {
+  async getFilteredAdCounts(f: FilterRequest): Promise<FiltersResponse> {
     return this.postJSON('/api/recorded_ads/filtered', f);
   }
 
@@ -271,5 +273,9 @@ export class FWApiClient extends APIClient {
       password_reset_token: token,
       password,
     });
+  }
+
+  requestGalleryImage(req: GalleryImageRequest): Promise<GalleryImageResponse> {
+    return this.postJSON('/api/recorded_ads/screenshot', req);
   }
 }

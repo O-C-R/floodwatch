@@ -150,7 +150,7 @@ export class Main extends Component {
             </Alert>}
           <Navigation navs={navs} />
         </Row>
-        <Row style={{ height: '85%' }}>
+        <Row>
           {this.props.children &&
             React.cloneElement(this.props.children, {
               showMessage: this.showMessage.bind(this),
