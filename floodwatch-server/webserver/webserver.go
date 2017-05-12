@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -59,8 +60,8 @@ func WriteJSON(w http.ResponseWriter, value interface{}) {
 }
 
 type Options struct {
-	Addr         string
-	RedirectAddr string
+	Port         int
+	RedirectPort int
 	Backend      *backend.Backend
 	Emailer      email.Emailer
 	Hostname     string
@@ -159,7 +160,7 @@ func New(options *Options) (*Webserver, error) {
 	}
 
 	webserver.server = &http.Server{
-		Addr:    options.Addr,
+		Addr:    fmt.Sprintf(":%d", options.Port),
 		Handler: handler,
 	}
 
@@ -169,6 +170,6 @@ func New(options *Options) (*Webserver, error) {
 func (w *Webserver) ListenAndServe() error {
 	go handleClassifierOutput(w.options)
 
-	log.Println(w.options.Addr)
+	log.Printf("Listening on %d", w.options.Port)
 	return w.server.ListenAndServe()
 }

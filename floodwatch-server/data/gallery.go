@@ -13,7 +13,7 @@ type GalleryImageData struct {
 	FilterB  PersonFilter        `json:"filterB"`
 	DataA    *FilterResponseItem `json:"dataA"`
 	DataB    *FilterResponseItem `json:"dataB"`
-	CurTopic int                 `json:"curTopic"`
+	CurTopic string              `json:"curTopic"`
 }
 
 type GalleryImage struct {

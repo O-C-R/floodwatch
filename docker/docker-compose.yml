@@ -12,11 +12,11 @@ services:
     environment:
       - FW_BACKEND_URL=postgres://floodwatch:password@postgres/floodwatch?sslmode=disable
       - FW_SESSION_STORE_ADDRESS=redis:6379
-      - FW_ADDR=0.0.0.0:80
-      - FW_REDIRECT_ADDR=0.0.0.0:8000
       - HOME=/home
     volumes:
       - ~/.aws:/home/.aws
+    security_opt:
+    - seccomp:unconfined
   postgres:
     image: postgres:9.6.2-alpine
     environment:

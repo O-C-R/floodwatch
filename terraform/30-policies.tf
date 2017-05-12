@@ -12,6 +12,18 @@ data "aws_iam_policy_document" "floodwatch-server" {
 
   statement {
     actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::floodwatch-gallery/*",
+    ]
+  }
+
+  statement {
+    actions = [
       "sqs:SendMessage",
     ]
 

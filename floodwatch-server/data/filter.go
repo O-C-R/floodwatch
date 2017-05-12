@@ -46,5 +46,5 @@ type FilterResponse struct {
 type GenerateRequest struct {
 	FilterA  PersonFilter `json:"filterA"`
 	FilterB  PersonFilter `json:"filterB"`
-	CurTopic int          `json:"curTopic"`
+	CurTopic string       `json:"curTopic"`
 }

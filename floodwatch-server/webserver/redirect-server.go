@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ func httpsRedirect(w http.ResponseWriter, req *http.Request) {
 
 func NewRedirectServer(options *Options) *http.Server {
 	server := &http.Server{
-		Addr:    options.RedirectAddr,
+		Addr:    fmt.Sprintf(":%d", options.RedirectPort),
 		Handler: http.HandlerFunc(httpsRedirect),
 	}
 

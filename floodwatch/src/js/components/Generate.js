@@ -42,8 +42,8 @@ function initialState(): StateType {
   const lVal = curData.curTopic ? curData.dataA[curData.curTopic] : 0;
   const rVal = curData.curTopic ? curData.dataB[curData.curTopic] : 0;
 
-  const decodedA = decodeFilterRequestItem(curData.filterA);
-  const decodedB = decodeFilterRequestItem(curData.filterB);
+  const decodedA = decodeFilterRequestItem(curData.filterA.categories);
+  const decodedB = decodeFilterRequestItem(curData.filterB.categories);
 
   const lSentence = createSentence(decodedA);
   const rSentence = createSentence(decodedB);

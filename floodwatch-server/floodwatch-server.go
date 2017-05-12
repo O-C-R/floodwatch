@@ -21,9 +21,10 @@ import (
 )
 
 type Config struct {
-	Addr       string `default:"0.0.0.0:8080"`
-	StaticPath string `default:"./static" envconfig:"STATIC_PATH"`
-	BackendURL string `default:"postgres://localhost/floodwatch?sslmode=disable" envconfig:"BACKEND_URL"`
+	Port         int    `default:"80"`
+	RedirectPort int    `default:"8000" envconfig:"REDIRECT_PORT"`
+	StaticPath   string `default:"./static" envconfig:"STATIC_PATH"`
+	BackendURL   string `default:"postgres://localhost/floodwatch?sslmode=disable" envconfig:"BACKEND_URL"`
 
 	SessionStoreAddr     string `default:"localhost:6379" envconfig:"SESSION_STORE_ADDRESS"`
 	SessionStorePassword string `envconfig:"SESSION_STORE_PASSWORD"`
@@ -36,7 +37,6 @@ type Config struct {
 	SQSClassifierOutputQueueURL string `envconfig:"SQS_CLASSIFIER_OUTPUT_QUEUE_URL"`
 
 	TwofishesHost string `envconfig:"TWOFISHES_HOST"`
-	RedirectAddr  string `default:"0.0.0.0:8000" envconfig:"REDIRECT_ADDR"`
 	Hostname      string `default:"http://localhost:8080"`
 	FromEmail     string `default:"test@test.com" envconfig:"FROM_EMAIL"`
 	Insecure      bool   `default:"false"`
@@ -93,8 +93,8 @@ func main() {
 	screenshotter := screenshot.Screenshotter{config.ChromeExe}
 
 	options := &webserver.Options{
-		Addr:         config.Addr,
-		RedirectAddr: config.RedirectAddr,
+		Port:         config.Port,
+		RedirectPort: config.RedirectPort,
 		Backend:      b,
 		Emailer:      emailer,
 		Hostname:     config.Hostname,

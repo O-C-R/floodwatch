@@ -3,11 +3,17 @@ set -ex
 cd `dirname $0`
 
 deploy () {
-	scp ../systemd/floodwatch-server.service core@$1:~/
+  HOST=$1
+  TAG=$2
+
+	scp ../systemd/floodwatch-server.service core@$HOST:~/
+  scp ../docker/config/chrome.json core@$HOST:~/
 	ssh core@$1 "set -ex \
-		&& docker pull ocrnyc/floodwatch-server:$2 \
-    && docker tag ocrnyc/floodwatch-server:$2 ocrnyc/floodwatch-server \
+		&& docker pull ocrnyc/floodwatch-server:$TAG \
+    && docker tag ocrnyc/floodwatch-server:$TAG ocrnyc/floodwatch-server \
 		&& sudo mv ~/floodwatch-server.service /etc/systemd/system/ \
+    && sudo mkdir -p /etc/floodwatch/config/ \
+    && sudo mv ~/chrome.json /etc/floodwatch/config/ \
 		&& sudo systemctl daemon-reload \
 		&& sudo systemctl stop floodwatch-server \
 		&& sudo systemctl enable floodwatch-server \

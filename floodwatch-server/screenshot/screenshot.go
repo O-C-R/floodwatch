@@ -32,9 +32,15 @@ func (s *Screenshotter) Capture(url string) ([]byte, error) {
 	)
 	cmd.Dir = dir
 
-	err = cmd.Run()
+	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		return nil, errors.Wrap(err, "error running chrome")
+		return nil, errors.Wrap(err, "error getting stderr")
+	}
+
+	stdout, err := cmd.Output()
+	if err != nil {
+		stderrSlurp, _ := ioutil.ReadAll(stderr)
+		return nil, errors.Wrapf(err, "error running chrome\nstdout: %s\nstderr: %s", stdout, stderrSlurp)
 	}
 
 	imgFile := path.Join(dir, "screenshot.png")

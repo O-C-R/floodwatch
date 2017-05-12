@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/pkg/errors"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
@@ -297,7 +298,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		session := ContextSession(req.Context())
 		if session == nil {
-			Error(w, nil, 401)
+			Error(w, errors.New("could not retrieve session"), 401)
 			return
 		}
 
@@ -305,18 +306,21 @@ func GenerateScreenshot(options *Options) http.Handler {
 		var generateRequest data.GenerateRequest
 		err := decoder.Decode(&generateRequest)
 		if err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not decode request"), 500)
+			return
 		}
 		defer req.Body.Close()
 
 		resA, err := options.Backend.FilteredAds(generateRequest.FilterA, session.UserID)
 		if err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not process filterA"), 500)
+			return
 		}
 
 		resB, err := options.Backend.FilteredAds(generateRequest.FilterB, session.UserID)
 		if err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not process filterB"), 500)
+			return
 		}
 
 		galleryImageData := data.GalleryImageData{
@@ -330,22 +334,27 @@ func GenerateScreenshot(options *Options) http.Handler {
 		buf := new(bytes.Buffer)
 		encoder := json.NewEncoder(buf)
 		err = encoder.Encode(galleryImageData)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not encode galleryImageData"), 500)
+			return
+		}
 
 		dataParam := buf.String()
 		dataParam = strings.TrimSpace(dataParam)
 		dataParam = url.QueryEscape(dataParam)
 
-		generateUrl := fmt.Sprintf("%s/generate?data=%s", options.Hostname, dataParam)
+		generateUrl := fmt.Sprintf("http://localhost:%d/generate?data=%s", options.Port, dataParam)
 		log.Printf("Generating image for: %s\n", generateUrl)
 
 		screenshotImgData, err := options.Screenshot.Capture(generateUrl)
 		if err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not capture screenshot"), 500)
+			return
 		}
 
 		screenshotID, err := id.New()
 		if err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not generate screenshotId"), 500)
 			return
 		}
 
@@ -353,6 +362,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 		screenshotIDString := screenshotID.String()
 		key := screenshotIDString + ".png"
 		putObjectInput := &s3.PutObjectInput{
+			ACL:           aws.String("public-read"),
 			Body:          screenshotImgDataReader,
 			Key:           aws.String(key),
 			ContentType:   aws.String("image/png"),
@@ -362,7 +372,8 @@ func GenerateScreenshot(options *Options) http.Handler {
 		}
 
 		if _, err := s3Client.PutObject(putObjectInput); err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not upload to s3"), 500)
+			return
 		}
 
 		galleryImage := &data.GalleryImage{
@@ -373,7 +384,8 @@ func GenerateScreenshot(options *Options) http.Handler {
 		galleryImage.SetData(galleryImageData)
 
 		if _, err := options.Backend.AddGalleryImage(galleryImage); err != nil {
-			Error(w, err, 500)
+			Error(w, errors.Wrap(err, "could not save gallery image"), 500)
+			return
 		}
 
 		output := make(map[string]interface{})
