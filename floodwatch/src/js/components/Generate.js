@@ -37,12 +37,14 @@ function initialState(): StateType {
     curData = {};
   }
 
-  const visibilityMap = getVisibilityMap(curData.dataA, curData.dataB);
-  const lVal = curData.curTopic ? curData.dataA[curData.curTopic] : 0;
-  const rVal = curData.curTopic ? curData.dataB[curData.curTopic] : 0;
+  const { dataA, dataB, curTopic, filterA, filterB } = curData;
 
-  const decodedA = decodeFilterRequestItem(curData.filterA);
-  const decodedB = decodeFilterRequestItem(curData.filterB);
+  const visibilityMap = getVisibilityMap(dataA, dataB);
+  const lVal = curTopic ? dataA.categories[curTopic] : 0;
+  const rVal = curTopic ? dataB.categories[curTopic] : 0;
+
+  const decodedA = decodeFilterRequestItem(filterA);
+  const decodedB = decodeFilterRequestItem(filterB);
 
   const lSentence = createSentence(decodedA);
   const rSentence = createSentence(decodedB);
@@ -52,15 +54,15 @@ function initialState(): StateType {
     decodedB,
     lVal,
     rVal,
-    curData.curTopic,
+    curTopic,
   );
 
   return {
-    dataA: curData.dataA || { categories: {}, totalCount: 0 },
-    dataB: curData.dataB || { categories: {}, totalCount: 0 },
-    filterA: curData.filterA || {},
-    filterB: curData.filterB || {},
-    curTopic: curData.curTopic || null,
+    dataA: dataA || { categories: {}, totalCount: 0 },
+    dataB: dataB || { categories: {}, totalCount: 0 },
+    filterA: filterA || {},
+    filterB: filterB || {},
+    curTopic: curTopic || null,
     visibilityMap,
     lSentence,
     rSentence,
