@@ -17,8 +17,8 @@ type GalleryImageData struct {
 }
 
 type GalleryImage struct {
-	ID        id.ID          `db:"id", json:"id"`
-	CreatorID id.ID          `db:"creator_id" json:"creator_id"`
+	ID        id.ID          `db:"id" json:"id"`
+	CreatorID id.ID          `db:"creator_id" json:"-"`
 	Data      types.JSONText `db:"data" json:"data"`
 	CreatedAt time.Time      `db:"created_at" json:"created_at"`
 }

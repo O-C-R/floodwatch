@@ -59,6 +59,7 @@ type Backend struct {
 	upsertSite       sqlutil.ValueFunc
 
 	addGalleryImage sqlutil.ValueFunc
+	getGalleryImage *sqlx.Stmt
 
 	filterValues *sqlx.Stmt
 }
@@ -193,6 +194,16 @@ func New(url string) (*Backend, error) {
 	}
 
 	b.addGalleryImage, err = sqlutil.InsertFunc(b.db.DB, data.GalleryImage{}, `gallery.image`)
+	if err != nil {
+		return nil, err
+	}
+
+	galleryImageSelect, err := sqlutil.Select(data.GalleryImage{}, nil, `WHERE gallery.image.id = $1`)
+	if err != nil {
+		return nil, err
+	}
+
+	b.getGalleryImage, err = b.db.Preparex(galleryImageSelect)
 	if err != nil {
 		return nil, err
 	}
@@ -399,6 +410,14 @@ func (b *Backend) UpsertSite(site *data.Site) (interface{}, error) {
 
 func (b *Backend) AddGalleryImage(galleryImage *data.GalleryImage) (interface{}, error) {
 	return b.addGalleryImage(galleryImage)
+}
+
+func (b *Backend) GetGalleryImage(imageId id.ID) (*data.GalleryImage, error) {
+	galleryImage := &data.GalleryImage{}
+	if err := b.getGalleryImage.Get(galleryImage, imageId); err != nil {
+		return nil, err
+	}
+	return galleryImage, nil
 }
 
 func (b *Backend) UpdateAdFromClassifier(adID, categoryID interface{}, classificationOutput []byte) error {

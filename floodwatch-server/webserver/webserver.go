@@ -122,6 +122,8 @@ func New(options *Options) (*Webserver, error) {
 	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 	apiRouter.Handle("/recorded_ads/screenshot", secureRoute(GenerateScreenshot(options), auth, secure)).Methods("POST")
 
+	apiRouter.Handle("/gallery/image/{imageID}", RateLimitHandler(GetGalleryImage(options), options, 10/60e9, 30)).Methods("GET")
+
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
 		return nil, err
