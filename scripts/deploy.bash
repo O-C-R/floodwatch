@@ -1,13 +1,13 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
+cd $(dirname $0)/..
 
 deploy () {
   HOST=$1
   TAG=$2
 
-	scp ../systemd/floodwatch-server.service core@$HOST:~/
-  scp ../docker/config/chrome.json core@$HOST:~/
+	scp systemd/floodwatch-server.service core@$HOST:~/
+  scp docker/config/chrome.json core@$HOST:~/
 	ssh core@$1 "set -ex \
 		&& docker pull ocrnyc/floodwatch-server:$TAG \
     && docker tag ocrnyc/floodwatch-server:$TAG ocrnyc/floodwatch-server \

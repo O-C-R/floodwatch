@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex
-cd `dirname $0`
+cd $(dirname $0)/..
 
 PSQL_URL="postgres://floodwatch@floodwatch.cnr5oa8r0jip.us-east-1.rds.amazonaws.com:5432/floodwatch?sslmode=require"
 
