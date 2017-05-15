@@ -1,13 +1,16 @@
 // @flow
 
-const UNKNOWN_ID = '16';
-const OTHER_BREAKDOWN = 0.02;
+import _ from 'lodash';
 
 import TopicKeys from '../../stubbed_data/topic_keys.json';
-import _ from 'lodash';
+import DemographicKeys from '../../stubbed_data/demographic_keys.json';
+
 import type { Preset, Filter, FilterLogic } from './filtertypes';
 import type { VisibilityMap } from './Compare';
-import type { FilterResponse } from '../api/types';
+import type { FilterResponse, FilterRequestItem } from '../api/types';
+
+const UNKNOWN_ID = '16';
+const OTHER_BREAKDOWN = 0.02;
 
 export function getVisibilityMap(
   lD: FilterResponse,
@@ -112,6 +115,71 @@ export function createSentence(options: Array<Filter>): string {
   });
 
   return sentence;
+}
+
+export function decodeFilterRequestItem(
+  filter: FilterRequestItem,
+): Array<Filter> {
+  const keys = _.keys(filter);
+
+  if (filter.personal) {
+    return [
+      {
+        name: 'data',
+        logic: 'or',
+        choices: ['You'],
+      },
+    ];
+  }
+
+  const optionsArr = [];
+
+  if (filter.age && filter.age.min && filter.age.max) {
+    const str = `${filter.age.min}-${filter.age.max}`;
+    optionsArr.push({
+      name: 'age',
+      logic: 'or',
+      choices: [str],
+    });
+  }
+
+  if (filter.location) {
+    const countries = filter.location.countryCodes;
+    optionsArr.push({
+      name: 'country',
+      logic: 'or',
+      choices: countries,
+    });
+  }
+
+  if (filter.demographics) {
+    for (const o of filter.demographics) {
+      const newObj = {};
+
+      newObj.logic = o.operator;
+      newObj.choices = [];
+      o.values.forEach((v) => {
+        const choice = _.find(DemographicKeys.demographic_keys, { id: v });
+        newObj.choices.push(choice.name);
+      });
+
+      // get category of first elem to check what name of category is
+      const sampleElem = _.find(
+        DemographicKeys.demographic_keys,
+        dk => dk.id == o.values[0],
+      );
+      const category = _.findKey(
+        DemographicKeys.category_to_id,
+        ci => ci == sampleElem.category_id,
+      );
+
+      newObj.name = 'category';
+
+      optionsArr.push(newObj);
+    }
+  }
+
+  return optionsArr;
 }
 
 function calculatePercentDiff(a: number, b: number): number {

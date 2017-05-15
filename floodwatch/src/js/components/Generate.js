@@ -1,25 +1,20 @@
 // @flow
 
-import type { Filter, FilterLogic } from './filtertypes';
-import type {
-  PersonResponse,
-  FilterResponse,
-  FilterRequestItem,
-} from '../api/types';
+import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
+
+import url from 'url';
+
+import type { FilterResponse, FilterRequestItem } from '../api/types';
 import type { VisibilityMap } from './Compare';
 
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
+  decodeFilterRequestItem,
 } from './comparisontools';
-import DemographicKeys from '../../stubbed_data/demographic_keys.json';
-import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
 import { Chart } from './Chart';
-import { render } from 'react-dom';
-import url from 'url';
-import _ from 'lodash';
 
 type StateType = {
   filterA: FilterRequestItem,
@@ -73,7 +68,7 @@ function initialState(): StateType {
   };
 }
 
-export class Generate extends Component {
+export default class Generate extends Component {
   state: StateType;
 
   constructor(props: any) {
@@ -132,67 +127,4 @@ export class Generate extends Component {
       </Row>
     );
   }
-}
-
-function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
-  const keys = _.keys(filter);
-
-  if (filter.personal) {
-    return [
-      {
-        name: 'data',
-        logic: 'or',
-        choices: ['You'],
-      },
-    ];
-  }
-
-  const optionsArr = [];
-
-  if (filter.age && filter.age.min && filter.age.max) {
-    const str = `${filter.age.min}-${filter.age.max}`;
-    optionsArr.push({
-      name: 'age',
-      logic: 'or',
-      choices: [str],
-    });
-  }
-
-  if (filter.location) {
-    const countries = filter.location.countryCodes;
-    optionsArr.push({
-      name: 'country',
-      logic: 'or',
-      choices: countries,
-    });
-  }
-
-  if (filter.demographics) {
-    for (const o of filter.demographics) {
-      const newObj = {};
-
-      newObj.logic = o.operator;
-      newObj.choices = [];
-      o.values.forEach((v) => {
-        const choice = _.find(DemographicKeys.demographic_keys, { id: v });
-        newObj.choices.push(choice.name);
-      });
-
-      // get category of first elem to check what name of category is
-      const sampleElem = _.find(
-        DemographicKeys.demographic_keys,
-        dk => dk.id == o.values[0],
-      );
-      const category = _.findKey(
-        DemographicKeys.category_to_id,
-        ci => ci == sampleElem.category_id,
-      );
-
-      newObj.name = 'category';
-
-      optionsArr.push(newObj);
-    }
-  }
-
-  return optionsArr;
 }

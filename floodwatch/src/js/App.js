@@ -14,7 +14,7 @@ import { Login } from './components/Login';
 import { ProfilePage } from './components/Profile';
 import { Faq } from './components/Faq';
 import { Compare } from './components/Compare';
-import { Generate } from './components/Generate';
+import Generate from './components/Generate';
 import { Landing } from './components/Landing';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
