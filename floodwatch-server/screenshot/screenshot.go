@@ -24,10 +24,11 @@ func (s *Screenshotter) Capture(url string) ([]byte, error) {
 		s.Executable,
 		"--headless",
 		"--disable-gpu",
+		"--hide-scrollbars",
 		"--screenshot",
+		"--high-dpi-support=1",
+		"--force-device-scale-factor=2",
 		"--virtual-time-budget=1500",
-		// "--remote-debugging-port=9222",
-		// "--window-size=1280,1696",
 		url,
 	)
 	cmd.Dir = dir
