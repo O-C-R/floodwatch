@@ -325,7 +325,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 
 		galleryImageData := data.GalleryImageData{
 			FilterA:  generateRequest.FilterA,
-			FilterB:  generateRequest.FilterA,
+			FilterB:  generateRequest.FilterB,
 			DataA:    resA,
 			DataB:    resB,
 			CurTopic: generateRequest.CurTopic,
