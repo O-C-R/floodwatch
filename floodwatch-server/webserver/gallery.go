@@ -30,6 +30,12 @@ func GetGalleryImage(options *Options) http.Handler {
 			return
 		}
 
-		WriteJSON(w, galleryImage)
+		res, err := galleryImage.ToResponse(options.S3GalleryBucket)
+		if err != nil {
+			Error(w, errors.Wrap(err, "couldn't serialize response"), 500)
+			return
+		}
+
+		WriteJSON(w, res)
 	})
 }

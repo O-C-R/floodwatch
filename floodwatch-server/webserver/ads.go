@@ -284,8 +284,8 @@ func FilteredAdStats(options *Options) http.Handler {
 		}
 
 		res := data.FilterResponse{
-			FilterA: resA,
-			FilterB: resB,
+			DataA: resA,
+			DataB: resB,
 		}
 
 		WriteJSON(w, res)
@@ -388,9 +388,12 @@ func GenerateScreenshot(options *Options) http.Handler {
 			return
 		}
 
-		output := make(map[string]interface{})
-		output["url"] = fmt.Sprintf("https://s3.amazonaws.com/%s/%s", options.S3GalleryBucket, key)
+		res, err := galleryImage.ToResponse(options.S3GalleryBucket)
+		if err != nil {
+			Error(w, errors.Wrap(err, "couldn't serialize response"), 500)
+			return
+		}
 
-		WriteJSON(w, output)
+		WriteJSON(w, res)
 	})
 }

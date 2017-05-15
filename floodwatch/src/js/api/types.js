@@ -24,34 +24,45 @@ export type FilterRequestItem = {
     max?: number,
   },
   location?: {
-    countryCodes: Array<string>,
+    country_codes: Array<string>,
   },
   demographics?: Array<DemographicFilterItem>,
 };
 
-export type FilterRequest = {
-  filterA: FilterRequestItem,
-  filterB: FilterRequestItem,
+export type FilterPair = {
+  filter_a: FilterRequestItem,
+  filter_b: FilterRequestItem,
 };
 
 export type AdCategoryId = string;
 
+export type FiltersResponse = {
+  data_a: FilterResponse;
+  data_b: FilterResponse;
+}
+
 export type FilterResponse = {
   categories: { [key: AdCategoryId]: number },
-  totalCount: number,
-};
-
-export type FiltersResponse = {
-  filterA: FilterResponse,
-  filterB: FilterResponse,
+  total_count: number,
 };
 
 export type GalleryImageRequest = {
-  filterA: FilterRequestItem,
-  filterB: FilterRequestItem,
-  curTopic: ?string,
+  filter_a: FilterRequestItem,
+  filter_b: FilterRequestItem,
+  cur_topic: ?string,
+};
+
+export type GalleryImageData = {
+  filter_a: FilterRequestItem,
+  filter_b: FilterRequestItem,
+  data_a: FilterResponse,
+  data_b: FilterResponse,
+  cur_topic: ?string,
 };
 
 export type GalleryImageResponse = {
+  id: string,
+  data: GalleryImageData,
   url: string,
+  created_at: string,
 };

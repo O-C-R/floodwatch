@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-
 import url from 'url';
 
-import type { FilterResponse, FilterRequestItem } from '../api/types';
+import ChartContainer from './ChartContainer';
+
+import type { FilterResponse, GalleryImageData, FilterRequestItem } from '../api/types';
 import type { VisibilityMap } from './Compare';
 
 import {
@@ -17,10 +18,10 @@ import {
 import { Chart } from './Chart';
 
 type StateType = {
-  filterA: FilterRequestItem,
-  filterB: FilterRequestItem,
-  dataA: FilterResponse,
-  dataB: FilterResponse,
+  dataA: ?FilterResponse,
+  dataB: ?FilterResponse,
+  filterA: ?FilterRequestItem,
+  filterB: ?FilterRequestItem,
   curTopic: ?string,
   visibilityMap: VisibilityMap,
   lSentence: string,
@@ -29,15 +30,17 @@ type StateType = {
 };
 
 function initialState(): StateType {
-  let curData = null;
+  let curData: GalleryImageData;
+
   const location = url.parse(window.location.href, true);
   if (location.query && location.query.data) {
-    curData = JSON.parse(location.query.data);
+    const parsed: GalleryImageData = JSON.parse(location.query.data);
+    curData = parsed;
   } else {
-    curData = {};
+    throw new Error('Bad data!');
   }
 
-  const { dataA, dataB, curTopic, filterA, filterB } = curData;
+  const { data_a: dataA, data_b: dataB, cur_topic: curTopic, filter_a: filterA, filter_b: filterB } = curData;
 
   const visibilityMap = getVisibilityMap(dataA, dataB);
   const lVal = curTopic ? dataA.categories[curTopic] : 0;
@@ -58,11 +61,11 @@ function initialState(): StateType {
   );
 
   return {
-    dataA: dataA || { categories: {}, totalCount: 0 },
-    dataB: dataB || { categories: {}, totalCount: 0 },
-    filterA: filterA || {},
-    filterB: filterB || {},
-    curTopic: curTopic || null,
+    dataA,
+    dataB,
+    filterA,
+    filterB,
+    curTopic,
     visibilityMap,
     lSentence,
     rSentence,
@@ -79,43 +82,32 @@ export default class Generate extends Component {
   }
 
   render() {
+    const {
+      dataA,
+      dataB,
+      filterA,
+      filterB,
+      curTopic,
+      visibilityMap,
+      lSentence,
+      rSentence,
+      sentence
+    } = this.state;
+
     return (
       <Row className="main generate container-fluid">
         <Col xs={12}>
-          <Row className="chart-container">
-            <Col
-              sm={5}
-              smOffset={1}
-              xs={10}
-              xsOffset={1}
-              style={{ padding: 0 }}>
-              <Chart
-                data={this.state.dataA}
-                visibilityMap={this.state.visibilityMap}
-                currentTopic={this.state.curTopic}
-                side={'left'}
-                sentence={this.state.lSentence}
-                mouseEnterHandler={() => {}}
-                mouseClickHandler={() => {}}
-                mouseLeaveHandler={() => {}} />
-            </Col>
-            <Col
-              sm={5}
-              smOffset={0}
-              xs={10}
-              xsOffset={1}
-              style={{ padding: 0 }}>
-              <Chart
-                data={this.state.dataB}
-                visibilityMap={this.state.visibilityMap}
-                currentTopic={this.state.curTopic}
-                side={'right'}
-                sentence={this.state.rSentence}
-                mouseEnterHandler={() => {}}
-                mouseClickHandler={() => {}}
-                mouseLeaveHandler={() => {}} />
-            </Col>
-          </Row>
+          { dataA && dataB &&
+            <ChartContainer
+              currentTopic={curTopic}
+              leftPersonal={filterA ? filterA.personal : false}
+              rightPersonal={filterB ? filterB.personal : false}
+              leftSentence={lSentence}
+              rightSentence={rSentence}
+              leftData={dataA}
+              rightData={dataB}
+              visibilityMap={visibilityMap} /> }
+
           <Row>
             <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
               <Row>

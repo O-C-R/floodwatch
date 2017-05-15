@@ -6,7 +6,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 
 // import {FilterParent} from './FilterParent';
-import { Chart } from './Chart';
+import ChartContainer from './ChartContainer';
 import { ComparisonModal } from './ComparisonModal';
 import {
   getVisibilityMap,
@@ -46,8 +46,8 @@ function CompareContainerInitialState(): StateType {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
-    leftData: { categories: {}, totalCount: 0 },
-    rightData: { categories: {}, totalCount: 0 },
+    leftData: { categories: {}, total_count: 0 },
+    rightData: { categories: {}, total_count: 0 },
     visibilityMap: {},
     currentTopic: null,
     modalVisible: false,
@@ -71,13 +71,13 @@ export class Compare extends Component {
       const cleanedFilterA = this.cleanFilterRequest(filterA);
       const cleanedFilterB = this.cleanFilterRequest(filterB);
 
-      const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({
-        filterA: cleanedFilterA,
-        filterB: cleanedFilterB,
+      const adBreakdown = await FWApiClient.get().getFilteredAdCounts({
+        filter_a: cleanedFilterA,
+        filter_b: cleanedFilterB,
       });
 
-      const leftData = AdBreakdown.filterA;
-      const rightData = AdBreakdown.filterB;
+      const leftData = adBreakdown.data_a;
+      const rightData = adBreakdown.data_b;
       const visibilityMap = getVisibilityMap(leftData, rightData);
 
       const UserData = await FWApiClient.get().getCurrentPerson();
@@ -177,7 +177,7 @@ export class Compare extends Component {
         }
       } else if (f.name === 'country') {
         obj.location = {
-          countryCodes: f.choices,
+          country_codes: f.choices,
         };
       } else {
         const arr = [];
@@ -288,18 +288,14 @@ export class Compare extends Component {
     const cleanedFilterA = this.cleanFilterRequest(filterA);
     const cleanedFilterB = this.cleanFilterRequest(filterB);
 
-    const AdBreakdown = await FWApiClient.get().getFilteredAdCounts({
-      filterA: cleanedFilterA,
-      filterB: cleanedFilterB,
+    const adBreakdown = await FWApiClient.get().getFilteredAdCounts({
+      filter_a: cleanedFilterA,
+      filter_b: cleanedFilterB,
     });
 
     this.setState({
-      leftData: AdBreakdown.filterA.totalCount > 0
-        ? AdBreakdown.filterA
-        : { categories: {}, totalCount: 0 },
-      rightData: AdBreakdown.filterB.totalCount > 0
-        ? AdBreakdown.filterB
-        : { categories: {}, totalCount: 0 },
+      leftData: adBreakdown.data_a,
+      rightData: adBreakdown.data_b,
       leftOptions: left,
       rightOptions: right,
     });
@@ -307,13 +303,14 @@ export class Compare extends Component {
 
   async shareComparison(): Promise<void> {
     const req = {
-      filterA: this.generateFilterRequestItem(this.state.leftOptions),
-      filterB: this.generateFilterRequestItem(this.state.rightOptions),
-      curTopic: this.state.currentTopic,
+      filter_a: this.generateFilterRequestItem(this.state.leftOptions),
+      filter_b: this.generateFilterRequestItem(this.state.rightOptions),
+      cur_topic: this.state.currentTopic,
     };
 
     const res = await FWApiClient.get().requestGalleryImage(req);
-    const win = window.open(res.url, '_blank');
+    const link = `${window.location.protocol}//${window.location.host}/gallery/image/${res.id}`
+    const win = window.open(link, '_blank');
   }
 
   clearTopic(event: Event) {
@@ -351,37 +348,23 @@ export class Compare extends Component {
     const lSentence = createSentence(leftOptions);
     const rSentence = createSentence(rightOptions);
 
+    const leftPersonal = leftOptions.length > 0 && leftOptions[0].name === 'data';
+    const rightPersonal = rightOptions.length > 0 && rightOptions[0].name === 'data';
+
     return (
-      <div
-        className="main compare"
-        onClick={this.clearTopic.bind(this)}
-        style={{ height: '100%' }}>
-        <div className="chart-container">
-          <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding: 0 }}>
-            <Chart
-              side="left"
-              data={leftData}
-              sentence={lSentence}
-              visibilityMap={visibilityMap}
-              currentTopic={currentTopic}
-              noOutline={updateCurrentTopic}
-              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-              mouseClickHandler={this.mouseClickHandler.bind(this)}
-              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
-          </Col>
-          <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding: 0 }}>
-            <Chart
-              side="right"
-              data={rightData}
-              sentence={rSentence}
-              visibilityMap={visibilityMap}
-              currentTopic={currentTopic}
-              noOutline={updateCurrentTopic}
-              mouseEnterHandler={this.mouseEnterHandler.bind(this)}
-              mouseClickHandler={this.mouseClickHandler.bind(this)}
-              mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
-          </Col>
-        </div>
+      <div className="main compare" onClick={this.clearTopic.bind(this)}>
+        <ChartContainer
+          currentTopic={currentTopic}
+          leftSentence={lSentence}
+          rightSentence={rSentence}
+          leftPersonal={leftPersonal}
+          rightPersonal={rightPersonal}
+          leftData={leftData}
+          rightData={rightData}
+          visibilityMap={visibilityMap}
+          mouseClickHandler={this.mouseClickHandler.bind(this)}
+          mouseEnterHandler={this.mouseEnterHandler.bind(this)}
+          mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
 
         <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
           <Row>

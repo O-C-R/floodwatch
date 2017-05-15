@@ -6,7 +6,7 @@ import log from 'loglevel';
 import { BaseError } from '../common/util';
 import type {
   PersonResponse,
-  FilterRequest,
+  FilterPair,
   FiltersResponse,
   PersonDemographics,
   GalleryImageRequest,
@@ -260,7 +260,7 @@ export class FWApiClient extends APIClient {
     this.onLogout();
   }
 
-  async getFilteredAdCounts(f: FilterRequest): Promise<FiltersResponse> {
+  async getFilteredAdCounts(f: FilterPair): Promise<FiltersResponse> {
     return this.postJSON('/api/recorded_ads/filtered', f);
   }
 
@@ -277,5 +277,9 @@ export class FWApiClient extends APIClient {
 
   requestGalleryImage(req: GalleryImageRequest): Promise<GalleryImageResponse> {
     return this.postJSON('/api/recorded_ads/screenshot', req);
+  }
+
+  getGalleryImage(id: string): Promise<GalleryImageResponse> {
+    return this.getJSON(`/api/gallery/image/${id}`);
   }
 }

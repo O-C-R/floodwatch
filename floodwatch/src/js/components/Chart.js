@@ -21,16 +21,18 @@ type StackedData = Array<{
   value: number,
 }>;
 
-type PropsType = {
+type PropsType = {|
   side: string,
   data: FilterResponse,
   sentence: string,
   visibilityMap: VisibilityMap,
   currentTopic: ?string,
-  mouseEnterHandler: (topic: string) => void,
-  mouseLeaveHandler: (topic: string) => void,
-  mouseClickHandler: (topic: string) => void,
-};
+  noOutline?: boolean,
+  isPersonal: boolean,
+  mouseEnterHandler: ?(topic: string) => void,
+  mouseLeaveHandler: ?(topic: string) => void,
+  mouseClickHandler: ?(topic: string) => void,
+|};
 
 type StateType = {
   height: number,
@@ -169,13 +171,19 @@ export class Chart extends Component {
         .attr('x', 0)
         .attr('width', '100%')
         .on('mouseenter', (d) => {
-          this.props.mouseEnterHandler(d.id);
+          if (this.props.mouseEnterHandler) {
+            this.props.mouseEnterHandler(d.id);
+          }
         })
         .on('mouseleave', (d) => {
-          this.props.mouseLeaveHandler(d.id);
+          if (this.props.mouseLeaveHandler) {
+            this.props.mouseLeaveHandler(d.id);
+          }
         })
         .on('click', (d) => {
-          this.props.mouseClickHandler(d.id);
+          if (this.props.mouseClickHandler) {
+            this.props.mouseClickHandler(d.id);
+          }
         })
         .attr('fill', (d, i) => `url(#${this.props.side}${i})`);
 
@@ -228,7 +236,7 @@ export class Chart extends Component {
         .duration(200)
         .attr('stroke-width', 0)
         .attr('fill-opacity', (d) => {
-          if (this.props.currentTopic === null) {
+          if (_.isEmpty(this.props.currentTopic)) {
             return 1;
           } else if (this.props.currentTopic === d.id) {
             return 1;
@@ -306,17 +314,30 @@ export class Chart extends Component {
       this.props.data,
       this.props.visibilityMap,
     );
+
     let error;
+
     if (processedData.length <= 1) {
+      let errorMessage = '';
+      if (this.props.isPersonal) {
+        errorMessage = "We haven't seen enough ads from you yet, install the extension and get browsing!";
+
+      } else {
+        errorMessage = "Whoops! Not enough data for this demographic category - try another comparison.";
+      }
+
       error = (
         <Col
           xs={12}
           className="chart"
           style={{
-            padding: '2px',
-            textAlign: this.props.side,
+            textAlign: 'center',
+            height: this.state.height,
+            background: '#ccc'
           }}>
-          Whoops! Not enough data for this demographic category - try another comparison.
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: this.state.height}}>
+            {errorMessage}
+          </div>
         </Col>
       );
     }
@@ -329,8 +350,7 @@ export class Chart extends Component {
             {this.props.sentence}
           </Col>
           <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
-            <div
-              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
+            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>
@@ -347,8 +367,7 @@ export class Chart extends Component {
             mdPull={4}
             className="chart"
             style={{ padding: '2px' }}>
-            <div
-              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
+            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>
