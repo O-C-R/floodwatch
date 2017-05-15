@@ -6,11 +6,12 @@ const OTHER_BREAKDOWN = 0.02;
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import _ from 'lodash';
 import type { Preset, Filter, FilterLogic } from './filtertypes';
-import type { VisibilityMap, UnstackedData } from './Compare';
+import type { VisibilityMap } from './Compare';
+import type { FilterResponse } from '../api/types';
 
 export function getVisibilityMap(
-  lD: UnstackedData,
-  rD: UnstackedData,
+  lD: FilterResponse,
+  rD: FilterResponse,
 ): VisibilityMap {
   const { categories: ldCategories } = lD;
   const { categories: rdCategories } = rD;
@@ -59,7 +60,7 @@ export function generateDifferenceSentence(
   } else if (prc === 100) {
     sentence = `On average, ${createSentence(rO)} don't see any ${TopicKeys[currentTopic]} ads, as opposed to ${createSentence(lO)}.`;
   } else if (prc < 0) {
-    sentence = `On average, ${createSentence(lO)} see ${Math.abs(prc)}% less ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
+    sentence = `On average, ${createSentence(lO)} see ${Math.abs(prc)}% fewer ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
   } else if (prc > 0) {
     sentence = `On average, ${createSentence(lO)} see ${prc}% more ${TopicKeys[currentTopic]} ads than ${createSentence(rO)}.`;
   } else if (prc === 0) {

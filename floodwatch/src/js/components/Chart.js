@@ -10,7 +10,8 @@ import colors from './colors';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import { createSentence } from './comparisontools';
 
-import type { UnstackedData, VisibilityMap } from './Compare';
+import type { VisibilityMap } from './Compare';
+import type { FilterResponse } from '../api/types';
 
 type StackedData = Array<{
   name: string,
@@ -22,7 +23,7 @@ type StackedData = Array<{
 
 type PropsType = {
   side: string,
-  data: UnstackedData,
+  data: FilterResponse,
   sentence: string,
   visibilityMap: VisibilityMap,
   currentTopic: ?string,
@@ -66,7 +67,7 @@ export class Chart extends Component {
     });
   }
 
-  processData(data: UnstackedData, visibilityMap: VisibilityMap): StackedData {
+  processData(data: FilterResponse, visibilityMap: VisibilityMap): StackedData {
     const processedData = [];
     let totalValue = 0;
     let other = 0;

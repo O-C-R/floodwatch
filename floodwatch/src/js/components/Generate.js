@@ -1,8 +1,12 @@
 // @flow
 
 import type { Filter, FilterLogic } from './filtertypes';
-import type { PersonResponse, FilterRequestItem } from '../api/types';
-import type { VisibilityMap, UnstackedData } from './Compare';
+import type {
+  PersonResponse,
+  FilterResponse,
+  FilterRequestItem,
+} from '../api/types';
+import type { VisibilityMap } from './Compare';
 
 import {
   getVisibilityMap,
@@ -20,9 +24,9 @@ import _ from 'lodash';
 type StateType = {
   filterA: FilterRequestItem,
   filterB: FilterRequestItem,
-  dataA: UnstackedData,
-  dataB: UnstackedData,
-  curTopic: string,
+  dataA: FilterResponse,
+  dataB: FilterResponse,
+  curTopic: ?string,
   visibilityMap: VisibilityMap,
   lSentence: string,
   rSentence: string,

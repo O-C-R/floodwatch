@@ -16,7 +16,11 @@ import {
 import { FWApiClient } from '../api/api';
 
 import type { Preset, Filter, FilterLogic } from './filtertypes';
-import type { PersonResponse, FilterRequestItem } from '../api/types';
+import type {
+  PersonResponse,
+  FilterResponse,
+  FilterRequestItem,
+} from '../api/types';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import Filters from '../../stubbed_data/filter_response.json';
@@ -26,20 +30,15 @@ export type VisibilityMap = {
   [catId: string]: 'show' | 'hide' | 'other',
 };
 
-export type UnstackedData = {
-  categories: { [key: string]: number },
-  totalCount: number,
-};
-
 type StateType = {
   leftOptions: Array<Filter>,
   rightOptions: Array<Filter>,
   visibilityMap: VisibilityMap,
-  leftData: UnstackedData,
-  rightData: UnstackedData,
+  leftData: FilterResponse,
+  rightData: FilterResponse,
   currentTopic: ?string,
   modalVisible: boolean,
-  userData: PersonResponse,
+  userData: ?PersonResponse,
   updateCurrentTopic: boolean,
 };
 
@@ -47,11 +46,12 @@ function CompareContainerInitialState(): StateType {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
-    leftData: {},
-    rightData: {},
+    leftData: { categories: {}, totalCount: 0 },
+    rightData: { categories: {}, totalCount: 0 },
     visibilityMap: {},
     currentTopic: null,
     modalVisible: false,
+    userData: null,
     updateCurrentTopic: true,
   };
 }
@@ -295,11 +295,11 @@ export class Compare extends Component {
 
     this.setState({
       leftData: AdBreakdown.filterA.totalCount > 0
-        ? AdBreakdown.filterA.categories
-        : {},
+        ? AdBreakdown.filterA
+        : { categories: {}, totalCount: 0 },
       rightData: AdBreakdown.filterB.totalCount > 0
-        ? AdBreakdown.filterB.categories
-        : {},
+        ? AdBreakdown.filterB
+        : { categories: {}, totalCount: 0 },
       leftOptions: left,
       rightOptions: right,
     });
@@ -326,22 +326,30 @@ export class Compare extends Component {
   }
 
   render() {
-    const lVal = this.state.currentTopic
-      ? this.state.leftData[this.state.currentTopic]
-      : 0;
-    const rVal = this.state.currentTopic
-      ? this.state.rightData[this.state.currentTopic]
-      : 0;
+    const {
+      currentTopic,
+      userData,
+      leftData,
+      rightData,
+      leftOptions,
+      rightOptions,
+      modalVisible,
+      updateCurrentTopic,
+      visibilityMap,
+    } = this.state;
+
+    const lVal = currentTopic ? leftData.categories[currentTopic] : 0;
+    const rVal = currentTopic ? rightData.categories[currentTopic] : 0;
     const sentence = generateDifferenceSentence(
-      this.state.leftOptions,
-      this.state.rightOptions,
+      leftOptions,
+      rightOptions,
       lVal,
       rVal,
-      this.state.currentTopic,
+      currentTopic,
     );
 
-    const lSentence = createSentence(this.state.leftOptions);
-    const rSentence = createSentence(this.state.rightOptions);
+    const lSentence = createSentence(leftOptions);
+    const rSentence = createSentence(rightOptions);
 
     return (
       <div
@@ -352,11 +360,11 @@ export class Compare extends Component {
           <Col sm={5} smOffset={1} xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Chart
               side="left"
-              data={this.state.leftData}
+              data={leftData}
               sentence={lSentence}
-              visibilityMap={this.state.visibilityMap}
-              currentTopic={this.state.currentTopic}
-              noOutline={this.state.updateCurrentTopic}
+              visibilityMap={visibilityMap}
+              currentTopic={currentTopic}
+              noOutline={updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
               mouseClickHandler={this.mouseClickHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
@@ -364,11 +372,11 @@ export class Compare extends Component {
           <Col sm={5} smOffset={0} xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Chart
               side="right"
-              data={this.state.rightData}
+              data={rightData}
               sentence={rSentence}
-              visibilityMap={this.state.visibilityMap}
-              currentTopic={this.state.currentTopic}
-              noOutline={this.state.updateCurrentTopic}
+              visibilityMap={visibilityMap}
+              currentTopic={currentTopic}
+              noOutline={updateCurrentTopic}
               mouseEnterHandler={this.mouseEnterHandler.bind(this)}
               mouseClickHandler={this.mouseClickHandler.bind(this)}
               mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
@@ -396,15 +404,16 @@ export class Compare extends Component {
           </Row>
         </Col>
 
-        <ComparisonModal
-          visible={this.state.modalVisible}
-          toggleModal={this.toggleComparisonModal.bind(this)}
-          currentSelectionLeft={this.state.leftOptions}
-          currentSelectionRight={this.state.rightOptions}
-          changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
-          changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
-          updateSearchLogic={this.updateSearchLogic.bind(this)}
-          userData={this.state.userData} />
+        {userData &&
+          <ComparisonModal
+            visible={modalVisible}
+            toggleModal={this.toggleComparisonModal.bind(this)}
+            currentSelectionLeft={leftOptions}
+            currentSelectionRight={rightOptions}
+            changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
+            changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
+            updateSearchLogic={this.updateSearchLogic.bind(this)}
+            userData={userData} />}
       </div>
     );
   }
