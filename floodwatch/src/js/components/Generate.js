@@ -46,8 +46,8 @@ function initialState(): StateType {
   const lVal = curData.curTopic ? curData.dataA[curData.curTopic] : 0;
   const rVal = curData.curTopic ? curData.dataB[curData.curTopic] : 0;
 
-  const decodedA = decodeFilterRequestItem(curData.filterA.categories);
-  const decodedB = decodeFilterRequestItem(curData.filterB.categories);
+  const decodedA = decodeFilterRequestItem(curData.filterA);
+  const decodedB = decodeFilterRequestItem(curData.filterB);
 
   const lSentence = createSentence(decodedA);
   const rSentence = createSentence(decodedB);
@@ -136,9 +136,8 @@ export class Generate extends Component {
 
 function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
   const keys = _.keys(filter);
-  const isPersonal = keys.includes('personal');
 
-  if (isPersonal) {
+  if (filter.personal) {
     return [
       {
         name: 'data',
@@ -150,47 +149,50 @@ function decodeFilterRequestItem(filter: FilterRequestItem): Array<Filter> {
 
   const optionsArr = [];
 
-  for (const k of keys) {
-    if (k == 'age') {
-      const str = `${filter[k].min}-${filter[k].max}`;
-      optionsArr.push({
-        name: 'age',
-        logic: 'or',
-        choices: [str],
+  if (filter.age && filter.age.min && filter.age.max) {
+    const str = `${filter.age.min}-${filter.age.max}`;
+    optionsArr.push({
+      name: 'age',
+      logic: 'or',
+      choices: [str],
+    });
+  }
+
+  if (filter.location) {
+    const countries = filter.location.countryCodes;
+    optionsArr.push({
+      name: 'country',
+      logic: 'or',
+      choices: countries,
+    });
+  }
+
+  if (filter.demographics) {
+    for (const o of filter.demographics) {
+      const newObj = {};
+
+      newObj.logic = o.operator;
+      newObj.choices = [];
+      o.values.forEach((v) => {
+        const choice = _.find(DemographicKeys.demographic_keys, { id: v });
+        newObj.choices.push(choice.name);
       });
-    } else if (k == 'location') {
-      const countries = filter[k].countryCodes;
-      optionsArr.push({
-        name: 'country',
-        logic: 'or',
-        choices: countries,
-      });
-    } else if (k == 'demographics') {
-      filter[k].forEach((o) => {
-        const newObj = {};
 
-        newObj.logic = o.operator;
-        newObj.choices = [];
-        o.values.forEach((v) => {
-          const choice = _.find(DemographicKeys.demographic_keys, { id: v });
-          newObj.choices.push(choice.name);
-        });
+      // get category of first elem to check what name of category is
+      const sampleElem = _.find(
+        DemographicKeys.demographic_keys,
+        dk => dk.id == o.values[0],
+      );
+      const category = _.findKey(
+        DemographicKeys.category_to_id,
+        ci => ci == sampleElem.category_id,
+      );
 
-        // get category of first elem to check what name of category is
-        const sampleElem = _.find(
-          DemographicKeys.demographic_keys,
-          dk => dk.id == o.values[0],
-        );
-        const category = _.findKey(
-          DemographicKeys.category_to_id,
-          ci => ci == sampleElem.category_id,
-        );
+      newObj.name = 'category';
 
-        newObj.name = 'category';
-
-        optionsArr.push(newObj);
-      });
+      optionsArr.push(newObj);
     }
   }
+
   return optionsArr;
 }
