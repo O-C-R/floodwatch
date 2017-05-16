@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { Row, Col } from 'react-bootstrap';
-import {Helmet} from "react-helmet";
 import moment from 'moment';
 
 import url from 'url';
@@ -58,7 +57,6 @@ export default class GalleryImage extends Component {
   async init() {
     try {
       const imageRes = await FWApiClient.get().getGalleryImage(this.props.params.imageId);
-      console.log(imageRes);
 
       const { url, data, created_at } = imageRes;
       const { filter_a: filterA, filter_b: filterB, data_a: dataA, data_b: dataB, cur_topic: curTopic} = data;
@@ -92,7 +90,6 @@ export default class GalleryImage extends Component {
         rSentence,
         sentence
       })
-      console.log(this.state);
     } catch (e) {
       console.error(e);
     }
@@ -109,19 +106,6 @@ export default class GalleryImage extends Component {
 
     return (
       <div className="main generate container">
-        <Helmet>
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:site" content="@floodwatchapp" />
-          <meta name="twitter:title" content={title} />
-          <meta name="twitter:description" content={description} />
-          <meta name="twitter:image" content={imageUrl} />
-          <meta name="twitter:image:alt" content={sentence} />
-          <meta property="og:url" content={canonical} />
-          <meta property="og:title" content={title} />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={imageUrl} />
-        </Helmet>
-
         <Row>
           <Col xs={12} md={8} mdOffset={2} style={{ textAlign: 'center', marginTop: '20px', marginBottom: '20px' }}>
             <h4>An ad comparsion saved {createdAgo}</h4>

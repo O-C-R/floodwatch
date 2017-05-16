@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/O-C-R/auth/httpauth"
 	"github.com/O-C-R/auth/session"
@@ -143,10 +145,42 @@ func New(options *Options) (*Webserver, error) {
 			return nil, err
 		}
 
+		replacer := func(req *http.Request, raw []byte) ([]byte, error) {
+			out := raw
+
+			// The same between all pages.
+			out = bytes.Replace(out, []byte("__META_URL__"), []byte(options.Hostname+req.URL.Path), -1)
+			out = bytes.Replace(out, []byte("__META_TITLE__"), []byte("Floodwatch"), -1)
+			out = bytes.Replace(out, []byte("__META_DESCRIPTION__"), []byte("Floodwatch collects the ads you see as you browse the internet, in order to track how advertisers are categorizing and tracking you."), -1)
+
+			if strings.HasPrefix(req.URL.Path, "/gallery/image/") {
+				pathParts := strings.Split(req.URL.Path, "/")
+				imageId := pathParts[len(pathParts)-1]
+
+				out = bytes.Replace(
+					out,
+					[]byte("__META_IMAGE_URL__"),
+					[]byte(fmt.Sprintf("https://s3.amazonaws.com/%s/%s.png", options.S3GalleryBucket, imageId)),
+					-1,
+				)
+			} else {
+				out = bytes.Replace(
+					out,
+					[]byte("__META_IMAGE_URL__"),
+					[]byte(options.Hostname+"/static/img/share.jpg"),
+					-1,
+				)
+			}
+
+			return out, nil
+		}
+
 		r.Handle("/", singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{
 			Root:          http.Dir(options.StaticPath),
 			Application:   application,
 			LongtermCache: longtermCache,
+
+			Replacer: &replacer,
 		}))
 	}
 
