@@ -309,7 +309,7 @@ export class Compare extends Component {
     };
 
     const res = await FWApiClient.get().requestGalleryImage(req);
-    const link = `${window.location.protocol}//${window.location.host}/gallery/image/${res.id}`
+    const link = `${window.location.protocol}//${window.location.host}/gallery/image/${res.id}`;
     const win = window.open(link, '_blank');
   }
 
@@ -348,8 +348,10 @@ export class Compare extends Component {
     const lSentence = createSentence(leftOptions);
     const rSentence = createSentence(rightOptions);
 
-    const leftPersonal = leftOptions.length > 0 && leftOptions[0].name === 'data';
-    const rightPersonal = rightOptions.length > 0 && rightOptions[0].name === 'data';
+    const leftPersonal =
+      leftOptions.length > 0 && leftOptions[0].name === 'data';
+    const rightPersonal =
+      rightOptions.length > 0 && rightOptions[0].name === 'data';
 
     return (
       <div className="main compare" onClick={this.clearTopic.bind(this)}>

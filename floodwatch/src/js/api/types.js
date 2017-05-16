@@ -37,9 +37,9 @@ export type FilterPair = {
 export type AdCategoryId = string;
 
 export type FiltersResponse = {
-  data_a: FilterResponse;
-  data_b: FilterResponse;
-}
+  data_a: FilterResponse,
+  data_b: FilterResponse,
+};
 
 export type FilterResponse = {
   categories: { [key: AdCategoryId]: number },

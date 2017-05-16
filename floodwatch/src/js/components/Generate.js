@@ -6,7 +6,11 @@ import url from 'url';
 
 import ChartContainer from './ChartContainer';
 
-import type { FilterResponse, GalleryImageData, FilterRequestItem } from '../api/types';
+import type {
+  FilterResponse,
+  GalleryImageData,
+  FilterRequestItem,
+} from '../api/types';
 import type { VisibilityMap } from './Compare';
 
 import {
@@ -40,7 +44,13 @@ function initialState(): StateType {
     throw new Error('Bad data!');
   }
 
-  const { data_a: dataA, data_b: dataB, cur_topic: curTopic, filter_a: filterA, filter_b: filterB } = curData;
+  const {
+    data_a: dataA,
+    data_b: dataB,
+    cur_topic: curTopic,
+    filter_a: filterA,
+    filter_b: filterB,
+  } = curData;
 
   const visibilityMap = getVisibilityMap(dataA, dataB);
   const lVal = curTopic ? dataA.categories[curTopic] : 0;
@@ -91,13 +101,14 @@ export default class Generate extends Component {
       visibilityMap,
       lSentence,
       rSentence,
-      sentence
+      sentence,
     } = this.state;
 
     return (
       <Row className="main generate container-fluid">
         <Col xs={12}>
-          { dataA && dataB &&
+          {dataA &&
+            dataB &&
             <ChartContainer
               currentTopic={curTopic}
               leftPersonal={filterA ? filterA.personal : false}
@@ -106,7 +117,7 @@ export default class Generate extends Component {
               rightSentence={rSentence}
               leftData={dataA}
               rightData={dataB}
-              visibilityMap={visibilityMap} /> }
+              visibilityMap={visibilityMap} />}
 
           <Row>
             <Col xs={10} xsOffset={1} style={{ padding: 0 }}>

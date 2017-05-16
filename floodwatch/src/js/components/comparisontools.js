@@ -73,7 +73,10 @@ export function generateDifferenceSentence(
   return sentence;
 }
 
-export function createSentence(options: Array<Filter>, impersonal: boolean = false): string {
+export function createSentence(
+  options: Array<Filter>,
+  impersonal: boolean = false,
+): string {
   let sentence = 'Floodwatch users';
 
   if (options[0] == undefined) {
@@ -84,9 +87,8 @@ export function createSentence(options: Array<Filter>, impersonal: boolean = fal
   if (options[0].name === 'data') {
     if (!impersonal) {
       return 'You';
-    } else {
-      return 'A Floodwatch user'
     }
+    return 'A Floodwatch user';
   }
 
   sentence += ' who are ';

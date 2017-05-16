@@ -320,10 +320,11 @@ export class Chart extends Component {
     if (processedData.length <= 1) {
       let errorMessage = '';
       if (this.props.isPersonal) {
-        errorMessage = "We haven't seen enough ads from you yet, install the extension and get browsing!";
-
+        errorMessage =
+          "We haven't seen enough ads from you yet, install the extension and get browsing!";
       } else {
-        errorMessage = "Whoops! Not enough data for this demographic category - try another comparison.";
+        errorMessage =
+          'Whoops! Not enough data for this demographic category - try another comparison.';
       }
 
       error = (
@@ -333,9 +334,15 @@ export class Chart extends Component {
           style={{
             textAlign: 'center',
             height: this.state.height,
-            background: '#ccc'
+            background: '#ccc',
           }}>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: this.state.height}}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: this.state.height,
+            }}>
             {errorMessage}
           </div>
         </Col>
@@ -350,7 +357,8 @@ export class Chart extends Component {
             {this.props.sentence}
           </Col>
           <Col xs={12} md={8} className="chart" style={{ padding: '2px' }}>
-            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
+            <div
+              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>
@@ -367,7 +375,8 @@ export class Chart extends Component {
             mdPull={4}
             className="chart"
             style={{ padding: '2px' }}>
-            <div className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
+            <div
+              className={`chart_svg chart_svg-${this.props.side} ${error ? 'hide' : 'show'}`} />
             {error}
           </Col>
         </div>

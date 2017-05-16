@@ -25,13 +25,26 @@ type Props = {
   mouseEnterHandler?: (newTopic: string) => void,
   mouseClickHandler?: (newTopic: string) => void,
   mouseLeaveHandler?: () => void,
-}
+};
 
 export default class ChartContainer extends Component {
   props: $Exact<Props>;
 
   render() {
-    const { leftData, rightData, leftPersonal, rightPersonal, leftSentence, rightSentence, visibilityMap, currentTopic, noOutline, mouseEnterHandler, mouseClickHandler, mouseLeaveHandler } = this.props;
+    const {
+      leftData,
+      rightData,
+      leftPersonal,
+      rightPersonal,
+      leftSentence,
+      rightSentence,
+      visibilityMap,
+      currentTopic,
+      noOutline,
+      mouseEnterHandler,
+      mouseClickHandler,
+      mouseLeaveHandler,
+    } = this.props;
 
     return (
       <div className="chart-container">
@@ -62,6 +75,6 @@ export default class ChartContainer extends Component {
             mouseLeaveHandler={mouseLeaveHandler} />
         </Col>
       </div>
-    )
+    );
   }
 }
