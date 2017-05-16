@@ -152,7 +152,7 @@ func New(options *Options) (*Webserver, error) {
 			out = bytes.Replace(out, []byte("__META_TITLE__"), []byte("Floodwatch"), -1)
 			out = bytes.Replace(out, []byte("__META_DESCRIPTION__"), []byte("Floodwatch collects the ads you see as you browse the internet, in order to track how advertisers are categorizing and tracking you."), -1)
 
-			if strings.HasPrefix(req.URL.Path, "/gallery/image/") {
+			if strings.HasPrefix(req.URL.Path, "/i/") || strings.HasPrefix(req.URL.Path, "/gallery/image/") {
 				pathParts := strings.Split(req.URL.Path, "/")
 				imageSlug := pathParts[len(pathParts)-1]
 
