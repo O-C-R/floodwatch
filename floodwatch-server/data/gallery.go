@@ -8,6 +8,7 @@ import (
 	"github.com/O-C-R/auth/id"
 	"github.com/jmoiron/sqlx/types"
 	"github.com/pkg/errors"
+	"github.com/ventu-io/go-shortid"
 )
 
 type GalleryImageData struct {
@@ -19,17 +20,30 @@ type GalleryImageData struct {
 }
 
 type GalleryImage struct {
-	ID        id.ID          `db:"id" json:"id"`
-	CreatorID id.ID          `db:"creator_id" json:"-"`
-	Data      types.JSONText `db:"data" json:"data"`
-	CreatedAt time.Time      `db:"created_at" json:"created_at"`
+	Slug      string         `db:"slug"`
+	CreatorID id.ID          `db:"creator_id"`
+	Data      types.JSONText `db:"data"`
+	CreatedAt time.Time      `db:"created_at"`
 }
 
 type GalleryImageResponse struct {
-	ID        id.ID            `json:"id"`
+	Slug      string           `json:"slug"`
 	Data      GalleryImageData `json:"data"`
 	CreatedAt time.Time        `json:"created_at"`
 	URL       string           `json:"url"`
+}
+
+const (
+	seed = 8910215121992
+)
+
+func init() {
+	sid := shortid.MustNew(0, shortid.DefaultABC, seed)
+	shortid.SetDefault(sid)
+}
+
+func GenerateGalleryImageSlug() (string, error) {
+	return shortid.Generate()
 }
 
 func (g *GalleryImage) SetData(data GalleryImageData) error {
@@ -53,9 +67,7 @@ func (g *GalleryImage) GetData() (*GalleryImageData, error) {
 }
 
 func (g *GalleryImage) ToResponse(bucket string) (*GalleryImageResponse, error) {
-	idStr := g.ID.String()
-	key := idStr + ".png"
-	url := fmt.Sprintf("https://s3.amazonaws.com/%s/%s", bucket, key)
+	url := fmt.Sprintf("https://s3.amazonaws.com/%s/%s.png", bucket, g.Slug)
 
 	data, err := g.GetData()
 	if err != nil {
@@ -63,7 +75,7 @@ func (g *GalleryImage) ToResponse(bucket string) (*GalleryImageResponse, error) 
 	}
 
 	return &GalleryImageResponse{
-		ID:        g.ID,
+		Slug:      g.Slug,
 		Data:      *data,
 		CreatedAt: g.CreatedAt,
 		URL:       url,

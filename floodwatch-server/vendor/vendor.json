@@ -271,6 +271,12 @@
 			"revisionTime": "2017-05-05T04:36:39Z"
 		},
 		{
+			"checksumSHA1": "hAQsARrAjLzpfUa4KA1tW/RZPxY=",
+			"path": "github.com/ventu-io/go-shortid",
+			"revision": "935de6796a71e222e8a8a141ead882d70b6ba6d0",
+			"revisionTime": "2017-03-05T09:20:00Z"
+		},
+		{
 			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
 			"path": "golang.org/x/crypto/bcrypt",
 			"revision": "6ab629be5e31660579425a738ba8870beb5b7404",

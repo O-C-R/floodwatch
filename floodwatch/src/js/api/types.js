@@ -61,7 +61,7 @@ export type GalleryImageData = {
 };
 
 export type GalleryImageResponse = {
-  id: string,
+  slug: string,
   data: GalleryImageData,
   url: string,
   created_at: string,

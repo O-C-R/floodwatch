@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Router, Route, IndexRoute } from 'react-router';
+import { Router, Route, IndexRoute, Redirect } from 'react-router';
 
 import { FWApiClient } from './api/api.js';
 import history from './common/history';
@@ -76,7 +76,8 @@ export class App extends Component {
 
         {/* Routes for gallery */}
         <Route path="/generate" component={Generate} />
-        <Route path="/gallery/image/:imageId" component={GalleryImage} />
+        <Redirect from="/i/:imageSlug" to="/gallery/image/:imageSlug" />
+        <Route path="/gallery/image/:imageSlug" component={GalleryImage} />
       </Router>
     );
   }

@@ -124,7 +124,7 @@ func New(options *Options) (*Webserver, error) {
 	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 	apiRouter.Handle("/recorded_ads/screenshot", secureRoute(GenerateScreenshot(options), auth, secure)).Methods("POST")
 
-	apiRouter.Handle("/gallery/image/{imageID}", RateLimitHandler(GetGalleryImage(options), options, 10/60e9, 30)).Methods("GET")
+	apiRouter.Handle("/gallery/image/{imageSlug}", RateLimitHandler(GetGalleryImage(options), options, 10/60e9, 30)).Methods("GET")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
@@ -149,21 +149,32 @@ func New(options *Options) (*Webserver, error) {
 			out := raw
 
 			// The same between all pages.
-			out = bytes.Replace(out, []byte("__META_URL__"), []byte(options.Hostname+req.URL.Path), -1)
 			out = bytes.Replace(out, []byte("__META_TITLE__"), []byte("Floodwatch"), -1)
 			out = bytes.Replace(out, []byte("__META_DESCRIPTION__"), []byte("Floodwatch collects the ads you see as you browse the internet, in order to track how advertisers are categorizing and tracking you."), -1)
 
 			if strings.HasPrefix(req.URL.Path, "/gallery/image/") {
 				pathParts := strings.Split(req.URL.Path, "/")
-				imageId := pathParts[len(pathParts)-1]
+				imageSlug := pathParts[len(pathParts)-1]
 
 				out = bytes.Replace(
 					out,
+					[]byte("__META_URL__"),
+					[]byte(options.Hostname+"/gallery/image/"+imageSlug),
+					-1,
+				)
+				out = bytes.Replace(
+					out,
 					[]byte("__META_IMAGE_URL__"),
-					[]byte(fmt.Sprintf("https://s3.amazonaws.com/%s/%s.png", options.S3GalleryBucket, imageId)),
+					[]byte(fmt.Sprintf("https://s3.amazonaws.com/%s/%s.png", options.S3GalleryBucket, imageSlug)),
 					-1,
 				)
 			} else {
+				out = bytes.Replace(
+					out,
+					[]byte("__META_URL__"),
+					[]byte(options.Hostname+req.URL.Path),
+					-1,
+				)
 				out = bytes.Replace(
 					out,
 					[]byte("__META_IMAGE_URL__"),

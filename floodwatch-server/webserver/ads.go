@@ -352,15 +352,14 @@ func GenerateScreenshot(options *Options) http.Handler {
 			return
 		}
 
-		screenshotID, err := id.New()
+		galleryImageSlug, err := data.GenerateGalleryImageSlug()
 		if err != nil {
-			Error(w, errors.Wrap(err, "could not generate screenshotId"), 500)
+			Error(w, errors.Wrap(err, "could not generate gallery image slug"), 500)
 			return
 		}
 
 		screenshotImgDataReader := bytes.NewReader(screenshotImgData)
-		screenshotIDString := screenshotID.String()
-		key := screenshotIDString + ".png"
+		key := galleryImageSlug + ".png"
 		putObjectInput := &s3.PutObjectInput{
 			ACL:           aws.String("public-read"),
 			Body:          screenshotImgDataReader,
@@ -377,7 +376,7 @@ func GenerateScreenshot(options *Options) http.Handler {
 		}
 
 		galleryImage := &data.GalleryImage{
-			ID:        screenshotID,
+			Slug:      galleryImageSlug,
 			CreatorID: session.UserID,
 			CreatedAt: time.Now(),
 		}

@@ -58,8 +58,8 @@ type Backend struct {
 	upsertImpression sqlutil.ValueFunc
 	upsertSite       sqlutil.ValueFunc
 
-	addGalleryImage sqlutil.ValueFunc
-	getGalleryImage *sqlx.Stmt
+	addGalleryImage       sqlutil.ValueFunc
+	getGalleryImageBySlug *sqlx.Stmt
 
 	filterValues *sqlx.Stmt
 }
@@ -198,12 +198,12 @@ func New(url string) (*Backend, error) {
 		return nil, err
 	}
 
-	galleryImageSelect, err := sqlutil.Select(data.GalleryImage{}, nil, `WHERE gallery.image.id = $1`)
+	galleryImageSelect, err := sqlutil.Select(data.GalleryImage{}, nil, `WHERE gallery.image.slug = $1`)
 	if err != nil {
 		return nil, err
 	}
 
-	b.getGalleryImage, err = b.db.Preparex(galleryImageSelect)
+	b.getGalleryImageBySlug, err = b.db.Preparex(galleryImageSelect)
 	if err != nil {
 		return nil, err
 	}
@@ -412,9 +412,9 @@ func (b *Backend) AddGalleryImage(galleryImage *data.GalleryImage) (interface{},
 	return b.addGalleryImage(galleryImage)
 }
 
-func (b *Backend) GetGalleryImage(imageId id.ID) (*data.GalleryImage, error) {
+func (b *Backend) GetGalleryImageBySlug(imageSlug string) (*data.GalleryImage, error) {
 	galleryImage := &data.GalleryImage{}
-	if err := b.getGalleryImage.Get(galleryImage, imageId); err != nil {
+	if err := b.getGalleryImageBySlug.Get(galleryImage, imageSlug); err != nil {
 		return nil, err
 	}
 	return galleryImage, nil

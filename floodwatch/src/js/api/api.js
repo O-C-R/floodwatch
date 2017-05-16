@@ -279,7 +279,7 @@ export class FWApiClient extends APIClient {
     return this.postJSON('/api/recorded_ads/screenshot', req);
   }
 
-  getGalleryImage(id: string): Promise<GalleryImageResponse> {
-    return this.getJSON(`/api/gallery/image/${id}`);
+  getGalleryImage(slug: string): Promise<GalleryImageResponse> {
+    return this.getJSON(`/api/gallery/image/${slug}`);
   }
 }

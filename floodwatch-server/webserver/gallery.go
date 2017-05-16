@@ -3,7 +3,6 @@ package webserver
 import (
 	"net/http"
 
-	"github.com/O-C-R/auth/id"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
 )
@@ -11,16 +10,9 @@ import (
 func GetGalleryImage(options *Options) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
-		imageIDStr := vars["imageID"]
+		imageSlug := vars["imageSlug"]
 
-		var imageID = id.ID{}
-		err := imageID.UnmarshalText([]byte(imageIDStr))
-		if err != nil {
-			Error(w, errors.New("bad image id"), 400)
-			return
-		}
-
-		galleryImage, err := options.Backend.GetGalleryImage(imageID)
+		galleryImage, err := options.Backend.GetGalleryImageBySlug(imageSlug)
 		if err != nil {
 			Error(w, errors.Wrap(err, "error loading image"), 400)
 			return

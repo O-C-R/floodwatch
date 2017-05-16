@@ -13,6 +13,10 @@
 @import "pages/compare";
 @import "pages/profile";
 
+// fontawesome
+$fa-font-path: "../../node_modules/font-awesome/fonts";
+@import "../../node_modules/font-awesome/scss/font-awesome.scss";
+
 html, body, #root{
 	height:100%;
 }

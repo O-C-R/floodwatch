@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import d3 from 'd3';
 import _ from 'lodash';
+import FontAwesome from 'react-fontawesome';
 
 // import {FilterParent} from './FilterParent';
 import ChartContainer from './ChartContainer';
@@ -301,7 +302,7 @@ export class Compare extends Component {
     });
   }
 
-  async shareComparison(): Promise<void> {
+  async shareComparison(): Promise<string> {
     const req = {
       filter_a: this.generateFilterRequestItem(this.state.leftOptions),
       filter_b: this.generateFilterRequestItem(this.state.rightOptions),
@@ -309,17 +310,48 @@ export class Compare extends Component {
     };
 
     const res = await FWApiClient.get().requestGalleryImage(req);
-    const link = `${window.location.protocol}//${window.location.host}/gallery/image/${res.id}`;
-    const win = window.open(link, '_blank');
+    return `${window.location.protocol}//${window.location.host}/i/${res.slug}`;
   }
 
-  clearTopic(event: Event) {
-    if (event.target.tagName != 'rect') {
-      this.setState({
-        currentTopic: null,
-        updateCurrentTopic: true,
-      });
+  async shareTwitter(): Promise<void> {
+    const text = 'A demographic comparison of ad categories';
+    const galleryUrl = await this.shareComparison();
+    const via = 'floodwatchapp';
+    const intentUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURI(galleryUrl)}&via=${via}`;
+
+    this.socialWindow(intentUrl, 'twitter', { height: 253 });
+  }
+
+  async shareFacebook(): Promise<void> {
+    const galleryUrl = await this.shareComparison();
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURI(galleryUrl)}`;
+
+    this.socialWindow(shareUrl, 'facebook');
+  }
+
+  socialWindow(
+    url: string,
+    network: string,
+    { height = 570, width = 570 }: { height: number, width: number } = {},
+  ) {
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    const params = `menubar=no,toolbar=no,status=no,scrollbars=no,width=${width},height=${height},top=${top},left=${left}`;
+    window.open(url, network, params);
+  }
+
+  onBodyClick(event: Event) {
+    const tagName = event.target.tagName.toLowerCase();
+
+    // Ignore clicks on the buttons or chart
+    if (tagName == 'rect' || tagName == 'button') {
+      return;
     }
+
+    this.setState({
+      currentTopic: null,
+      updateCurrentTopic: true,
+    });
   }
 
   render() {
@@ -354,7 +386,7 @@ export class Compare extends Component {
       rightOptions.length > 0 && rightOptions[0].name === 'data';
 
     return (
-      <div className="main compare" onClick={this.clearTopic.bind(this)}>
+      <div className="main compare" onClick={this.onBodyClick.bind(this)}>
         <ChartContainer
           currentTopic={currentTopic}
           leftSentence={lSentence}
@@ -380,9 +412,18 @@ export class Compare extends Component {
                   Change demographics
                 </button>
                 <button
-                  className="btn btn-default button"
-                  onClick={this.shareComparison.bind(this)}>
-                  Share
+                  className="chart-actions_share btn btn-default button"
+                  onClick={this.shareTwitter.bind(this)}>
+                  <FontAwesome
+                    name="twitter"
+                    style={{ pointerEvents: 'none' }} />
+                </button>
+                <button
+                  className="chart-actions_share btn btn-default button"
+                  onClick={this.shareFacebook.bind(this)}>
+                  <FontAwesome
+                    name="facebook"
+                    style={{ pointerEvents: 'none' }} />
                 </button>
               </div>
             </Col>

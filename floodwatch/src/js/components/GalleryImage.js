@@ -24,7 +24,7 @@ import { Chart } from './Chart';
 
 type Props = {
   params: {
-    imageId: string,
+    imageSlug: string,
   },
 };
 
@@ -57,7 +57,7 @@ export default class GalleryImage extends Component {
   async init() {
     try {
       const imageRes = await FWApiClient.get().getGalleryImage(
-        this.props.params.imageId,
+        this.props.params.imageSlug,
       );
 
       const { url, data, created_at } = imageRes;
@@ -124,7 +124,7 @@ export default class GalleryImage extends Component {
     const title = 'Floodwatch';
     const description = `Comparing ads between ${lowercaseFirstLetter(lSentence)} and ${lowercaseFirstLetter(rSentence)}.`;
 
-    const canonical = `${window.location.protocol}//${window.location.host}/gallery/image/${this.props.params.imageId}`;
+    const canonical = `${window.location.protocol}//${window.location.host}/gallery/image/${this.props.params.imageSlug}`;
 
     return (
       <div className="main generate container">
