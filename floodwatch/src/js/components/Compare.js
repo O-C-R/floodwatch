@@ -41,6 +41,8 @@ type StateType = {
   modalVisible: boolean,
   userData: ?PersonResponse,
   updateCurrentTopic: boolean,
+  loadingTwitter: boolean,
+  loadingFacebook: boolean,
 };
 
 function CompareContainerInitialState(): StateType {
@@ -54,6 +56,8 @@ function CompareContainerInitialState(): StateType {
     modalVisible: false,
     userData: null,
     updateCurrentTopic: true,
+    loadingTwitter: false,
+    loadingFacebook: false,
   };
 }
 
@@ -314,19 +318,23 @@ export class Compare extends Component {
   }
 
   async shareTwitter(): Promise<void> {
+    this.setState({ loadingTwitter: true });
     const text = 'A demographic comparison of ad categories';
     const galleryUrl = await this.shareComparison();
     const via = 'floodwatchapp';
     const intentUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURI(galleryUrl)}&via=${via}`;
 
     this.socialWindow(intentUrl, 'twitter', { height: 253 });
+    this.setState({ loadingTwitter: false });
   }
 
   async shareFacebook(): Promise<void> {
+    this.setState({ loadingFacebook: true });
     const galleryUrl = await this.shareComparison();
     const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURI(galleryUrl)}`;
 
     this.socialWindow(shareUrl, 'facebook');
+    this.setState({ loadingFacebook: false });
   }
 
   socialWindow(
@@ -365,6 +373,8 @@ export class Compare extends Component {
       modalVisible,
       updateCurrentTopic,
       visibilityMap,
+      loadingTwitter,
+      loadingFacebook,
     } = this.state;
 
     const lVal = currentTopic ? leftData.categories[currentTopic] : 0;
@@ -413,17 +423,33 @@ export class Compare extends Component {
                 </button>
                 <button
                   className="chart-actions_share btn btn-default button"
-                  onClick={this.shareTwitter.bind(this)}>
-                  <FontAwesome
-                    name="twitter"
-                    style={{ pointerEvents: 'none' }} />
+                  onClick={
+                    !loadingTwitter ? this.shareTwitter.bind(this) : null
+                  }>
+                  {!loadingTwitter &&
+                    <FontAwesome
+                      name="twitter"
+                      style={{ pointerEvents: 'none' }} />}
+                  {loadingTwitter &&
+                    <div>
+                      <i className="fa fa-cog fa-spin fa-fw" />
+                      <span className="sr-only">Loading...</span>
+                    </div>}
                 </button>
                 <button
                   className="chart-actions_share btn btn-default button"
-                  onClick={this.shareFacebook.bind(this)}>
-                  <FontAwesome
-                    name="facebook"
-                    style={{ pointerEvents: 'none' }} />
+                  onClick={
+                    !loadingFacebook ? this.shareFacebook.bind(this) : null
+                  }>
+                  {!loadingFacebook &&
+                    <FontAwesome
+                      name="facebook"
+                      style={{ pointerEvents: 'none' }} />}
+                  {loadingFacebook &&
+                    <div>
+                      <i className="fa fa-cog fa-spin fa-fw" />
+                      <span className="sr-only">Loading...</span>
+                    </div>}
                 </button>
               </div>
             </Col>
