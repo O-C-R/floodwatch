@@ -13,8 +13,8 @@ import type {
 import type { VisibilityMap } from './Compare.js';
 
 type Props = {
-  leftData: FilterResponse,
-  rightData: FilterResponse,
+  leftData: ?FilterResponse,
+  rightData: ?FilterResponse,
   leftPersonal?: boolean,
   rightPersonal?: boolean,
   leftSentence: string,

@@ -35,8 +35,8 @@ type StateType = {
   leftOptions: Array<Filter>,
   rightOptions: Array<Filter>,
   visibilityMap: VisibilityMap,
-  leftData: FilterResponse,
-  rightData: FilterResponse,
+  leftData: ?FilterResponse,
+  rightData: ?FilterResponse,
   currentTopic: ?string,
   modalVisible: boolean,
   userData: ?PersonResponse,
@@ -49,8 +49,8 @@ function CompareContainerInitialState(): StateType {
   return {
     leftOptions: Filters.presets[0].filters,
     rightOptions: Filters.presets[1].filters,
-    leftData: { categories: {}, total_count: 0 },
-    rightData: { categories: {}, total_count: 0 },
+    leftData: null,
+    rightData: null,
     visibilityMap: {},
     currentTopic: null,
     modalVisible: false,
@@ -340,7 +340,7 @@ export class Compare extends Component {
   socialWindow(
     url: string,
     network: string,
-    { height = 570, width = 570 }: { height: number, width: number } = {},
+    { height = 570, width = 570 }: { height?: number, width?: number } = {},
   ) {
     const left = (screen.width - width) / 2;
     const top = (screen.height - height) / 2;
@@ -349,6 +349,7 @@ export class Compare extends Component {
   }
 
   onBodyClick(event: Event) {
+    // $FlowBug: this is valid
     const tagName = event.target.tagName.toLowerCase();
 
     // Ignore clicks on the buttons or chart
@@ -377,8 +378,12 @@ export class Compare extends Component {
       loadingFacebook,
     } = this.state;
 
-    const lVal = currentTopic ? leftData.categories[currentTopic] : 0;
-    const rVal = currentTopic ? rightData.categories[currentTopic] : 0;
+    const lVal = currentTopic && leftData
+      ? leftData.categories[currentTopic]
+      : 0;
+    const rVal = currentTopic && rightData
+      ? rightData.categories[currentTopic]
+      : 0;
     const sentence = generateDifferenceSentence(
       leftOptions,
       rightOptions,

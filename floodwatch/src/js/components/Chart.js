@@ -23,7 +23,7 @@ type StackedData = Array<{
 
 type PropsType = {|
   side: string,
-  data: FilterResponse,
+  data: ?FilterResponse,
   sentence: string,
   visibilityMap: VisibilityMap,
   currentTopic: ?string,
@@ -310,14 +310,15 @@ export class Chart extends Component {
   }
 
   render() {
-    const processedData = this.processData(
-      this.props.data,
-      this.props.visibilityMap,
-    );
+    const processedData = this.props.data
+      ? this.processData(this.props.data, this.props.visibilityMap)
+      : [];
 
     let error;
 
-    if (processedData.length <= 1) {
+    if (!this.props.data) {
+      error = <div />;
+    } else if (processedData.length <= 1) {
       let errorMessage = '';
       if (this.props.isPersonal) {
         errorMessage =
