@@ -141,7 +141,7 @@ export class APIClient {
 
 const LOGGED_IN_KEY = 'loggedIn';
 let fwApiClientInstance: ?FWApiClient;
-export class FWApiClient extends APIClient {
+export default class FWApiClient extends APIClient {
   unauthorizedHandler: () => void;
 
   constructor(baseUrl: string, unauthorizedHandler: () => void) {

@@ -7,20 +7,19 @@ import moment from 'moment';
 
 import url from 'url';
 
-import { FWApiClient } from '../api/api';
-import ChartContainer from './ChartContainer';
+import FWApiClient from '../api/api';
+import ChartContainer from '../components/ChartContainer';
 import { lowercaseFirstLetter } from '../common/util';
 
 import type { FilterResponse, FilterRequestItem } from '../api/types';
-import type { VisibilityMap } from './Compare';
+import type { VisibilityMap } from '../common/filtertypes';
 
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
   decodeFilterRequestItem,
-} from './comparisontools';
-import { Chart } from './Chart';
+} from '../common/comparisontools';
 
 type Props = {
   params: {

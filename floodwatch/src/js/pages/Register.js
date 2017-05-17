@@ -13,7 +13,7 @@ import {
   HelpBlock,
 } from 'react-bootstrap';
 
-import { FWApiClient, APIError } from '../api/api';
+import FWApiClient, { APIError } from '../api/api';
 import history from '../common/history';
 
 type State = {

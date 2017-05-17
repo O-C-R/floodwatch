@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { Row, Col } from 'react-bootstrap';
 
-import { FWApiClient, AuthenticationError } from '../api/api';
+import FWApiClient, { AuthenticationError } from '../api/api';
 import history from '../common/history';
 
 type Props = {
@@ -19,7 +19,7 @@ type State = {
   error: ?string,
 };
 
-export class Login extends Component {
+export default class Login extends Component {
   props: Props;
   state: State;
 

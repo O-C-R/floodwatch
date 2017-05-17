@@ -8,7 +8,7 @@ import type {
   Filter,
   Preset,
   FilterLogic,
-} from './filtertypes';
+} from '../common/filtertypes';
 
 type PropsType = {
   filterData: PresetsAndFilters,

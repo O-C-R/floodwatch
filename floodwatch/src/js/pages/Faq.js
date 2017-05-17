@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export class Faq extends Component {
+export default class Faq extends Component {
   render() {
     return (
       <Col xs={10} xsOffset={1} md={8} mdOffset={2} id="faqpp">

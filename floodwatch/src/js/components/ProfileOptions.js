@@ -3,12 +3,13 @@
 import React, { Component } from 'react';
 import Autocomplete from 'react-autocomplete';
 import { Well } from 'react-bootstrap';
-import { FWApiClient } from '../api/api';
 import _ from 'lodash';
+
+import FWApiClient from '../api/api';
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import type { DemographicDictionary } from './FindInDemographics';
 import type { PersonDemographics } from '../api/types';
-import type { FilterJSON } from './filtertypes';
+import type { FilterJSON } from '../common/filtertypes';
 
 // age ------------------------------------------------------------------------------------------------------------------------
 

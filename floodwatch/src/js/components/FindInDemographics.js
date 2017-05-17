@@ -8,7 +8,7 @@ import type {
   DisabledCheck,
   FilterJSON,
   DemographicEntry,
-} from './filtertypes';
+} from '../common/filtertypes';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 

@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import { Modal, Button, Row, Col } from 'react-bootstrap';
 
-import { createSentence } from './comparisontools';
+import { createSentence } from '../common/comparisontools';
 import { ModalSegment } from './ModalSegment';
 
-import type { Filter, Preset, FilterLogic } from './filtertypes';
+import type { Filter, Preset, FilterLogic } from '../common/filtertypes';
 import type { PersonResponse } from '../api/types';
 
 import Filters from '../../stubbed_data/filter_response.json';
@@ -38,7 +38,7 @@ function ComparisonModalInitialState(): StateType {
   };
 }
 
-export class ComparisonModal extends Component {
+export default class ComparisonModal extends Component {
   state: StateType;
   props: PropsType;
 

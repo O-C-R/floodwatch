@@ -5,8 +5,7 @@ import _ from 'lodash';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 
-import type { Preset, Filter, FilterLogic } from './filtertypes';
-import type { VisibilityMap } from './Compare';
+import type { Preset, Filter, FilterLogic, VisibilityMap } from './filtertypes';
 import type { FilterResponse, FilterRequestItem } from '../api/types';
 
 const UNKNOWN_ID = '16';

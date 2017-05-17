@@ -3,23 +3,22 @@
 import React, { Component } from 'react';
 import { Router, Route, IndexRoute, Redirect } from 'react-router';
 
-import { FWApiClient } from './api/api.js';
+import FWApiClient from './api/api.js';
 import history from './common/history';
 
-import { Main } from './components/Main';
-
-import Register from './components/Register';
-import { RegisterDemographics } from './components/RegisterDemographics';
-import { Login } from './components/Login';
-import { ProfilePage } from './components/Profile';
-import { Faq } from './components/Faq';
-import { Compare } from './components/Compare';
-import Generate from './components/Generate';
-import GalleryImage from './components/GalleryImage';
-import MyAds from './components/MyAds';
-import { Landing } from './components/Landing';
-import { ForgotPassword } from './components/ForgotPassword';
-import { ResetPassword } from './components/ResetPassword';
+import Main from './pages/Main';
+import Register from './pages/Register';
+import RegisterDemographics from './pages/RegisterDemographics';
+import Login from './pages/Login';
+import ProfilePage from './pages/Profile';
+import Faq from './pages/Faq';
+import Compare from './pages/Compare';
+import Generate from './pages/Generate';
+import GalleryImage from './pages/GalleryImage';
+import MyAds from './pages/MyAds';
+import Landing from './pages/Landing';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function requireNoAuth(nextState, replace): void {
   if (FWApiClient.get().loggedIn()) {
@@ -39,7 +38,7 @@ function requireAuth(nextState, replace): void {
   }
 }
 
-export class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
 

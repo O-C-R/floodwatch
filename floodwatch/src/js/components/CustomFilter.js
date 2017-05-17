@@ -1,10 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import $ from 'jquery';
 import { Button, FormGroup, Radio, Well } from 'react-bootstrap';
+import Autocomplete from 'react-autocomplete';
 import _ from 'lodash';
 
+import FWApiClient from '../api/api';
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import FilterResponse from '../../stubbed_data/filter_response.json';
 
@@ -13,11 +14,10 @@ import type {
   DisabledCheck,
   Filter,
   FilterLogic,
-} from './filtertypes.js';
+} from '../common/filtertypes.js';
 import type { DemographicDictionary } from './FindInDemographics';
-import Autocomplete from 'react-autocomplete';
 
-import { FWApiClient } from '../api/api';
+
 
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
@@ -92,10 +92,8 @@ export class CustomFilter extends Component {
       };
 
       let checked = false;
-      if (this.props.mySelection) {
-        if ($.inArray(opt.name, this.props.mySelection.choices) > -1) {
-          checked = true;
-        }
+      if (this.props.mySelection && this.props.mySelection.choices.includes(opt.name)) {
+        checked = true;
       }
 
       elems.push(

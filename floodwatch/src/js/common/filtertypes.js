@@ -41,3 +41,7 @@ export type DisabledCheck = {
   disabled: boolean,
   name: string,
 };
+
+export type VisibilityMap = {
+  [catId: string]: 'show' | 'hide' | 'other',
+};

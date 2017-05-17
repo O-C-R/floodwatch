@@ -15,9 +15,9 @@ import { LinkContainer } from 'react-router-bootstrap';
 import '../../css/app.css';
 
 import history from '../common/history';
-import { FWApiClient } from '../api/api';
+import FWApiClient from '../api/api';
 
-import { Navigation } from './Navigation';
+import Navigation from '../components/Navigation';
 
 const chrome = window.chrome;
 
@@ -29,7 +29,7 @@ type MainState = {
   extensionInstallMsgDismissed: boolean,
 };
 
-export class Main extends Component {
+export default class Main extends Component {
   state: MainState;
 
   constructor() {

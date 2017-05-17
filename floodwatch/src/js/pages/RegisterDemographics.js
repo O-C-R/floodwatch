@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { Col } from 'react-bootstrap';
-import { FWApiClient } from '../api/api';
+
+import FWApiClient from '../api/api';
 import history from '../common/history';
 import { ProfileExplanation, DemographicContainer } from './Profile';
 
@@ -17,7 +18,7 @@ function initialState(): State {
   };
 }
 
-export class RegisterDemographics extends Component {
+export default class RegisterDemographics extends Component {
   state: State;
 
   constructor() {

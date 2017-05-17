@@ -6,11 +6,11 @@ import { Row, Col } from 'react-bootstrap';
 import * as d3 from 'd3';
 import _ from 'lodash';
 
-import colors from './colors';
+import colors from '../common/colors';
 import TopicKeys from '../../stubbed_data/topic_keys.json';
-import { createSentence } from './comparisontools';
+import { createSentence } from '../common/comparisontools';
 
-import type { VisibilityMap } from './Compare';
+import type { VisibilityMap } from '../common/filtertypes';
 import type { FilterResponse } from '../api/types';
 
 type StackedData = Array<{

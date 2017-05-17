@@ -14,7 +14,7 @@ import {
 } from 'react-bootstrap';
 import { Location } from 'react-router';
 
-import { FWApiClient, AuthenticationError, APIError } from '../api/api';
+import FWApiClient, { AuthenticationError, APIError } from '../api/api';
 import history from '../common/history';
 
 type Props = {
@@ -29,7 +29,7 @@ type State = {
   error: ?string,
 };
 
-export class ResetPassword extends Component {
+export default class ResetPassword extends Component {
   props: Props;
   state: State;
 

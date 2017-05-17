@@ -16,7 +16,7 @@ import type {
   Preset,
   PresetsAndFilters,
   FilterJSON,
-} from './filtertypes.js';
+} from '../common/filtertypes.js';
 import type { PersonResponse } from '../api/types';
 
 import Filters from '../../stubbed_data/filter_response.json';

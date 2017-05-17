@@ -10,7 +10,7 @@ import type {
   FilterResponse,
   FilterRequestItem,
 } from '../api/types';
-import type { VisibilityMap } from './Compare.js';
+import type { VisibilityMap } from '../common/filtertypes';
 
 type Props = {
   leftData: ?FilterResponse,

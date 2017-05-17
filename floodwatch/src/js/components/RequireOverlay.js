@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Popover, Button } from 'react-bootstrap';
 
-export class RequireOverlay extends Component {
+export default class RequireOverlay extends Component {
   updateUserInfo() {
     // tk
   }

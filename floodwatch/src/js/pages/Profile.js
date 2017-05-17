@@ -12,14 +12,14 @@ import {
 import _ from 'lodash';
 import Filters from '../../stubbed_data/filter_response.json';
 
-import { FWApiClient } from '../api/api';
+import FWApiClient from '../api/api';
 import type { PersonDemographics } from '../api/types';
-import { AgeOption, LocationOption, DefaultOption } from './ProfileOptions';
+import { AgeOption, LocationOption, DefaultOption } from '../components/ProfileOptions';
 import scrollTo from 'scroll-to';
 
 const TO_PICK = ['birth_year', 'twofishes_id', 'demographic_ids']; // stripping out admin, timestamp, etc.--other things that are set on the backend
 
-export class ProfilePage extends Component {
+export default class ProfilePage extends Component {
   render() {
     return (
       <Col xs={10} xsOffset={1} md={8} mdOffset={2}>

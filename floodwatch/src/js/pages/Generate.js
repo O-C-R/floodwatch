@@ -4,22 +4,21 @@ import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import url from 'url';
 
-import ChartContainer from './ChartContainer';
+import ChartContainer from '../components/ChartContainer';
 
 import type {
   FilterResponse,
   GalleryImageData,
   FilterRequestItem,
 } from '../api/types';
-import type { VisibilityMap } from './Compare';
+import type { VisibilityMap } from '../common/filtertypes';
 
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
   decodeFilterRequestItem,
-} from './comparisontools';
-import { Chart } from './Chart';
+} from '../common/comparisontools';
 
 type StateType = {
   dataA: ?FilterResponse,

@@ -11,7 +11,7 @@ import {
 } from 'react-bootstrap';
 import history from '../common/history';
 
-export class Landing extends Component {
+export default class Landing extends Component {
   handleJoinUs() {
     history.push('/register');
   }

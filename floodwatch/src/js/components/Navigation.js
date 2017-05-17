@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 import { Grid, Nav, Navbar, NavItem, Row, Col } from 'react-bootstrap';
 
 import history from '../common/history';
-import { FWApiClient } from '../api/api';
+import FWApiClient from '../api/api';
 
 type NavigationProps = {
   navs: Array<{ to?: string, name: string, action?: Function }>,
@@ -13,7 +13,7 @@ type NavigationProps = {
 
 type NavigationState = {};
 
-export class Navigation extends Component {
+export default class Navigation extends Component {
   props: NavigationProps;
   state: NavigationState;
 
