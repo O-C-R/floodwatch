@@ -66,3 +66,25 @@ export type GalleryImageResponse = {
   url: string,
   created_at: string,
 };
+
+export type ImpressionsRequest = {
+  before?: string,
+  limit?: number,
+};
+
+export type ImpressionResponseItem = {
+  id: string,
+  ad_id: string,
+  category_id: number,
+  classifier_output: {
+    tags?: { [key: string]: number },
+    'is ad'?: number,
+    'is not ad'?: number,
+  },
+  top_url: string,
+  timestamp: string,
+};
+
+export type ImpressionsResponse = {
+  impressions: ImpressionResponseItem[],
+};

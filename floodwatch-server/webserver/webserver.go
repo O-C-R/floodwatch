@@ -123,6 +123,7 @@ func New(options *Options) (*Webserver, error) {
 	// server. Named this way to avoid ad blockers.
 	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
 	apiRouter.Handle("/recorded_ads/screenshot", secureRoute(GenerateScreenshot(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads/impressions", secureRoute(GetPagedImpressions(options), auth, secure)).Methods("GET")
 
 	apiRouter.Handle("/gallery/image/{imageSlug}", RateLimitHandler(GetGalleryImage(options), options, 10/60e9, 30)).Methods("GET")
 

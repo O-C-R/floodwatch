@@ -111,6 +111,7 @@ export class Main extends Component {
     // Navs have to be designed here because we're passing handleLogout
     const SIGNED_IN_NAVS = [
       { name: 'Compare', to: '/compare' },
+      { name: 'My Ads', to: '/myads' },
       { name: 'Profile', to: '/profile' },
       { name: 'FAQ', to: '/faq' },
       { name: 'Logout', to: '/logout', action: this.handleLogout.bind(this) },

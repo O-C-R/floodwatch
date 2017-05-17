@@ -16,6 +16,7 @@ import { Faq } from './components/Faq';
 import { Compare } from './components/Compare';
 import Generate from './components/Generate';
 import GalleryImage from './components/GalleryImage';
+import MyAds from './components/MyAds';
 import { Landing } from './components/Landing';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
@@ -70,6 +71,7 @@ export class App extends Component {
           <Route path="/reset_password" component={ResetPassword} />
 
           <Route path="compare" component={Compare} onEnter={requireAuth} />
+          <Route path="myads" component={MyAds} onEnter={requireAuth} />
 
           <Route path="profile" component={ProfilePage} onEnter={requireAuth} />
         </Route>

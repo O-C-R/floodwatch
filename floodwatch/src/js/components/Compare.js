@@ -436,10 +436,10 @@ export class Compare extends Component {
                       name="twitter"
                       style={{ pointerEvents: 'none' }} />}
                   {loadingTwitter &&
-                    <div>
-                      <i className="fa fa-cog fa-spin fa-fw" />
-                      <span className="sr-only">Loading...</span>
-                    </div>}
+                    <FontAwesome
+                      name="cog"
+                      spin
+                      style={{ pointerEvents: 'none' }} />}
                 </button>
                 <button
                   className="chart-actions_share btn btn-default button"
@@ -451,10 +451,10 @@ export class Compare extends Component {
                       name="facebook"
                       style={{ pointerEvents: 'none' }} />}
                   {loadingFacebook &&
-                    <div>
-                      <i className="fa fa-cog fa-spin fa-fw" />
-                      <span className="sr-only">Loading...</span>
-                    </div>}
+                    <FontAwesome
+                      name="cog"
+                      spin
+                      style={{ pointerEvents: 'none' }} />}
                 </button>
               </div>
             </Col>

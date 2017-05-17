@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -392,6 +393,52 @@ func GenerateScreenshot(options *Options) http.Handler {
 			Error(w, errors.Wrap(err, "couldn't serialize response"), 500)
 			return
 		}
+
+		WriteJSON(w, res)
+	})
+}
+
+type PagedImpressionsQuery struct {
+	Before *time.Time
+	Limit  int
+}
+
+func GetPagedImpressions(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
+			return
+		}
+
+		queryParams := PagedImpressionsQuery{
+			Limit: 100,
+		}
+		query := req.URL.Query()
+
+		beforeStr := query.Get("before")
+		if beforeStr != "" {
+			before, err := time.Parse(time.RFC3339, beforeStr)
+			if err == nil {
+				queryParams.Before = &before
+			}
+		}
+
+		limitStr := query.Get("limit")
+		if limitStr != "" {
+			limit, err := strconv.Atoi(limitStr)
+			if err == nil && limit <= 1000 && limit > 0 {
+				queryParams.Limit = limit
+			}
+		}
+
+		rows, err := options.Backend.PagedImpressions(session.UserID, queryParams.Before, queryParams.Limit)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		res := make(map[string]interface{})
+		res["impressions"] = rows
 
 		WriteJSON(w, res)
 	})

@@ -11,6 +11,8 @@ import type {
   PersonDemographics,
   GalleryImageRequest,
   GalleryImageResponse,
+  ImpressionsRequest,
+  ImpressionsResponse,
 } from './types';
 
 export class APIError extends BaseError {
@@ -281,5 +283,9 @@ export class FWApiClient extends APIClient {
 
   getGalleryImage(slug: string): Promise<GalleryImageResponse> {
     return this.getJSON(`/api/gallery/image/${slug}`);
+  }
+
+  getImpressionsPaged(req: ImpressionsRequest): Promise<ImpressionsResponse> {
+    return this.getJSON('/api/recorded_ads/impressions', req);
   }
 }

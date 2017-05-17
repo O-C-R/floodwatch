@@ -2,14 +2,15 @@ package backend
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/O-C-R/auth/id"
 	"github.com/O-C-R/sqlutil"
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
+	"github.com/pkg/errors"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
@@ -27,6 +28,19 @@ LEFT JOIN person.person_demographic_aggregate on person.person_demographic_aggre
 %s
 GROUP BY ad.category.id, ad.category.name
 ORDER BY ad.category.id ASC;`
+
+	impressionAdsPaged = `SELECT
+person.impression.id as impression_id,
+ad.ad.id as ad_id,
+ad.ad.category_id as category_id,
+ad.ad.classifier_output as classifier_output,
+person.impression.top_url as top_url,
+person.impression.timestamp as timestamp
+FROM person.impression
+INNER JOIN ad.ad ON ad.ad.id = person.impression.ad_id
+WHERE %s
+ORDER by timestamp DESC
+LIMIT :limit;`
 
 	personDemographicDelete = `DELETE FROM person.person_demographic WHERE person_id = ? AND demographic_id NOT IN (?)`
 )
@@ -55,8 +69,10 @@ type Backend struct {
 	addAd, upsertAd, updateAd sqlutil.ValueFunc
 	updateAdFromClassifier    *sql.Stmt
 
-	upsertImpression sqlutil.ValueFunc
-	upsertSite       sqlutil.ValueFunc
+	upsertImpression    sqlutil.ValueFunc
+	getImpressionsPaged *sqlx.Stmt
+
+	upsertSite sqlutil.ValueFunc
 
 	addGalleryImage       sqlutil.ValueFunc
 	getGalleryImageBySlug *sqlx.Stmt
@@ -512,6 +528,46 @@ func (b *Backend) FilteredAds(f data.PersonFilter, contextPersonId id.ID) (*data
 	}
 
 	return ret, nil
+}
+
+func (b *Backend) PagedImpressions(personId id.ID, before *time.Time, limit int) (*[]data.ImpressionResult, error) {
+	whereClauses := make([]string, 0)
+	params := make(map[string]interface{})
+
+	params["limit"] = limit
+
+	whereClauses = append(whereClauses, "person.impression.person_id = :personId")
+	params["personId"] = personId
+
+	if before != nil {
+		whereClauses = append(whereClauses, "timestamp < :timestamp")
+		params["timestamp"] = before
+	}
+
+	whereStr := ""
+	if len(whereClauses) > 0 {
+		whereStr = strings.Join(whereClauses, " AND ")
+	}
+	query := fmt.Sprintf(impressionAdsPaged, whereStr)
+
+	query, args, err := sqlx.Named(query, params)
+	query = b.db.Rebind(query)
+	rows, err := b.db.Queryx(query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	impressionRows := make([]data.ImpressionResult, 0)
+	for rows.Next() {
+		impressionRow := data.ImpressionResult{}
+		err := rows.StructScan(&impressionRow)
+		if err != nil {
+			return nil, errors.Wrap(err, "couldnt parse row")
+		}
+		impressionRows = append(impressionRows, impressionRow)
+	}
+
+	return &impressionRows, nil
 }
 
 func init() {
