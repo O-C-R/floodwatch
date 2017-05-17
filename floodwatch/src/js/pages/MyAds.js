@@ -82,7 +82,13 @@ export default class MyAds extends Component {
   }
 
   render() {
-    const { impressions, requesting, canRequest, modalOpen, selectedImpression } = this.state;
+    const {
+      impressions,
+      requesting,
+      canRequest,
+      modalOpen,
+      selectedImpression,
+    } = this.state;
 
     let selectedUrl = '';
     if (selectedImpression) {
@@ -96,7 +102,8 @@ export default class MyAds extends Component {
         const categoryName = TopicKeys[selectedImpression.category_id];
         let categoryScore = null;
         if (selectedImpression.classifier_output.tags) {
-          categoryScore = selectedImpression.classifier_output.tags[categoryName];
+          categoryScore =
+            selectedImpression.classifier_output.tags[categoryName];
         }
 
         if (categoryScore) {
@@ -147,7 +154,9 @@ export default class MyAds extends Component {
                   seen {moment(selectedImpression.timestamp).fromNow()}
                 </span>
               </div>
-              <button className="close" onClick={() => this.setState({ modalOpen: false })}>
+              <button
+                className="close"
+                onClick={() => this.setState({ modalOpen: false })}>
                 <FontAwesome name="times" />
               </button>
             </Modal>}
@@ -168,7 +177,9 @@ export default class MyAds extends Component {
                 ))}
             </div>
             <div className="bottom">
-              {!requesting && canRequest && <Waypoint onEnter={this.requestPage.bind(this)} />}
+              {!requesting &&
+                canRequest &&
+                <Waypoint onEnter={this.requestPage.bind(this)} />}
               {requesting && <FontAwesome name="cog" spin />}
               {!canRequest && <FontAwesome name="check" />}
             </div>

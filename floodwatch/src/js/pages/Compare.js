@@ -10,10 +10,23 @@ import FontAwesome from 'react-fontawesome';
 import FWApiClient from '../api/api';
 import ChartContainer from '../components/ChartContainer';
 import ComparisonModal from '../components/ComparisonModal';
-import { getVisibilityMap, generateDifferenceSentence, createSentence } from '../common/comparisontools';
+import {
+  getVisibilityMap,
+  generateDifferenceSentence,
+  createSentence,
+} from '../common/comparisontools';
 
-import type { Preset, Filter, FilterLogic, VisibilityMap } from '../common/filtertypes';
-import type { PersonResponse, FilterResponse, FilterRequestItem } from '../api/types';
+import type {
+  Preset,
+  Filter,
+  FilterLogic,
+  VisibilityMap,
+} from '../common/filtertypes';
+import type {
+  PersonResponse,
+  FilterResponse,
+  FilterRequestItem,
+} from '../api/types';
 
 import DemographicKeys from '../../stubbed_data/demographic_keys.json';
 import Filters from '../../stubbed_data/filter_response.json';
@@ -170,7 +183,10 @@ export default class Compare extends Component {
   }
 
   generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
-    const isPersonal = _.find(filter, f => f.name === 'data' && f.choices[0] === 'You');
+    const isPersonal = _.find(
+      filter,
+      f => f.name === 'data' && f.choices[0] === 'You',
+    );
     if (isPersonal) {
       return { personal: true };
     }
@@ -249,7 +265,10 @@ export default class Compare extends Component {
             curInfo[i].logic = info.logic;
           }
         } else {
-          curInfo[i].choices = _.filter(curInfo[i].choices, (n: string) => n !== info.choices[0]);
+          curInfo[i].choices = _.filter(
+            curInfo[i].choices,
+            (n: string) => n !== info.choices[0],
+          );
         }
 
         found = true;
@@ -384,8 +403,12 @@ export default class Compare extends Component {
       loadingFacebook,
     } = this.state;
 
-    const lVal = currentTopic && leftData ? leftData.categories[currentTopic] : 0;
-    const rVal = currentTopic && rightData ? rightData.categories[currentTopic] : 0;
+    const lVal = currentTopic && leftData
+      ? leftData.categories[currentTopic]
+      : 0;
+    const rVal = currentTopic && rightData
+      ? rightData.categories[currentTopic]
+      : 0;
     const sentence = generateDifferenceSentence(
       leftOptions,
       rightOptions,
@@ -397,8 +420,10 @@ export default class Compare extends Component {
     const lSentence = createSentence(leftOptions);
     const rSentence = createSentence(rightOptions);
 
-    const leftPersonal = leftOptions.length > 0 && leftOptions[0].name === 'data';
-    const rightPersonal = rightOptions.length > 0 && rightOptions[0].name === 'data';
+    const leftPersonal =
+      leftOptions.length > 0 && leftOptions[0].name === 'data';
+    const rightPersonal =
+      rightOptions.length > 0 && rightOptions[0].name === 'data';
 
     return (
       <div className="main compare" onClick={this.onBodyClick.bind(this)}>
@@ -428,19 +453,33 @@ export default class Compare extends Component {
                 </button>
                 <button
                   className="chart-actions_share btn btn-default button"
-                  onClick={!loadingTwitter ? this.shareTwitter.bind(this) : null}>
+                  onClick={
+                    !loadingTwitter ? this.shareTwitter.bind(this) : null
+                  }>
                   {!loadingTwitter &&
-                    <FontAwesome name="twitter" style={{ pointerEvents: 'none' }} />}
+                    <FontAwesome
+                      name="twitter"
+                      style={{ pointerEvents: 'none' }} />}
                   {loadingTwitter &&
-                    <FontAwesome name="cog" spin style={{ pointerEvents: 'none' }} />}
+                    <FontAwesome
+                      name="cog"
+                      spin
+                      style={{ pointerEvents: 'none' }} />}
                 </button>
                 <button
                   className="chart-actions_share btn btn-default button"
-                  onClick={!loadingFacebook ? this.shareFacebook.bind(this) : null}>
+                  onClick={
+                    !loadingFacebook ? this.shareFacebook.bind(this) : null
+                  }>
                   {!loadingFacebook &&
-                    <FontAwesome name="facebook" style={{ pointerEvents: 'none' }} />}
+                    <FontAwesome
+                      name="facebook"
+                      style={{ pointerEvents: 'none' }} />}
                   {loadingFacebook &&
-                    <FontAwesome name="cog" spin style={{ pointerEvents: 'none' }} />}
+                    <FontAwesome
+                      name="cog"
+                      spin
+                      style={{ pointerEvents: 'none' }} />}
                 </button>
               </div>
             </Col>

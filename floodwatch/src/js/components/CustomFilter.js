@@ -17,8 +17,6 @@ import type {
 } from '../common/filtertypes.js';
 import type { DemographicDictionary } from './FindInDemographics';
 
-
-
 type PropType = {
   handleFilterClick: (obj: Filter, checked: boolean) => void,
   updateSearchLogic: (logic: FilterLogic, filtername: string) => void,
@@ -92,7 +90,10 @@ export class CustomFilter extends Component {
       };
 
       let checked = false;
-      if (this.props.mySelection && this.props.mySelection.choices.includes(opt.name)) {
+      if (
+        this.props.mySelection &&
+        this.props.mySelection.choices.includes(opt.name)
+      ) {
         checked = true;
       }
 
