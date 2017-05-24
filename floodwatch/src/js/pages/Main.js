@@ -1,16 +1,7 @@
 // @flow
 import React, { Component } from 'react';
-import {
-  Grid,
-  Nav,
-  Navbar,
-  NavItem,
-  Row,
-  Col,
-  Button,
-  Alert,
-} from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Grid, Row, Button, Alert } from 'react-bootstrap';
+import log from 'loglevel';
 
 import '../../css/app.css';
 
@@ -21,7 +12,11 @@ import Navigation from '../components/Navigation';
 
 const chrome = window.chrome;
 
-type MainState = {
+type Props = {
+  children: any,
+};
+
+type State = {
   user: ?Object,
   message: ?string,
   messageClearTimeout: ?number,
@@ -30,10 +25,11 @@ type MainState = {
 };
 
 export default class Main extends Component {
-  state: MainState;
+  props: Props;
+  state: State;
 
-  constructor() {
-    super();
+  constructor(props: Props) {
+    super(props);
 
     this.state = {
       user: null,
@@ -98,7 +94,7 @@ export default class Main extends Component {
         this.setState({ extensionInstalled: true });
       },
       (err) => {
-        console.error(err);
+        log.error(err);
       },
     );
   }
@@ -108,6 +104,8 @@ export default class Main extends Component {
   }
 
   render() {
+    const { children } = this.props;
+
     // Navs have to be designed here because we're passing handleLogout
     const SIGNED_IN_NAVS = [
       { name: 'Compare', to: '/compare' },
@@ -152,8 +150,8 @@ export default class Main extends Component {
           <Navigation navs={navs} />
         </Row>
         <Row>
-          {this.props.children &&
-            React.cloneElement(this.props.children, {
+          {children &&
+            React.cloneElement(children, {
               showMessage: this.showMessage.bind(this),
               loginChanged: this.loadUserFromServer.bind(this),
               handleLogout: this.handleLogout.bind(this),

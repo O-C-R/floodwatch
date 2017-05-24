@@ -1,109 +1,89 @@
 // @flow
 
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import { Row, Col } from 'react-bootstrap';
-import d3 from 'd3';
-import _ from 'lodash';
 import FontAwesome from 'react-fontawesome';
 
 import FWApiClient from '../api/api';
 import ChartContainer from '../components/ChartContainer';
-import ComparisonModal from '../components/ComparisonModal';
+import ComparisonModal from '../components/comparison_modal/ComparisonModal';
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
 } from '../common/comparisontools';
 
-import type {
-  Preset,
-  Filter,
-  FilterLogic,
-  VisibilityMap,
-} from '../common/filtertypes';
+import type { VisibilityMap, FilterPresetsJSON } from '../common/types';
 import type {
   PersonResponse,
   FilterResponse,
   FilterRequestItem,
 } from '../api/types';
 
-import DemographicKeys from '../../stubbed_data/demographic_keys.json';
-import Filters from '../../stubbed_data/filter_response.json';
-import TopicKeys from '../../stubbed_data/topic_keys.json';
+const FILTER_PRESETS: FilterPresetsJSON = require('../../data/filter_presets.json');
 
-type StateType = {
-  leftOptions: Array<Filter>,
-  rightOptions: Array<Filter>,
+function socialWindow(
+  url: string,
+  network: string,
+  { height = 570, width = 570 }: { height?: number, width?: number } = {},
+) {
+  const left = (window.screen.width - width) / 2;
+  const top = (window.screen.height - height) / 2;
+  const params = `menubar=no,toolbar=no,status=no,scrollbars=no,width=${width},height=${height},top=${top},left=${left}`;
+  window.open(url, network, params);
+}
+
+type State = {
+  leftFilter: FilterRequestItem,
+  rightFilter: FilterRequestItem,
   visibilityMap: VisibilityMap,
   leftData: ?FilterResponse,
   rightData: ?FilterResponse,
-  currentTopic: ?string,
+  currentCategoryId: ?number,
   modalVisible: boolean,
   userData: ?PersonResponse,
-  updateCurrentTopic: boolean,
+  updateCurrentCategoryId: boolean,
   loadingTwitter: boolean,
   loadingFacebook: boolean,
 };
 
-function CompareContainerInitialState(): StateType {
-  return {
-    leftOptions: Filters.presets[0].filters,
-    rightOptions: Filters.presets[1].filters,
-    leftData: null,
-    rightData: null,
-    visibilityMap: {},
-    currentTopic: null,
-    modalVisible: false,
-    userData: null,
-    updateCurrentTopic: true,
-    loadingTwitter: false,
-    loadingFacebook: false,
-  };
-}
-
 export default class Compare extends Component {
-  state: StateType;
+  state: State;
+
+  node: ?Element;
   scrollHeight: ?number;
   scrollTop: ?number;
 
-  constructor(): void {
-    super();
-    this.state = CompareContainerInitialState();
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      leftFilter: FILTER_PRESETS.presets[0].filter,
+      rightFilter: FILTER_PRESETS.presets[1].filter,
+      leftData: null,
+      rightData: null,
+      visibilityMap: {},
+      currentCategoryId: null,
+      modalVisible: false,
+      userData: null,
+      updateCurrentCategoryId: true,
+      loadingTwitter: false,
+      loadingFacebook: false,
+    };
   }
 
   componentDidMount() {
     const init = async () => {
-      const filterA = this.generateFilterRequestItem(this.state.leftOptions);
-      const filterB = this.generateFilterRequestItem(this.state.rightOptions);
-      const cleanedFilterA = this.cleanFilterRequest(filterA);
-      const cleanedFilterB = this.cleanFilterRequest(filterB);
+      const userData = await FWApiClient.get().getCurrentPerson();
+      this.setState({ userData });
 
-      const adBreakdown = await FWApiClient.get().getFilteredAdCounts({
-        filter_a: cleanedFilterA,
-        filter_b: cleanedFilterB,
-      });
-
-      const leftData = adBreakdown.data_a;
-      const rightData = adBreakdown.data_b;
-      const visibilityMap = getVisibilityMap(leftData, rightData);
-
-      const UserData = await FWApiClient.get().getCurrentPerson();
-
-      this.setState({
-        leftData,
-        rightData,
-        visibilityMap,
-        currentTopic: null,
-        userData: UserData,
-        updateCurrentTopic: true,
-      });
+      const { leftFilter, rightFilter } = this.state;
+      await this.updateData(leftFilter, rightFilter);
     };
     init();
   }
 
   componentWillUpdate() {
-    const node = ReactDOM.findDOMNode(this);
+    const { node } = this;
     if (node && node instanceof Element) {
       this.scrollHeight = node.scrollHeight;
       this.scrollTop = node.scrollTop;
@@ -111,7 +91,7 @@ export default class Compare extends Component {
   }
 
   componentDidUpdate() {
-    const node = ReactDOM.findDOMNode(this);
+    const { node } = this;
     if (
       node &&
       node instanceof Element &&
@@ -124,184 +104,41 @@ export default class Compare extends Component {
     }
   }
 
-  mouseEnterHandler(newTopic: string): void {
-    if (newTopic !== 'Other' && this.state.updateCurrentTopic) {
-      this.setState({
-        currentTopic: newTopic,
-      });
+  mouseEnterHandler(categoryId: number): void {
+    if (this.state.updateCurrentCategoryId) {
+      this.setState({ currentCategoryId: categoryId });
     }
   }
 
   mouseLeaveHandler() {
-    if (this.state.updateCurrentTopic) {
+    if (this.state.updateCurrentCategoryId) {
+      this.setState({ currentCategoryId: null });
+    }
+  }
+
+  mouseClickHandler(categoryId: ?number): void {
+    if (categoryId === null || categoryId === undefined) {
+      return;
+    }
+
+    if (this.state.updateCurrentCategoryId) {
       this.setState({
-        currentTopic: null,
+        currentCategoryId: categoryId,
+        updateCurrentCategoryId: false,
+      });
+    } else {
+      this.setState({
+        currentCategoryId: categoryId,
+        updateCurrentCategoryId: false,
       });
     }
   }
 
-  mouseClickHandler(newTopic: string): void {
-    if (newTopic !== 'Other') {
-      if (this.state.updateCurrentTopic) {
-        this.setState({
-          currentTopic: newTopic,
-          updateCurrentTopic: false,
-        });
-      } else {
-        this.setState({
-          currentTopic: newTopic,
-          updateCurrentTopic: false,
-        });
-      }
-    }
-  }
-
-  updateSearchLogic(side: string, logic: FilterLogic, filtername: string) {
-    let curInfo = [];
-    if (side === 'left') {
-      curInfo = _.cloneDeep(this.state.leftOptions);
-    } else if (side === 'right') {
-      curInfo = _.cloneDeep(this.state.rightOptions);
-    }
-
-    let found = false;
-    for (let i = 0; i < curInfo.length; i++) {
-      if (curInfo[i].name === filtername) {
-        curInfo[i].logic = logic;
-        found = true;
-      }
-    }
-    if (found === false) {
-      curInfo.push({ name: filtername, logic, choices: [] });
-    }
-
-    if (side === 'left') {
-      this.updateData(curInfo, this.state.rightOptions);
-    } else if (side === 'right') {
-      this.updateData(this.state.leftOptions, curInfo);
-    }
-  }
-
-  generateFilterRequestItem(filter: Array<Filter>): FilterRequestItem {
-    const isPersonal = _.find(
-      filter,
-      f => f.name === 'data' && f.choices[0] === 'You',
+  setFilters(left: ?FilterRequestItem, right: ?FilterRequestItem): void {
+    this.updateData(
+      left || this.state.leftFilter,
+      right || this.state.rightFilter,
     );
-    if (isPersonal) {
-      return { personal: true };
-    }
-
-    const obj: FilterRequestItem = {
-      demographics: [],
-    };
-
-    for (const f of filter) {
-      if (f.name === 'age') {
-        if (f.choices[0]) {
-          const min = parseInt(f.choices[0].split('-')[0], 10);
-          const max = parseInt(f.choices[0].split('-')[1], 10);
-          obj.age = {
-            min,
-            max,
-          };
-        }
-      } else if (f.name === 'country') {
-        obj.location = {
-          country_codes: f.choices,
-        };
-      } else {
-        const arr = [];
-        const myCategoryId = DemographicKeys.category_to_id[f.name];
-        for (const choice of f.choices) {
-          for (const key of DemographicKeys.demographic_keys) {
-            if (key.name === choice && key.category_id === myCategoryId) {
-              arr.push(key.id);
-            }
-          }
-        }
-        if (obj.demographics) {
-          obj.demographics.push({ operator: f.logic, values: arr });
-        }
-      }
-    }
-    return obj;
-  }
-
-  cleanFilterRequest(filter: FilterRequestItem): FilterRequestItem {
-    if (!filter.demographics) {
-      return filter;
-    }
-
-    if (filter.demographics.length === 0) {
-      return filter;
-    }
-
-    for (let i = filter.demographics.length - 1; i >= 0; i--) {
-      if (filter.demographics[i].values.length === 0) {
-        filter.demographics.splice(i, 1);
-      }
-    }
-    return filter;
-  }
-
-  changeCategoriesCustom(side: string, info: Filter, checked: boolean): void {
-    let curInfo = [];
-    if (side === 'left') {
-      curInfo = _.cloneDeep(this.state.leftOptions);
-    } else if (side === 'right') {
-      curInfo = _.cloneDeep(this.state.rightOptions);
-    }
-
-    let found = false;
-
-    for (let i = 0; i < curInfo.length; i++) {
-      if (curInfo[i].name === info.name) {
-        if (checked) {
-          if (info.name === 'age' || info.name === 'country') {
-            // special case for age
-            curInfo[i].choices = info.choices; // treat it like a radio button: only 1 choice allowed
-          } else {
-            curInfo[i].choices = _.union(curInfo[i].choices, info.choices);
-            curInfo[i].logic = info.logic;
-          }
-        } else {
-          curInfo[i].choices = _.filter(
-            curInfo[i].choices,
-            (n: string) => n !== info.choices[0],
-          );
-        }
-
-        found = true;
-      }
-    }
-
-    if (!found && checked) {
-      curInfo.push(info);
-    }
-
-    // fixing something stupid for when the filter is You
-    for (const [index: number, info: Filter] of curInfo.entries()) {
-      if (info.name === 'data') {
-        curInfo.splice(index, 1);
-      } else if (info.choices.length === 0) {
-        // this feels like it should be handled by the above _.filter but it's not...
-        curInfo.splice(index, 1);
-      }
-    }
-
-    if (side === 'left') {
-      this.updateData(curInfo, this.state.rightOptions);
-    } else if (side === 'right') {
-      this.updateData(this.state.leftOptions, curInfo);
-    }
-  }
-
-  changeCategoriesPreset(side: string, info: Preset): void {
-    if (side === 'left') {
-      this.updateData(info.filters, this.state.rightOptions);
-    } else if (side === 'right') {
-      this.updateData(this.state.leftOptions, info.filters);
-    }
   }
 
   toggleComparisonModal(): void {
@@ -311,31 +148,29 @@ export default class Compare extends Component {
     });
   }
 
-  async updateData(left: Array<Filter>, right: Array<Filter>) {
-    const filterA = this.generateFilterRequestItem(left);
-    const filterB = this.generateFilterRequestItem(right);
-
-    const cleanedFilterA = this.cleanFilterRequest(filterA);
-    const cleanedFilterB = this.cleanFilterRequest(filterB);
-
+  async updateData(left: FilterRequestItem, right: FilterRequestItem) {
     const adBreakdown = await FWApiClient.get().getFilteredAdCounts({
-      filter_a: cleanedFilterA,
-      filter_b: cleanedFilterB,
+      filter_a: left,
+      filter_b: right,
     });
+
+    const { data_a: dataA, data_b: dataB } = adBreakdown;
+    const visibilityMap = getVisibilityMap(dataA, dataB);
 
     this.setState({
       leftData: adBreakdown.data_a,
       rightData: adBreakdown.data_b,
-      leftOptions: left,
-      rightOptions: right,
+      visibilityMap,
+      leftFilter: left,
+      rightFilter: right,
     });
   }
 
   async shareComparison(): Promise<string> {
     const req = {
-      filter_a: this.generateFilterRequestItem(this.state.leftOptions),
-      filter_b: this.generateFilterRequestItem(this.state.rightOptions),
-      cur_topic: this.state.currentTopic,
+      filter_a: this.state.leftFilter,
+      filter_b: this.state.rightFilter,
+      cur_category_id: this.state.currentCategoryId,
     };
 
     const res = await FWApiClient.get().requestGalleryImage(req);
@@ -349,7 +184,7 @@ export default class Compare extends Component {
     const via = 'floodwatchapp';
     const intentUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURI(galleryUrl)}&via=${via}`;
 
-    this.socialWindow(intentUrl, 'twitter', { height: 253 });
+    socialWindow(intentUrl, 'twitter', { height: 253 });
     this.setState({ loadingTwitter: false });
   }
 
@@ -358,19 +193,8 @@ export default class Compare extends Component {
     const galleryUrl = await this.shareComparison();
     const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURI(galleryUrl)}`;
 
-    this.socialWindow(shareUrl, 'facebook');
+    socialWindow(shareUrl, 'facebook');
     this.setState({ loadingFacebook: false });
-  }
-
-  socialWindow(
-    url: string,
-    network: string,
-    { height = 570, width = 570 }: { height?: number, width?: number } = {},
-  ) {
-    const left = (screen.width - width) / 2;
-    const top = (screen.height - height) / 2;
-    const params = `menubar=no,toolbar=no,status=no,scrollbars=no,width=${width},height=${height},top=${top},left=${left}`;
-    window.open(url, network, params);
   }
 
   onBodyClick(event: Event) {
@@ -378,57 +202,66 @@ export default class Compare extends Component {
     const tagName = event.target.tagName.toLowerCase();
 
     // Ignore clicks on the buttons or chart
-    if (tagName == 'rect' || tagName == 'button') {
+    if (tagName === 'rect' || tagName === 'button') {
       return;
     }
 
     this.setState({
-      currentTopic: null,
-      updateCurrentTopic: true,
+      currentCategoryId: null,
+      updateCurrentCategoryId: true,
     });
   }
 
   render() {
     const {
-      currentTopic,
+      currentCategoryId,
       userData,
       leftData,
       rightData,
-      leftOptions,
-      rightOptions,
+      leftFilter,
+      rightFilter,
       modalVisible,
-      updateCurrentTopic,
       visibilityMap,
       loadingTwitter,
       loadingFacebook,
     } = this.state;
 
-    const lVal = currentTopic && leftData
-      ? leftData.categories[currentTopic]
+    const lVal = currentCategoryId !== null &&
+      currentCategoryId !== undefined &&
+      leftData
+      ? leftData.categories[currentCategoryId]
       : 0;
-    const rVal = currentTopic && rightData
-      ? rightData.categories[currentTopic]
+    const rVal = currentCategoryId !== null &&
+      currentCategoryId !== undefined &&
+      rightData
+      ? rightData.categories[currentCategoryId]
       : 0;
-    const sentence = generateDifferenceSentence(
-      leftOptions,
-      rightOptions,
-      lVal,
-      rVal,
-      currentTopic,
-    );
+    const sentence = currentCategoryId !== null &&
+      currentCategoryId !== undefined
+      ? generateDifferenceSentence(
+          leftFilter,
+          rightFilter,
+          lVal,
+          rVal,
+          currentCategoryId,
+        )
+      : '';
 
-    const lSentence = createSentence(leftOptions);
-    const rSentence = createSentence(rightOptions);
+    const lSentence = createSentence(leftFilter);
+    const rSentence = createSentence(rightFilter);
 
-    const leftPersonal =
-      leftOptions.length > 0 && leftOptions[0].name === 'data';
-    const rightPersonal =
-      rightOptions.length > 0 && rightOptions[0].name === 'data';
+    const leftPersonal = leftFilter.personal === true;
+    const rightPersonal = rightFilter.personal === true;
 
+    /* eslint-disable jsx-a11y/no-static-element-interactions */
     return (
-      <div className="main compare" onClick={this.onBodyClick.bind(this)}>
+      <div
+        className="main compare"
+        onClick={this.onBodyClick.bind(this)}
+        role="presentation"
+        ref={node => (this.node = node)}>
         <ChartContainer
-          currentTopic={currentTopic}
+          currentCategoryId={currentCategoryId}
           leftSentence={lSentence}
           rightSentence={rSentence}
           leftPersonal={leftPersonal}
@@ -490,13 +323,12 @@ export default class Compare extends Component {
           <ComparisonModal
             visible={modalVisible}
             toggleModal={this.toggleComparisonModal.bind(this)}
-            currentSelectionLeft={leftOptions}
-            currentSelectionRight={rightOptions}
-            changeCategoriesPreset={this.changeCategoriesPreset.bind(this)}
-            changeCategoriesCustom={this.changeCategoriesCustom.bind(this)}
-            updateSearchLogic={this.updateSearchLogic.bind(this)}
+            currentSelectionLeft={leftFilter}
+            currentSelectionRight={rightFilter}
+            setFilters={this.setFilters.bind(this)}
             userData={userData} />}
       </div>
     );
+    /* eslint-enable jsx-a11y/no-static-element-interactions */
   }
 }

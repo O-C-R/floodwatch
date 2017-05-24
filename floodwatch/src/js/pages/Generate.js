@@ -11,28 +11,27 @@ import type {
   GalleryImageData,
   FilterRequestItem,
 } from '../api/types';
-import type { VisibilityMap } from '../common/filtertypes';
+import type { VisibilityMap } from '../common/types';
 
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
-  decodeFilterRequestItem,
 } from '../common/comparisontools';
 
-type StateType = {
+type State = {
   dataA: ?FilterResponse,
   dataB: ?FilterResponse,
   filterA: ?FilterRequestItem,
   filterB: ?FilterRequestItem,
-  curTopic: ?string,
+  currentCategoryId: ?number,
   visibilityMap: VisibilityMap,
   lSentence: string,
   rSentence: string,
-  sentence: string,
+  sentence: ?string,
 };
 
-function initialState(): StateType {
+function initialState(): State {
   let curData: GalleryImageData;
 
   const location = url.parse(window.location.href, true);
@@ -46,35 +45,35 @@ function initialState(): StateType {
   const {
     data_a: dataA,
     data_b: dataB,
-    cur_topic: curTopic,
+    cur_category_id: currentCategoryId,
     filter_a: filterA,
     filter_b: filterB,
   } = curData;
 
   const visibilityMap = getVisibilityMap(dataA, dataB);
-  const lVal = curTopic ? dataA.categories[curTopic] : 0;
-  const rVal = curTopic ? dataB.categories[curTopic] : 0;
+  const lVal = currentCategoryId ? dataA.categories[currentCategoryId] : 0;
+  const rVal = currentCategoryId ? dataB.categories[currentCategoryId] : 0;
 
-  const decodedA = decodeFilterRequestItem(filterA);
-  const decodedB = decodeFilterRequestItem(filterB);
+  const lSentence = createSentence(filterA);
+  const rSentence = createSentence(filterB);
 
-  const lSentence = createSentence(decodedA);
-  const rSentence = createSentence(decodedB);
-
-  const sentence = generateDifferenceSentence(
-    decodedA,
-    decodedB,
-    lVal,
-    rVal,
-    curTopic,
-  );
+  let sentence: ?string;
+  if (currentCategoryId !== undefined && currentCategoryId !== null) {
+    sentence = generateDifferenceSentence(
+      filterA,
+      filterB,
+      lVal,
+      rVal,
+      currentCategoryId,
+    );
+  }
 
   return {
     dataA,
     dataB,
     filterA,
     filterB,
-    curTopic,
+    currentCategoryId,
     visibilityMap,
     lSentence,
     rSentence,
@@ -83,7 +82,7 @@ function initialState(): StateType {
 }
 
 export default class Generate extends Component {
-  state: StateType;
+  state: State;
 
   constructor(props: any) {
     super(props);
@@ -96,11 +95,10 @@ export default class Generate extends Component {
       dataB,
       filterA,
       filterB,
-      curTopic,
+      currentCategoryId,
       visibilityMap,
       lSentence,
       rSentence,
-      sentence,
     } = this.state;
 
     return (
@@ -109,7 +107,7 @@ export default class Generate extends Component {
           {dataA &&
             dataB &&
             <ChartContainer
-              currentTopic={curTopic}
+              currentCategoryId={currentCategoryId}
               leftPersonal={filterA ? filterA.personal : false}
               rightPersonal={filterB ? filterB.personal : false}
               leftSentence={lSentence}

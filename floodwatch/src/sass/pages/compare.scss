@@ -115,3 +115,14 @@
 		margin-top: 10px;
 	}
 }
+
+.logic-option {
+	&-inline {
+		margin-right: 7px;
+		font-weight: normal;
+
+		input[type="radio"] {
+			margin-right: 7px;
+		}
+	}
+}

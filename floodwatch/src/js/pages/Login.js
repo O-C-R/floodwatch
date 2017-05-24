@@ -8,9 +8,8 @@ import FWApiClient, { AuthenticationError } from '../api/api';
 import history from '../common/history';
 
 type Props = {
-  showMessage: Function,
-  loginChanged: Function,
-  user: ?Object,
+  loginChanged: () => void,
+  showMessage: (msg: string, timeout: number) => void,
 };
 
 type State = {
@@ -23,17 +22,11 @@ export default class Login extends Component {
   props: Props;
   state: State;
 
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      username: '',
-      password: '',
-      error: null,
-    };
-
-    // this.refs.username.focus();
-  }
+  state: State = {
+    username: '',
+    password: '',
+    error: null,
+  };
 
   setFormState(e: Event) {
     if (e.target instanceof HTMLInputElement) {
@@ -52,10 +45,13 @@ export default class Login extends Component {
   async handleSubmit(e: Event) {
     e.preventDefault();
 
+    const { showMessage, loginChanged } = this.props;
+
     try {
       await FWApiClient.get().login(this.state.username, this.state.password);
-      this.props.showMessage('Logged in!', 2000);
-      this.props.loginChanged();
+
+      showMessage('Logged in!', 2000);
+      loginChanged();
 
       history.push('/compare');
     } catch (error) {
@@ -70,7 +66,7 @@ export default class Login extends Component {
   render() {
     return (
       <Row>
-        <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
+        <Col xs={10} xsOffset={1} md={6} mdOffset={3}>
           {this.state.error &&
             <div className="alert alert-danger" role="alert">
               Login failed. {this.state.error}
@@ -89,8 +85,7 @@ export default class Login extends Component {
                     placeholder="Username"
                     required
                     value={this.state.username}
-                    onChange={this.setFormState.bind(this)}
-                    ref="username" />
+                    onChange={this.setFormState.bind(this)} />
                 </div>
                 <div className="form-group">
                   <input

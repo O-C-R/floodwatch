@@ -1,0 +1,125 @@
+{
+  "categories": {
+    "age": {
+      "name": "age",
+      "question": "What year were you born?",
+      "why": "In the USA, age is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of their age."
+    },
+    "gender": {
+      "category_id": 3,
+      "name": "gender",
+      "question": "What is your gender identity?",
+      "instruction": "Please choose all that apply.",
+      "why": "A CMU study found that simulated male profiles received ads that were associated with $200,000 jobs six times more often than the simulated female profiles.",
+      "options": [
+        {
+          "id": 17,
+          "name": "Female"
+        },
+        {
+          "id": 18,
+          "name": "Male"
+        },
+        {
+          "id": 19,
+          "name": "Trans"
+        },
+        {
+          "id": 20,
+          "name": "Nonbinary"
+        },
+        {
+          "id": 21,
+          "name": "Other"
+        }
+      ]
+    },
+    "race": {
+      "category_id": 2,
+      "name": "race",
+      "question": "What is your race/ethnicity?",
+      "instruction": "Please choose all that apply.",
+      "why": "See Latanya Sweeney's analysis of racial discrimination in online advertising.",
+      "options": [
+        {
+          "id": 9,
+          "name": "American Indian or Alaska Native"
+        },
+        {
+          "id": 10,
+          "name": "Hispanic, Latino, or Spanish origin"
+        },
+        {
+          "id": 11,
+          "name": "White"
+        },
+        {
+          "id": 12,
+          "name": "Asian"
+        },
+        {
+          "id": 13,
+          "name": "Middle Eastern or North African"
+        },
+        {
+          "id": 14,
+          "name": "Black or African American"
+        },
+        {
+          "id": 15,
+          "name": "Native Hawaiian or Other Pacific Islander"
+        },
+        {
+          "id": 16,
+          "name": "Other"
+        }
+      ]
+    },
+    "religion": {
+      "category_id": 1,
+      "name": "religion",
+      "question": "What is your religion?",
+      "instruction": "Please choose all that apply.",
+      "why": "In the USA, religion is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of their faith.",
+      "options": [
+        {
+          "id": 1,
+          "name": "Muslim"
+        },
+        {
+          "id": 2,
+          "name": "Jewish"
+        },
+        {
+          "id": 3,
+          "name": "Buddhist"
+        },
+        {
+          "id": 4,
+          "name": "Christian"
+        },
+        {
+          "id": 5,
+          "name": "Hindu"
+        },
+        {
+          "id": 6,
+          "name": "Agnostic"
+        },
+        {
+          "id": 7,
+          "name": "None/Atheist"
+        },
+        {
+          "id": 8,
+          "name": "Other"
+        }
+      ]
+    },
+    "location": {
+      "name": "location",
+      "question": "Where do you live?",
+      "why": "In the USA, national origin is a 'protected class', meaning that it is illegal to discriminate against someone on the basis of where they're from."
+    }
+  }
+}

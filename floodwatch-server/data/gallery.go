@@ -12,11 +12,11 @@ import (
 )
 
 type GalleryImageData struct {
-	FilterA  PersonFilter        `json:"filter_a"`
-	FilterB  PersonFilter        `json:"filter_b"`
-	DataA    *FilterResponseItem `json:"data_a"`
-	DataB    *FilterResponseItem `json:"data_b"`
-	CurTopic string              `json:"cur_topic"`
+	FilterA       PersonFilter        `json:"filter_a"`
+	FilterB       PersonFilter        `json:"filter_b"`
+	DataA         *FilterResponseItem `json:"data_a"`
+	DataB         *FilterResponseItem `json:"data_b"`
+	CurCategoryId *int                `json:"cur_category_id"`
 }
 
 type GalleryImage struct {

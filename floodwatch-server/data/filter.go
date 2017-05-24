@@ -1,8 +1,9 @@
 package data
 
 type DemographicFilter struct {
-	Operator string `json:"operator"`
-	Values   []int  `json:"values"`
+	CategoryId int    `json:"category_id"`
+	Operator   string `json:"operator"`
+	Values     []int  `json:"values"`
 }
 
 type RangeFilter struct {
@@ -44,7 +45,7 @@ type FilterResponse struct {
 }
 
 type GenerateRequest struct {
-	FilterA  PersonFilter `json:"filter_a"`
-	FilterB  PersonFilter `json:"filter_b"`
-	CurTopic string       `json:"cur_topic"`
+	FilterA       PersonFilter `json:"filter_a"`
+	FilterB       PersonFilter `json:"filter_b"`
+	CurCategoryId *int         `json:"cur_category_id"`
 }

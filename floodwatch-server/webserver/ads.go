@@ -325,11 +325,11 @@ func GenerateScreenshot(options *Options) http.Handler {
 		}
 
 		galleryImageData := data.GalleryImageData{
-			FilterA:  generateRequest.FilterA,
-			FilterB:  generateRequest.FilterB,
-			DataA:    resA,
-			DataB:    resB,
-			CurTopic: generateRequest.CurTopic,
+			FilterA:       generateRequest.FilterA,
+			FilterB:       generateRequest.FilterB,
+			DataA:         resA,
+			DataB:         resB,
+			CurCategoryId: generateRequest.CurCategoryId,
 		}
 
 		buf := new(bytes.Buffer)

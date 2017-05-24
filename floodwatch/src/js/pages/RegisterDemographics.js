@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { withRouter } from 'react-router';
 import { Col } from 'react-bootstrap';
 
-import FWApiClient from '../api/api';
 import history from '../common/history';
-import { ProfileExplanation, DemographicContainer } from './Profile';
+import ProfileExplanation from '../components/ProfileExplanation';
+import ProfileDemographics
+  from '../components/profile_demographics/ProfileDemographics';
 
 type State = {
   saving: boolean,
@@ -26,10 +26,6 @@ export default class RegisterDemographics extends Component {
     this.state = initialState();
   }
 
-  handleSuccess() {
-    history.push('/compare');
-  }
-
   render() {
     return (
       <Col xs={10} xsOffset={1} md={8} mdOffset={2}>
@@ -39,8 +35,11 @@ export default class RegisterDemographics extends Component {
             <ProfileExplanation />
           </div>
 
-          <DemographicContainer onSuccess={this.handleSuccess.bind(this)} />
-        </div>
+          <ProfileDemographics
+            onSuccess={() => {
+              history.push('/compare');
+            }} />
+        </div>s
       </Col>
     );
   }

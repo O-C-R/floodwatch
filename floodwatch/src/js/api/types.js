@@ -2,17 +2,26 @@
 
 export type PersonResponse = {
   username: string,
+  admin: boolean,
+  birth_year?: number,
+  twofishes_id?: string,
+  country_code?: string,
   demographic_ids: Array<number>,
+  last_seen: string,
+  created_at?: string,
 };
 
-export type PersonDemographics = {
-  birth_year: number,
-  twofishes_id: string,
-  demographic_ids: Array<number>,
+export type PersonDemographicsRequest = {
+  birth_year: ?number,
+  twofishes_id: ?string,
+  demographic_ids: ?Array<number>,
 };
+
+export type FilterLogic = 'or' | 'nor' | 'and';
 
 export type DemographicFilterItem = {
-  operator: 'nor' | 'and' | 'or',
+  category_id: number,
+  operator: FilterLogic,
   values: Array<number>,
 };
 
@@ -34,22 +43,22 @@ export type FilterPair = {
   filter_b: FilterRequestItem,
 };
 
-export type AdCategoryId = string;
-
-export type FiltersResponse = {
-  data_a: FilterResponse,
-  data_b: FilterResponse,
-};
+export type AdCategoryId = number;
 
 export type FilterResponse = {
   categories: { [key: AdCategoryId]: number },
   total_count: number,
 };
 
+export type FiltersResponse = {
+  data_a: FilterResponse,
+  data_b: FilterResponse,
+};
+
 export type GalleryImageRequest = {
   filter_a: FilterRequestItem,
   filter_b: FilterRequestItem,
-  cur_topic: ?string,
+  cur_category_id: ?number,
 };
 
 export type GalleryImageData = {
@@ -57,7 +66,7 @@ export type GalleryImageData = {
   filter_b: FilterRequestItem,
   data_a: FilterResponse,
   data_b: FilterResponse,
-  cur_topic: ?string,
+  cur_category_id: ?number,
 };
 
 export type GalleryImageResponse = {

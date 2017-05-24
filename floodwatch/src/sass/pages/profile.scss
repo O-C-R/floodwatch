@@ -21,14 +21,19 @@
 
     &_learnmore {
         opacity: 0.5;
-        cursor: pointer;
         color: $gray-base;
         margin-left: 5px;
+        background: white;
+        border: none;
 
         transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
 
         &:hover {
             opacity: 1;
+        }
+
+        &:focus {
+          outline: 0;
         }
 
         &.open {
@@ -47,24 +52,11 @@
         }
     }
 
-    .autocomplete {
-        width: 100%;
+    .custom-option {
+      background: white;
 
-        &_input {
-            margin-right: 0;
-        }
-
-        &_options {
-            padding: 15px 20px;
-            background-color: $gray-base;
-            color: white;
-            cursor: pointer;
-            border-bottom: solid 1px $gray-darker;
-
-            &.current {
-                background-color: $brand-primary;
-                border-bottom-color: $brand-primary;
-            }
-        }
+      &:focus {
+        outline: 0;
+      }
     }
 }

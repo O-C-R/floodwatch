@@ -10,9 +10,11 @@ import moment from 'moment';
 import log from 'loglevel';
 
 import FWApiClient from '../api/api';
-import TopicKeys from '../../stubbed_data/topic_keys.json';
 
 import type { ImpressionResponseItem } from '../api/types';
+import type { AdCategoriesJSON } from '../common/types';
+
+const AD_CATEGORIES: AdCategoriesJSON = require('../../data/ad_categories.json');
 
 type State = {
   impressions: ?(ImpressionResponseItem[]),
@@ -99,7 +101,9 @@ export default class MyAds extends Component {
     let selectedTopic = null;
     if (selectedImpression) {
       if (selectedImpression.category_id) {
-        const categoryName = TopicKeys[selectedImpression.category_id];
+        const categoryName =
+          AD_CATEGORIES.categories[selectedImpression.category_id].name;
+
         let categoryScore = null;
         if (selectedImpression.classifier_output.tags) {
           categoryScore =

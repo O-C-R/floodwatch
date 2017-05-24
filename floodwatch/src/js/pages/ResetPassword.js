@@ -1,20 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import {
-  Col,
-  Row,
-  Button,
-  Form,
-  FormGroup,
-  FormControl,
-  ControlLabel,
-  Alert,
-  HelpBlock,
-} from 'react-bootstrap';
+import { Col, Row, FormGroup, FormControl, HelpBlock } from 'react-bootstrap';
 import { Location } from 'react-router';
+import log from 'loglevel';
 
-import FWApiClient, { AuthenticationError, APIError } from '../api/api';
+import FWApiClient, { APIError } from '../api/api';
 import history from '../common/history';
 
 type Props = {
@@ -67,7 +58,7 @@ export default class ResetPassword extends Component {
   async handleSubmit(e: Event) {
     e.preventDefault();
 
-    if (this.state.password != this.state.passwordRepeated) {
+    if (this.state.password !== this.state.passwordRepeated) {
       this.setState({ passwordFeedback: 'Passwords do not match.' });
       return;
     }
@@ -83,12 +74,12 @@ export default class ResetPassword extends Component {
         const apiError: APIError = error;
         if (apiError.response) {
           const responseStatus = apiError.response.status;
-          if (responseStatus == 404) {
+          if (responseStatus === 404) {
             this.setState({
               error: "Your password reset token wasn't found, or that account was deleted.",
             });
             foundError = true;
-          } else if (responseStatus == 403) {
+          } else if (responseStatus === 403) {
             this.setState({
               error: 'Your password reset token expired, you should request another password reset.',
             });
@@ -112,7 +103,7 @@ export default class ResetPassword extends Component {
 
       history.push('/login');
     } catch (error) {
-      console.error(error);
+      log.error(error);
     }
   }
 

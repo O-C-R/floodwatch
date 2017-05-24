@@ -47,15 +47,9 @@ export default class Register extends Component {
   props: Props;
   state: State;
 
-  usernameInput: HTMLInputElement;
-
   constructor(props: Props) {
     super(props);
     this.state = initialState();
-  }
-
-  componentDidMount() {
-    this.usernameInput.focus();
   }
 
   setFormState(e: Event) {
@@ -162,6 +156,7 @@ export default class Register extends Component {
                   </Col>
                   <Col sm={10} xs={12}>
                     <FormControl
+                      autoFocus
                       type="text"
                       id="username"
                       name="username"
@@ -170,10 +165,7 @@ export default class Register extends Component {
                       maxLength="120"
                       pattern="\S{3,}"
                       value={this.state.username}
-                      onChange={this.setFormState.bind(this)}
-                      ref={(r) => {
-                        this.usernameInput = r;
-                      }} />
+                      onChange={this.setFormState.bind(this)} />
                     {this.state.usernameFeedback &&
                       <HelpBlock>{this.state.usernameFeedback}</HelpBlock>}
                     <small id="usernameHelp" className="form-text text-muted">

@@ -1,14 +1,15 @@
 // @flow
 
 import 'whatwg-fetch';
+import _ from 'lodash';
 import log from 'loglevel';
 
 import { BaseError } from '../common/util';
 import type {
   PersonResponse,
+  PersonDemographicsRequest,
   FilterPair,
   FiltersResponse,
-  PersonDemographics,
   GalleryImageRequest,
   GalleryImageResponse,
   ImpressionsRequest,
@@ -57,13 +58,13 @@ export class APIClient {
     }
 
     if (!res.ok) {
-      const body = await res.text();
+      const resBody = await res.text();
       if (res.status === 401) {
-        log.error('Bad auth while POSTing', url.toString(), body);
-        throw new AuthenticationError(res, body);
+        log.error('Bad auth while POSTing', url.toString(), resBody);
+        throw new AuthenticationError(res, resBody);
       } else {
-        log.error('Non-OK response while POSTing', url.toString(), body);
-        throw new APIError('HTTP error', res, body);
+        log.error('Non-OK response while POSTing', url.toString(), resBody);
+        throw new APIError('HTTP error', res, resBody);
       }
     }
 
@@ -74,7 +75,7 @@ export class APIClient {
     const url = new URL(path, this.baseUrl);
 
     if (params) {
-      for (const key in params) {
+      for (const key of Object.keys(params)) {
         url.searchParams.set(key, params[key]);
       }
     }
@@ -111,7 +112,7 @@ export class APIClient {
     const data = new FormData();
 
     if (body) {
-      for (const key in body) {
+      for (const key of Object.keys(body)) {
         data.append(key, body[key]);
       }
     }
@@ -140,9 +141,9 @@ export class APIClient {
 }
 
 const LOGGED_IN_KEY = 'loggedIn';
-let fwApiClientInstance: ?FWApiClient;
 export default class FWApiClient extends APIClient {
   unauthorizedHandler: () => void;
+  static fwApiClientInstance: ?FWApiClient;
 
   constructor(baseUrl: string, unauthorizedHandler: () => void) {
     super(baseUrl);
@@ -151,22 +152,30 @@ export default class FWApiClient extends APIClient {
   }
 
   static setup(baseUrl: string, unauthorizedHandler: () => void): FWApiClient {
-    if (!fwApiClientInstance) {
-      fwApiClientInstance = new FWApiClient(baseUrl, unauthorizedHandler);
+    if (!FWApiClient.fwApiClientInstance) {
+      FWApiClient.fwApiClientInstance = new FWApiClient(
+        baseUrl,
+        unauthorizedHandler,
+      );
     }
 
-    return fwApiClientInstance;
+    return FWApiClient.fwApiClientInstance;
   }
 
   static get(): FWApiClient {
-    if (!fwApiClientInstance) {
+    if (!FWApiClient.fwApiClientInstance) {
       throw new APIError('API has not been set up!');
     }
 
-    return fwApiClientInstance;
+    return FWApiClient.fwApiClientInstance;
   }
 
-  onAuthError(e: AuthenticationError) {
+  /* eslint class-methods-use-this: ["error", {
+    "exceptMethods": ["onAuthError", "onLogin", "onLogout", "loggedIn"]
+  }] */
+  /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
+  onAuthError(_e: AuthenticationError) {
     if (this.loggedIn()) {
       this.unauthorizedHandler();
       this.onLogout();
@@ -226,7 +235,7 @@ export default class FWApiClient extends APIClient {
   }
 
   async updatePersonDemographics(
-    options: PersonDemographics,
+    options: PersonDemographicsRequest,
   ): Promise<PersonResponse> {
     return this.postJSON('/api/person/demographics', options);
   }
@@ -263,6 +272,22 @@ export default class FWApiClient extends APIClient {
   }
 
   async getFilteredAdCounts(f: FilterPair): Promise<FiltersResponse> {
+    // TODO: move this somewhere better
+    const cpy = _.cloneDeep(f);
+    if (cpy.filter_a.demographics) {
+      for (let i = cpy.filter_a.demographics.length - 1; i >= 0; --i) {
+        if (cpy.filter_a.demographics[i].values.length === 0) {
+          cpy.filter_a.demographics = cpy.filter_a.demographics.splice(i, 1);
+        }
+      }
+    }
+    if (cpy.filter_b.demographics) {
+      for (let i = cpy.filter_b.demographics.length - 1; i >= 0; --i) {
+        if (cpy.filter_b.demographics[i].values.length === 0) {
+          cpy.filter_b.demographics = cpy.filter_b.demographics.splice(i, 1);
+        }
+      }
+    }
     return this.postJSON('/api/recorded_ads/filtered', f);
   }
 

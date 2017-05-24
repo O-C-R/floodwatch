@@ -4,42 +4,40 @@ import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { Row, Col } from 'react-bootstrap';
 import moment from 'moment';
-
-import url from 'url';
+import log from 'loglevel';
 
 import FWApiClient from '../api/api';
 import ChartContainer from '../components/ChartContainer';
-import { lowercaseFirstLetter } from '../common/util';
 
 import type { FilterResponse, FilterRequestItem } from '../api/types';
-import type { VisibilityMap } from '../common/filtertypes';
+import type { VisibilityMap } from '../common/types';
 
 import {
   getVisibilityMap,
   generateDifferenceSentence,
   createSentence,
-  decodeFilterRequestItem,
 } from '../common/comparisontools';
 
 type Props = {
   params: {
+    // eslint-disable-next-line react/no-unused-prop-types
     imageSlug: string,
   },
 };
 
 type State = {
-  imageUrl?: string,
-  createdAgo?: Date,
+  createdAgo?: string,
 
   filterA?: FilterRequestItem,
   filterB?: FilterRequestItem,
   dataA?: FilterResponse,
   dataB?: FilterResponse,
   curTopic?: ?string,
+  currentCategoryId?: ?number,
   visibilityMap?: VisibilityMap,
   lSentence?: string,
   rSentence?: string,
-  sentence?: string,
+  sentence?: ?string,
 };
 
 export default class GalleryImage extends Component {
@@ -59,58 +57,56 @@ export default class GalleryImage extends Component {
         this.props.params.imageSlug,
       );
 
-      const { url, data, created_at } = imageRes;
+      const { data, created_at } = imageRes;
       const {
         filter_a: filterA,
         filter_b: filterB,
         data_a: dataA,
         data_b: dataB,
-        cur_topic: curTopic,
+        cur_category_id: currentCategoryId,
       } = data;
 
       const visibilityMap = getVisibilityMap(dataA, dataB);
-      const lVal = curTopic ? dataA.categories[curTopic] : 0;
-      const rVal = curTopic ? dataB.categories[curTopic] : 0;
+      const lVal = currentCategoryId ? dataA.categories[currentCategoryId] : 0;
+      const rVal = currentCategoryId ? dataB.categories[currentCategoryId] : 0;
 
-      const decodedA = decodeFilterRequestItem(filterA);
-      const decodedB = decodeFilterRequestItem(filterB);
+      const lSentence = createSentence(filterA, { contextIsImpersonal: true });
+      const rSentence = createSentence(filterB, { contextIsImpersonal: true });
 
-      const lSentence = createSentence(decodedA, true);
-      const rSentence = createSentence(decodedB, true);
-
-      const sentence = generateDifferenceSentence(
-        decodedA,
-        decodedB,
-        lVal,
-        rVal,
-        curTopic,
-      );
+      let sentence = null;
+      if (currentCategoryId !== null && currentCategoryId !== undefined) {
+        sentence = generateDifferenceSentence(
+          filterA,
+          filterB,
+          lVal,
+          rVal,
+          currentCategoryId,
+        );
+      }
 
       this.setState({
-        imageUrl: url,
         createdAgo: moment(created_at).fromNow(),
         filterA,
         filterB,
         dataA,
         dataB,
-        curTopic,
+        currentCategoryId,
         visibilityMap,
         lSentence,
         rSentence,
         sentence,
       });
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
   }
 
   render() {
     const {
-      imageUrl,
-      sentence,
       lSentence,
       rSentence,
-      curTopic,
+      sentence,
+      currentCategoryId,
       filterA,
       filterB,
       dataA,
@@ -118,12 +114,9 @@ export default class GalleryImage extends Component {
       visibilityMap,
       createdAgo,
     } = this.state;
+
+    // Wait for load
     if (!lSentence || !rSentence) return <div />;
-
-    const title = 'Floodwatch';
-    const description = `Comparing ads between ${lowercaseFirstLetter(lSentence)} and ${lowercaseFirstLetter(rSentence)}.`;
-
-    const canonical = `${window.location.protocol}//${window.location.host}/gallery/image/${this.props.params.imageSlug}`;
 
     return (
       <div className="main generate container">
@@ -144,8 +137,9 @@ export default class GalleryImage extends Component {
           <Col xs={12}>
             {dataA &&
               dataB &&
+              visibilityMap &&
               <ChartContainer
-                currentTopic={curTopic}
+                currentCategoryId={currentCategoryId}
                 leftPersonal={filterA ? filterA.personal : false}
                 rightPersonal={filterB ? filterB.personal : false}
                 leftSentence={lSentence}
@@ -158,7 +152,7 @@ export default class GalleryImage extends Component {
           <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Row>
               <Col md={8} mdOffset={2}>
-                <h3 className="chart-sentence">{this.state.sentence}</h3>
+                <h3 className="chart-sentence">{sentence}</h3>
               </Col>
             </Row>
           </Col>

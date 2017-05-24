@@ -1,25 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import {
-  Col,
-  Row,
-  Button,
-  Form,
-  FormGroup,
-  FormControl,
-  ControlLabel,
-  Alert,
-  HelpBlock,
-} from 'react-bootstrap';
-import { Location } from 'react-router';
+import { Col, Row, FormGroup, FormControl } from 'react-bootstrap';
 
-import FWApiClient, { AuthenticationError, APIError } from '../api/api';
-import history from '../common/history';
+import FWApiClient, { APIError } from '../api/api';
 
-type Props = {
-  location: Location,
-};
 type State = {
   email: string,
   message: ?string,
@@ -27,10 +12,9 @@ type State = {
 };
 
 export default class ForgotPassword extends Component {
-  props: Props;
   state: State;
 
-  constructor(props: Props) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -71,7 +55,7 @@ export default class ForgotPassword extends Component {
         const apiError: APIError = error;
         if (apiError.response) {
           const responseStatus = apiError.response.status;
-          if (responseStatus == 404) {
+          if (responseStatus === 404) {
             this.setState({
               message: null,
               error: 'No account found.',

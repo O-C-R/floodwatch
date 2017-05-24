@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Router, Route, IndexRoute, Redirect } from 'react-router';
 
-import FWApiClient from './api/api.js';
+import FWApiClient from './api/api';
 import history from './common/history';
 
 import Main from './pages/Main';
@@ -38,6 +38,10 @@ function requireAuth(nextState, replace): void {
   }
 }
 
+function onLogout() {
+  history.pushState('/');
+}
+
 export default class App extends Component {
   constructor() {
     super();
@@ -45,11 +49,8 @@ export default class App extends Component {
     const apiHost =
       process.env.REACT_APP_API_HOST ||
       `${window.location.protocol}//${window.location.host}`;
-    FWApiClient.setup(apiHost, this.onLogout.bind(this));
-  }
 
-  onLogout() {
-    history.pushState('/');
+    FWApiClient.setup(apiHost, onLogout);
   }
 
   render() {

@@ -1,0 +1,114 @@
+{
+  "categories": {
+    "1": {
+      "id": 1,
+      "name": "NGO",
+      "colors": ["#7e14c1", "#a93eec"]
+    },
+    "2": {
+      "id": 2,
+      "name": "Social",
+      "colors": ["#fd8a0e", "#fda60e"]
+    },
+    "3": {
+      "id": 3,
+      "name": "Political",
+      "colors": ["#5604a3", "#7e14c1"]
+    },
+    "4": {
+      "id": 4,
+      "name": "XXX",
+      "colors": ["#ffffff", "#000000"]
+    },
+    "5": {
+      "id": 5,
+      "name": "Food / Beverages",
+      "colors": ["#08c5fb", "#08e7fb"]
+    },
+    "6": {
+      "id": 6,
+      "name": "Health",
+      "colors": ["#f30072", "#ff278c"]
+    },
+    "7": {
+      "id": 7,
+      "name": "Sports",
+      "colors": ["#036de4", "#11a3f7"]
+    },
+    "8": {
+      "id": 8,
+      "name": "Spam",
+      "colors": ["#576970", "#708e9a"]
+    },
+    "9": {
+      "id": 9,
+      "name": "Apparel",
+      "colors": ["#ffae00", "#ffc618"]
+    },
+    "10": {
+      "id": 10,
+      "name": "Financial",
+      "colors": ["#0f9b00", "#31bd0c"]
+    },
+    "11": {
+      "id": 11,
+      "name": "Tech / Electronics",
+      "colors": ["#fd730e", "#fd8a0e"]
+    },
+    "12": {
+      "id": 12,
+      "name": "Automotive",
+      "colors": ["#c80018", "#f12b42"]
+    },
+    "13": {
+      "id": 13,
+      "name": "Beauty / Personal Care",
+      "colors": ["#ffdc18", "#ffec18"]
+    },
+    "14": {
+      "id": 14,
+      "name": "Home / Garden",
+      "colors": ["#06cfba", "#0bf7d3"]
+    },
+    "15": {
+      "id": 15,
+      "name": "Travel",
+      "colors": ["#11a3f7", "#08c5fb"]
+    },
+    "16": {
+      "id": 16,
+      "name": "Unknown",
+      "colors": ["#89a4af", "#9cb5bf"]
+    },
+    "17": {
+      "id": 17,
+      "name": "Retailers / General Merchandise",
+      "colors": ["#ffc618", "#ffdc18"]
+    },
+    "18": {
+      "id": 18,
+      "name": "Jobs / Education",
+      "colors": ["#31bd0c", "#59d914"]
+    },
+    "19": {
+      "id": 19,
+      "name": "Magazine / Book / News",
+      "colors": ["#0035ce", "#036de4"]
+    },
+    "20": {
+      "id": 20,
+      "name": "Business Event",
+      "colors": ["#59d914", "#84f516"]
+    },
+    "21": {
+      "id": 21,
+      "name": "Entertainment",
+      "colors": ["#001595", "#0035ce"]
+    },
+    "22": {
+      "id": 22,
+      "name": "Development / Design / Web-Services",
+      "colors": ["#ff5a00", "#fd730e"]
+    }
+  }
+}

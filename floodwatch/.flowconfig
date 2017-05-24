@@ -1,5 +1,7 @@
 [ignore]
 .*/node_modules/fbjs/.*
+.*/node_modules/eslint-config-.*
+.*/node_modules/react-scripts/.*
 
 [include]
 node_modules/flow-interfaces-chrome/interfaces/
