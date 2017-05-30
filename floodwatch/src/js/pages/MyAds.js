@@ -166,6 +166,9 @@ export default class MyAds extends Component {
             </Modal>}
           <div className="panel-container">
             <h1>My Ads</h1>
+            <p>
+              View and explore the ads that your Floodwatch extension has collected.
+            </p>
             <div className="ads-container">
               {impressions &&
                 impressions.map((i, idx) => (
