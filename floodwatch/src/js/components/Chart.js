@@ -326,7 +326,7 @@ export default class Chart extends Component {
       let errorMessage = '';
       if (isPersonal) {
         errorMessage =
-          "We haven't seen enough ads from you yet, install the extension and get browsing!";
+          "We haven't seen enough ads from you yet. Make sure you have the extension, and have turned off any adblockers.";
       } else {
         errorMessage =
           'Whoops! Not enough data for this demographic category - try another comparison.';

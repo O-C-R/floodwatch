@@ -40,15 +40,15 @@ export default () => (
           <h2 className="h1">Features</h2>
           <Row>
             <Col xs={4}>
-              <img className="demo-image" src="static/img/ad.png" />
+              <img className="demo-image" alt="" src="static/img/ad.png" />
             </Col>
 
             <Col xs={4}>
-              <img className="demo-image" src="static/img/compare.png" />
+              <img className="demo-image" alt="" src="static/img/compare.png" />
             </Col>
 
             <Col xs={4}>
-              <img className="demo-image" src="static/img/modal.png" />
+              <img className="demo-image" alt="" src="static/img/modal.png" />
             </Col>
           </Row>
 
