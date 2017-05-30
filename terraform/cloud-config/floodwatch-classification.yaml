@@ -7,7 +7,7 @@ write_files:
     AWS_DEFAULT_REGION=${region}
     INPUT_QUEUE_URL=${input-queue-url}
     OUTPUT_QUEUE_URL=${output-queue-url}
-- path: /lib/systemd/system/floodwatch-classification.service
+- path: /lib/systemd/system/floodwatch-classification@.service
   owner: root:root
   permissions: '0644'
   content: |
@@ -18,8 +18,8 @@ write_files:
     Restart=always
     TimeoutStartSec=10min
     ExecStartPre=/usr/bin/nvidia-docker pull ocrnyc/floodwatch-classification
-    ExecStart=/usr/bin/nvidia-docker run --name=floodwatch-classification --rm --env-file=/etc/floodwatch-classification.env ocrnyc/floodwatch-classification
-    ExecStop=-/usr/bin/nvidia-docker stop floodwatch-classification
+    ExecStart=/usr/bin/nvidia-docker run --name=floodwatch-classification_%i --rm --env-file=/etc/floodwatch-classification.env ocrnyc/floodwatch-classification
+    ExecStop=-/usr/bin/nvidia-docker stop floodwatch-classification_%i
     RestartSec=5s
 
     [Install]
@@ -30,3 +30,6 @@ runcmd:
   - systemctl daemon-reload
   - systemctl enable floodwatch-classification.service
   - systemctl start --no-block floodwatch-classification.service
+ssh_authorized_keys:
+  # Chris
+  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCoorjV8jLI9kZ7fFQ1rvWgXyK+Ne7+fWiGtaaOuYBTv4HJal2PUBEad0wqQ9ryIGwU/itzjfGdfD/PgeuzBseNMUoMPSUE//qUCCfUwNrmXAzOH9IFxNbuaVUnj0oi1Vo+EPWkTdFGCbWipLsrOxifDcvHq4UuU31l8BkA2YCI9ALSNDaE9KSO3SwiOcDJd8pSOO8pPwg1aZ5UHVicvs74rH6UaCCnNiEuwQsh8Ghk+yfPbN9WFRwRTabcMFuZL+drGZsNpX6igL1QCVybhYpuwkqaTWN/W+Td9BmxuCMZ3v+zfHQRlhpw6BysaDXU3kLNYy7+sPx5Xpxx99tDQSHD anderson@andersonpro"

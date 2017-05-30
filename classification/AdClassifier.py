@@ -84,7 +84,7 @@ class AdClassifier:
         f_is_ad = out['prob'][0].flatten()
         is_ad = f_is_ad.argsort()[-1:-2:-1]
         results = {}
-        print self.yes_no_labels[is_ad[0]], f_is_ad[is_ad[0]]
+        # print self.yes_no_labels[is_ad[0]], f_is_ad[is_ad[0]]
         results[self.yes_no_labels[is_ad[0]]] = f_is_ad[is_ad[0]]
 
         if classifyAds and (is_ad[0] == "is ad" or not classifyNonAds):
@@ -97,7 +97,7 @@ class AdClassifier:
             results['tags'] = {}
 
             for i in range(len(top_k)):
-                print self.ad_categories[top_k[i]], f[top_k[i]]
+                # print self.ad_categories[top_k[i]], f[top_k[i]]
                 results['tags'][self.ad_categories[top_k[i]]] = f[top_k[i]]
 
         return results

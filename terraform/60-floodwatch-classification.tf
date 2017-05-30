@@ -14,16 +14,61 @@ resource "aws_spot_fleet_request" "floodwatch-classification" {
   allocation_strategy                 = "lowestPrice"
   target_capacity                     = 1
   terminate_instances_with_expiration = true
-  excess_capacity_termination_policy  = "default"
+  excess_capacity_termination_policy  = "Default"
   valid_until                         = "2017-12-31T23:59:59Z"
 
   launch_specification {
     instance_type          = "p2.xlarge"
-    ami                    = "ami-2281a335"
+    ami                    = "ami-afc088b9"
     key_name               = "floodwatch"
     iam_instance_profile   = "${aws_iam_instance_profile.floodwatch-classification.id}"
     vpc_security_group_ids = ["${aws_security_group.ssh.id}", "${aws_security_group.floodwatch-classification.id}"]
-    subnet_id              = "${aws_subnet.floodwatch-a.id},${aws_subnet.floodwatch-c.id},${aws_subnet.floodwatch-d.id},${aws_subnet.floodwatch-e.id}"
+    subnet_id              = "${aws_subnet.floodwatch-a.id}"
+    user_data              = "${data.template_file.floodwatch-classification.rendered}"
+
+    root_block_device {
+      volume_size = "100"
+      volume_type = "gp2"
+    }
+  }
+
+  launch_specification {
+    instance_type          = "p2.xlarge"
+    ami                    = "ami-afc088b9"
+    key_name               = "floodwatch"
+    iam_instance_profile   = "${aws_iam_instance_profile.floodwatch-classification.id}"
+    vpc_security_group_ids = ["${aws_security_group.ssh.id}", "${aws_security_group.floodwatch-classification.id}"]
+    subnet_id              = "${aws_subnet.floodwatch-c.id}"
+    user_data              = "${data.template_file.floodwatch-classification.rendered}"
+
+    root_block_device {
+      volume_size = "100"
+      volume_type = "gp2"
+    }
+  }
+
+  launch_specification {
+    instance_type          = "p2.xlarge"
+    ami                    = "ami-afc088b9"
+    key_name               = "floodwatch"
+    iam_instance_profile   = "${aws_iam_instance_profile.floodwatch-classification.id}"
+    vpc_security_group_ids = ["${aws_security_group.ssh.id}", "${aws_security_group.floodwatch-classification.id}"]
+    subnet_id              = "${aws_subnet.floodwatch-d.id}"
+    user_data              = "${data.template_file.floodwatch-classification.rendered}"
+
+    root_block_device {
+      volume_size = "100"
+      volume_type = "gp2"
+    }
+  }
+
+  launch_specification {
+    instance_type          = "p2.xlarge"
+    ami                    = "ami-afc088b9"
+    key_name               = "floodwatch"
+    iam_instance_profile   = "${aws_iam_instance_profile.floodwatch-classification.id}"
+    vpc_security_group_ids = ["${aws_security_group.ssh.id}", "${aws_security_group.floodwatch-classification.id}"]
+    subnet_id              = "${aws_subnet.floodwatch-e.id}"
     user_data              = "${data.template_file.floodwatch-classification.rendered}"
 
     root_block_device {
