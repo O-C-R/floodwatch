@@ -40,7 +40,7 @@ export default () => (
           <h2 className="h1">Features</h2>
           <Row>
             <Col xs={4}>
-              <img className="demo-image" alt="" src="static/img/ad.png" />
+              <img className="demo-image" alt="" src="static/img/4d.png" />
             </Col>
 
             <Col xs={4}>

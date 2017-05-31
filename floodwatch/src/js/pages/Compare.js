@@ -274,11 +274,20 @@ export default class Compare extends Component {
           mouseLeaveHandler={this.mouseLeaveHandler.bind(this)} />
 
         <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
-          <Row>
-            <Col md={8} mdOffset={2}>
-              <h3 className="chart-sentence">{sentence}</h3>
-
-              <div className="chart-actions">
+          <Row
+            style={{
+              position: 'fixed',
+              bottom: 0,
+              left: '1.3%',
+              width: '100%',
+            }}>
+            <Col xs={10} xsOffset={1} md={6} mdOffset={3} lg={6} lgOffset={3}>
+              <h3 className="chart-sentence text-center">
+                {sentence}
+              </h3>
+              <div
+                className="chart-actions"
+                style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                 <button
                   className="chart-actions_toggleCompare btn btn-primary button"
                   onClick={this.toggleComparisonModal.bind(this)}>
@@ -315,6 +324,7 @@ export default class Compare extends Component {
                       style={{ pointerEvents: 'none' }} />}
                 </button>
               </div>
+
             </Col>
           </Row>
         </Col>

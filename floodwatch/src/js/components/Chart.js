@@ -56,7 +56,7 @@ export default class Chart extends Component {
   }
 
   state = {
-    height: 500,
+    height: window.innerHeight * 0.6,
   };
 
   componentDidMount() {
@@ -67,6 +67,12 @@ export default class Chart extends Component {
       .attr('height', this.state.height);
     this.defs = this.svg.append('defs');
 
+    this.triggerDraw();
+
+    window.addEventListener('resize', this.updateHeight.bind(this));
+  }
+
+  triggerDraw() {
     const { data, visibilityMap } = this.props;
     if (data && visibilityMap) {
       this.colorBars = this.processData(data, visibilityMap);
@@ -77,6 +83,13 @@ export default class Chart extends Component {
     if (this.colorBars) {
       this.drawChart(this.colorBars);
     }
+  }
+
+  updateHeight() {
+    const height = window.innerHeight * 0.6;
+    d3.select(`.chart_svg-${this.props.side} svg`).attr('height', height);
+    this.setState({ height });
+    this.triggerDraw();
   }
 
   componentWillReceiveProps(nextProps: Props) {
