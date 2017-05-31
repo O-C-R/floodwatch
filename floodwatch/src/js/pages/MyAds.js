@@ -23,10 +23,12 @@ type State = {
   canRequest: boolean,
   modalOpen: boolean,
   selectedImpression: ?ImpressionResponseItem,
+  selectedImpressionIdx: ?number,
 };
 
 export default class MyAds extends Component {
   state: State;
+  keydownListener: (e: KeyboardEvent) => void;
 
   constructor(): void {
     super();
@@ -37,11 +39,38 @@ export default class MyAds extends Component {
       canRequest: true,
       modalOpen: false,
       selectedImpression: null,
+      selectedImpressionIdx: null,
     };
+    this.keydownListener = this.handleKeydown.bind(this);
   }
 
   componentDidMount() {
     this.requestPage();
+    document.addEventListener('keydown', this.keydownListener);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.keydownListener);
+  }
+
+  handleKeydown(e: KeyboardEvent) {
+    const { modalOpen, impressions, selectedImpressionIdx } = this.state;
+
+    if (
+      modalOpen &&
+      selectedImpressionIdx !== null &&
+      selectedImpressionIdx !== undefined &&
+      impressions !== null &&
+      impressions !== undefined
+    ) {
+      if (e.code === 'ArrowLeft') {
+        const newIdx = Math.max(selectedImpressionIdx - 1, 0);
+        this.setState({ selectedImpression: impressions[newIdx], selectedImpressionIdx: newIdx });
+      } else if (e.code === 'ArrowRight') {
+        const newIdx = Math.min(selectedImpressionIdx + 1, impressions.length - 1);
+        this.setState({ selectedImpression: impressions[newIdx], selectedImpressionIdx: newIdx });
+      }
+    }
   }
 
   async requestPage() {
@@ -79,18 +108,12 @@ export default class MyAds extends Component {
     }
   }
 
-  selectImpression(im: ImpressionResponseItem): void {
-    this.setState({ modalOpen: true, selectedImpression: im });
+  selectImpression(im: ImpressionResponseItem, idx: number): void {
+    this.setState({ modalOpen: true, selectedImpression: im, selectedImpressionIdx: idx });
   }
 
   render() {
-    const {
-      impressions,
-      requesting,
-      canRequest,
-      modalOpen,
-      selectedImpression,
-    } = this.state;
+    const { impressions, requesting, canRequest, modalOpen, selectedImpression } = this.state;
 
     let selectedUrl = '';
     if (selectedImpression) {
@@ -101,13 +124,11 @@ export default class MyAds extends Component {
     let selectedTopic = null;
     if (selectedImpression) {
       if (selectedImpression.category_id) {
-        const categoryName =
-          AD_CATEGORIES.categories[selectedImpression.category_id].name;
+        const categoryName = AD_CATEGORIES.categories[selectedImpression.category_id].name;
 
         let categoryScore = null;
         if (selectedImpression.classifier_output.tags) {
-          categoryScore =
-            selectedImpression.classifier_output.tags[categoryName];
+          categoryScore = selectedImpression.classifier_output.tags[categoryName];
         }
 
         if (categoryScore) {
@@ -158,9 +179,7 @@ export default class MyAds extends Component {
                   seen {moment(selectedImpression.timestamp).fromNow()}
                 </span>
               </div>
-              <button
-                className="close"
-                onClick={() => this.setState({ modalOpen: false })}>
+              <button className="close" onClick={() => this.setState({ modalOpen: false })}>
                 <FontAwesome name="times" />
               </button>
             </Modal>}
@@ -168,22 +187,20 @@ export default class MyAds extends Component {
             <h1>My Ads</h1>
             <div className="ads-container">
               {impressions &&
-                impressions.map((i, idx) => (
+                impressions.map((im, idx) => (
                   <button
                     className="ad-container"
-                    key={i.id}
+                    key={im.id}
                     style={{
-                      backgroundImage: `url("//images.floodwatch.me/${i.ad_id}.png")`,
+                      backgroundImage: `url("//images.floodwatch.me/${im.ad_id}.png")`,
                     }}
-                    onClick={() => this.selectImpression(i)}>
+                    onClick={() => this.selectImpression(im, idx)}>
                     <span className="sr-only">impression #{idx}</span>
                   </button>
                 ))}
             </div>
             <div className="bottom">
-              {!requesting &&
-                canRequest &&
-                <Waypoint onEnter={this.requestPage.bind(this)} />}
+              {!requesting && canRequest && <Waypoint onEnter={this.requestPage.bind(this)} />}
               {requesting && <FontAwesome name="cog" spin />}
               {!canRequest && <FontAwesome name="check" />}
             </div>
