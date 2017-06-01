@@ -147,6 +147,7 @@ export default class Main extends Component {
                 Add to Chrome
               </Button>
             </Alert>}
+
           <Navigation navs={navs} />
         </Row>
         <Row>

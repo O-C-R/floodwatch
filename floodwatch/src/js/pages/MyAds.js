@@ -115,6 +115,26 @@ export default class MyAds extends Component {
   render() {
     const { impressions, requesting, canRequest, modalOpen, selectedImpression } = this.state;
 
+    const error = (
+      <Col
+        xs={12}
+        style={{
+          textAlign: 'center',
+          background: '#ccc',
+        }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px',
+          }}>
+          We haven&#39;t seen enough ads from you yet.
+          Make sure you have the extension, and have turned off any adblockers.
+        </div>
+      </Col>
+    );
+
     let selectedUrl = '';
     if (selectedImpression) {
       const url = new URL(selectedImpression.top_url);
@@ -185,6 +205,9 @@ export default class MyAds extends Component {
             </Modal>}
           <div className="panel-container">
             <h1>My Ads</h1>
+            <p>
+              View and explore the ads that your Floodwatch extension has collected.
+            </p>
             <div className="ads-container">
               {impressions &&
                 impressions.map((im, idx) => (
@@ -198,11 +221,14 @@ export default class MyAds extends Component {
                     <span className="sr-only">impression #{idx}</span>
                   </button>
                 ))}
+              {!this.state.impressions && error}
             </div>
             <div className="bottom">
               {!requesting && canRequest && <Waypoint onEnter={this.requestPage.bind(this)} />}
               {requesting && <FontAwesome name="cog" spin />}
-              {!canRequest && <FontAwesome name="check" />}
+              {!canRequest &&
+                this.state.impressions &&
+                <FontAwesome name="check" />}
             </div>
           </div>
         </div>

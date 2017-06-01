@@ -152,7 +152,7 @@ export default class GalleryImage extends Component {
           <Col xs={10} xsOffset={1} style={{ padding: 0 }}>
             <Row>
               <Col md={8} mdOffset={2}>
-                <h3 className="chart-sentence">{sentence}</h3>
+                <h3 className="chart-sentence text-center">{sentence}</h3>
               </Col>
             </Row>
           </Col>

@@ -14,7 +14,7 @@ export default () => (
       className="home_header"
       style={{ backgroundImage: "url('static/img/home-back.png')" }}>
       <Row>
-        <Col xs={12} md={8} mdOffset={2}>
+        <Col xs={12} md={10} mdOffset={1}>
           <div className="panel-container">
             <h1 className="home_header_title">Floodwatch</h1>
             <p>
@@ -34,7 +34,47 @@ export default () => (
       </Row>
     </div>
 
-    <Col xs={12} md={8} mdOffset={2}>
+    <Col xs={12} md={10} mdOffset={1}>
+      <div className="panel">
+        <div className="panel-body">
+          <h2 className="h1">Features</h2>
+          <Row>
+            <Col xs={4}>
+              <img className="demo-image" alt="" src="static/img/4d.png" />
+            </Col>
+
+            <Col xs={4}>
+              <img className="demo-image" alt="" src="static/img/compare.png" />
+            </Col>
+
+            <Col xs={4}>
+              <img className="demo-image" alt="" src="static/img/modal.png" />
+            </Col>
+          </Row>
+
+          <Row>
+            <Col xs={4}>
+              <p className="text-center">Examine the ads you get served</p>
+            </Col>
+
+            <Col xs={4}>
+              <p className="text-center">
+                Compare your ad breakdown to other users
+              </p>
+            </Col>
+
+            <Col xs={4}>
+              <p className="text-center">
+                Explore advertising differences across demographics
+              </p>
+            </Col>
+          </Row>
+
+        </div>
+      </div>
+    </Col>
+
+    <Col xs={12} md={10} mdOffset={1}>
       <div className="panel">
         <div className="panel-body">
           <h2 className="h1">Why Floodwatch Matters</h2>
@@ -61,6 +101,7 @@ export default () => (
           <ul>
             <li>Capture the ads that you see</li>
             <li>Compare your breakdown to other demographics</li>
+            <li>Explore advertising differences across demographics</li>
           </ul>
           <p>
             The more demographic information you volunteer, the more tools
