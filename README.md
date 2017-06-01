@@ -6,6 +6,8 @@ Since its first release, Floodwatch has helped reverse the power dynamic between
 
 This repo is not currently being maintained.
 
+![comparison](/doc-images/4d.png)
+
 ### Server deploy
 
 ```bash
