@@ -10,7 +10,7 @@ As advertising technology gets more and more sophisticated, it is critical that 
  
 New in Floodwatch v2.0:
 * Improved ad detection techniques.
-* Users can add their own demographics, and compare their ad breakdown against a variety of other demographics.
+* Users can add their own demographics, and compare their ad breakdown against a variety of other demographics (age, gender, religion, race, location)
 * Users can share their own ad profile, or share comparisons of different demographics that display interesting insights and correlations.
  
 More information is available at floodwatch.me.
