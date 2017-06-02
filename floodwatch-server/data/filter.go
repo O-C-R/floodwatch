@@ -1,8 +1,9 @@
 package data
 
 type DemographicFilter struct {
-	Operator string `json:"operator"`
-	Values   []int  `json:"values"`
+	CategoryId int    `json:"category_id"`
+	Operator   string `json:"operator"`
+	Values     []int  `json:"values"`
 }
 
 type RangeFilter struct {
@@ -11,7 +12,7 @@ type RangeFilter struct {
 }
 
 type LocationFilter struct {
-	CountryCodes []string `json:"countryCodes"`
+	CountryCodes []string `json:"country_codes"`
 }
 
 type PersonFilter struct {
@@ -23,7 +24,7 @@ type PersonFilter struct {
 
 type FilterResponseItem struct {
 	Categories map[int]float32 `json:"categories"`
-	TotalCount int             `json:"totalCount"`
+	TotalCount int             `json:"total_count"`
 }
 
 func NewFilterResponseItem() *FilterResponseItem {
@@ -33,12 +34,18 @@ func NewFilterResponseItem() *FilterResponseItem {
 }
 
 type FilterRequest struct {
-	FilterA PersonFilter `json:"filterA"`
-	FilterB PersonFilter `json:"filterB"`
+	FilterA PersonFilter `json:"filter_a"`
+	FilterB PersonFilter `json:"filter_b"`
 }
 
 type FilterResponse struct {
-	FilterA         *FilterResponseItem `json:"filterA"`
-	FilterB         *FilterResponseItem `json:"filterB"`
-	CalculationTime *int                `json:"calcTime,omitempty"`
+	DataA           *FilterResponseItem `json:"data_a"`
+	DataB           *FilterResponseItem `json:"data_b"`
+	CalculationTime *int                `json:"calc_time,omitempty"`
+}
+
+type GenerateRequest struct {
+	FilterA       PersonFilter `json:"filter_a"`
+	FilterB       PersonFilter `json:"filter_b"`
+	CurCategoryId *int         `json:"cur_category_id"`
 }

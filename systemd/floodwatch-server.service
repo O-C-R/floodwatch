@@ -1,0 +1,23 @@
+[Unit]
+Description=floodwatch-server
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill floodwatch-server
+ExecStartPre=-/usr/bin/docker rm floodwatch-server
+ExecStart=/usr/bin/docker run \
+  --name=floodwatch-server \
+  --rm \
+  --read-only \
+  --env-file=/etc/floodwatch-server/floodwatch-server.env \
+  -v /usr/share/ca-certificates/:/etc/ssl/certs:ro \
+  -p 80:80 \
+  -p 8000:8000 \
+  --security-opt seccomp=/etc/floodwatch/config/chrome.json \
+  --tmpfs /tmp:rw,size=787448k,mode=1777 \
+  ocrnyc/floodwatch-server
+ExecStop=/usr/bin/docker stop floodwatch-server
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

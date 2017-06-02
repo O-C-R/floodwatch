@@ -1,0 +1,29 @@
+version: '2'
+services:
+  server:
+    build: ./
+    restart: always
+    env_file: ../config/compose.public.env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8080:80
+    environment:
+      - FW_BACKEND_URL=postgres://floodwatch:password@postgres/floodwatch?sslmode=disable
+      - FW_SESSION_STORE_ADDRESS=redis:6379
+      - HOME=/home
+    volumes:
+      - ~/.aws:/home/.aws
+    security_opt:
+    - seccomp:unconfined
+  postgres:
+    image: postgres:9.6.2-alpine
+    environment:
+      - POSTGRES_USER=floodwatch
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=floodwatch
+    volumes:
+      - ../floodwatch-server/schema:/docker-entrypoint-initdb.d/:ro
+  redis:
+    image: redis:3.2.8-alpine

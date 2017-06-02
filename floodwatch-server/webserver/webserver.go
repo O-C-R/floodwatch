@@ -1,13 +1,16 @@
 package webserver
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/O-C-R/auth/httpauth"
 	"github.com/O-C-R/auth/session"
@@ -18,6 +21,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/email"
+	"github.com/O-C-R/floodwatch/floodwatch-server/screenshot"
 )
 
 const (
@@ -57,18 +62,23 @@ func WriteJSON(w http.ResponseWriter, value interface{}) {
 }
 
 type Options struct {
-	Addr         string
-	RedirectAddr string
+	Port         int
+	RedirectPort int
 	Backend      *backend.Backend
+	Emailer      email.Emailer
+	Hostname     string
+	Screenshot   screenshot.Screenshotter
 
 	SessionStore                *session.SessionStore
 	AWSSession                  *awsSession.Session
 	S3Bucket                    string
+	S3GalleryBucket             string
 	SQSClassifierInputQueueURL  string
 	SQSClassifierOutputQueueURL string
 	Insecure                    bool
 	StaticPath                  string
 	TwofishesHost               string
+	FromEmail                   string
 }
 
 type Webserver struct {
@@ -104,8 +114,18 @@ func New(options *Options) (*Webserver, error) {
 
 	apiRouter.Handle("/person/current", secureRoute(PersonCurrent(options), auth, secure)).Methods("GET")
 	apiRouter.Handle("/person/demographics", secureRoute(UpdatePersonDemographics(options), auth, secure)).Methods("POST")
+
+	// The /ads endpoint is for pushing ads to the server - it's
+	// baked into the FW extension.
 	apiRouter.Handle("/ads", secureRoute(Ads(options), auth, secure)).Methods("POST")
-	apiRouter.Handle("/ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
+
+	// The /recorded_ads endpoint is for getting ads out of the
+	// server. Named this way to avoid ad blockers.
+	apiRouter.Handle("/recorded_ads/filtered", secureRoute(FilteredAdStats(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads/screenshot", secureRoute(GenerateScreenshot(options), auth, secure)).Methods("POST")
+	apiRouter.Handle("/recorded_ads/impressions", secureRoute(GetPagedImpressions(options), auth, secure)).Methods("GET")
+
+	apiRouter.Handle("/gallery/image/{imageSlug}", RateLimitHandler(GetGalleryImage(options), options, 10/60e9, 30)).Methods("GET")
 
 	url, err := url.Parse(options.TwofishesHost)
 	if err != nil {
@@ -126,10 +146,53 @@ func New(options *Options) (*Webserver, error) {
 			return nil, err
 		}
 
+		replacer := func(req *http.Request, raw []byte) ([]byte, error) {
+			out := raw
+
+			// The same between all pages.
+			out = bytes.Replace(out, []byte("__META_TITLE__"), []byte("Floodwatch"), -1)
+			out = bytes.Replace(out, []byte("__META_DESCRIPTION__"), []byte("Floodwatch collects the ads you see as you browse the internet, in order to track how advertisers are categorizing and tracking you."), -1)
+
+			if strings.HasPrefix(req.URL.Path, "/i/") || strings.HasPrefix(req.URL.Path, "/gallery/image/") {
+				pathParts := strings.Split(req.URL.Path, "/")
+				imageSlug := pathParts[len(pathParts)-1]
+
+				out = bytes.Replace(
+					out,
+					[]byte("__META_URL__"),
+					[]byte(options.Hostname+"/gallery/image/"+imageSlug),
+					-1,
+				)
+				out = bytes.Replace(
+					out,
+					[]byte("__META_IMAGE_URL__"),
+					[]byte(fmt.Sprintf("https://s3.amazonaws.com/%s/%s.png", options.S3GalleryBucket, imageSlug)),
+					-1,
+				)
+			} else {
+				out = bytes.Replace(
+					out,
+					[]byte("__META_URL__"),
+					[]byte(options.Hostname+req.URL.Path),
+					-1,
+				)
+				out = bytes.Replace(
+					out,
+					[]byte("__META_IMAGE_URL__"),
+					[]byte(options.Hostname+"/static/img/share.jpg"),
+					-1,
+				)
+			}
+
+			return out, nil
+		}
+
 		r.Handle("/", singlepage.NewSinglePageApplication(singlepage.SinglePageApplicationOptions{
 			Root:          http.Dir(options.StaticPath),
 			Application:   application,
 			LongtermCache: longtermCache,
+
+			Replacer: &replacer,
 		}))
 	}
 
@@ -145,7 +208,7 @@ func New(options *Options) (*Webserver, error) {
 	}
 
 	webserver.server = &http.Server{
-		Addr:    options.Addr,
+		Addr:    fmt.Sprintf(":%d", options.Port),
 		Handler: handler,
 	}
 
@@ -155,6 +218,6 @@ func New(options *Options) (*Webserver, error) {
 func (w *Webserver) ListenAndServe() error {
 	go handleClassifierOutput(w.options)
 
-	log.Println(w.options.Addr)
+	log.Printf("Listening on %d", w.options.Port)
 	return w.server.ListenAndServe()
 }

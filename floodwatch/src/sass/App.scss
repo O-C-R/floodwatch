@@ -12,6 +12,15 @@
 @import "pages/home";
 @import "pages/compare";
 @import "pages/profile";
+@import "pages/myads";
+
+// fontawesome
+$fa-font-path: "../../node_modules/font-awesome/fonts";
+@import "../../node_modules/font-awesome/scss/font-awesome.scss";
+
+html, body, #root{
+	height:100%;
+}
 
 * {
 	font-size: inherit;
@@ -62,4 +71,67 @@ a.anchor {
 	&.noicon:hover::before {
 		display: none;
 	}
+}
+
+button.learnmore {
+	border: none;
+	background: none;
+	color: $brand-primary;
+
+	&.active {
+		text-decoration: underline;
+	}
+
+	&:focus {
+		outline: 0;
+	}
+}
+
+.m-0 {
+	margin: 0;
+}
+
+@media(min-width: $screen-md-min) {
+	.col-md-border {
+		&:not(:last-child) {
+			border-right: 1px solid $gray-light;
+		}
+
+		& + .col-md-border {
+			border-left: 1px solid $gray-light;
+			margin-left: -1px;
+		}
+	}
+}
+
+.autocomplete {
+	width: 100%;
+
+	input {
+		margin-right: 0;
+		margin-bottom: 0;
+	}
+
+	.items {
+		max-height: 250px;
+		overflow: scroll;
+
+		background-color: $gray-base;
+		color: white;
+		cursor: pointer;
+		border-bottom: solid 1px $gray-darker;
+
+		div {
+			padding: 5px;
+
+			&.current {
+				background-color: $brand-primary;
+				border-bottom-color: $brand-primary;
+			}
+		}
+	}
+}
+
+input[disabled] {
+	color: darken($gray-lighter, 20%);
 }

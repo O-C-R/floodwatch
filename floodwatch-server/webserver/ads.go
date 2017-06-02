@@ -1,16 +1,21 @@
 package webserver
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/O-C-R/auth/id"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/pkg/errors"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/data"
 )
@@ -280,9 +285,160 @@ func FilteredAdStats(options *Options) http.Handler {
 		}
 
 		res := data.FilterResponse{
-			FilterA: resA,
-			FilterB: resB,
+			DataA: resA,
+			DataB: resB,
 		}
+
+		WriteJSON(w, res)
+	})
+}
+
+func GenerateScreenshot(options *Options) http.Handler {
+	s3Client := s3.New(options.AWSSession)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, errors.New("could not retrieve session"), 401)
+			return
+		}
+
+		decoder := json.NewDecoder(req.Body)
+		var generateRequest data.GenerateRequest
+		err := decoder.Decode(&generateRequest)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not decode request"), 500)
+			return
+		}
+		defer req.Body.Close()
+
+		resA, err := options.Backend.FilteredAds(generateRequest.FilterA, session.UserID)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not process filterA"), 500)
+			return
+		}
+
+		resB, err := options.Backend.FilteredAds(generateRequest.FilterB, session.UserID)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not process filterB"), 500)
+			return
+		}
+
+		galleryImageData := data.GalleryImageData{
+			FilterA:       generateRequest.FilterA,
+			FilterB:       generateRequest.FilterB,
+			DataA:         resA,
+			DataB:         resB,
+			CurCategoryId: generateRequest.CurCategoryId,
+		}
+
+		buf := new(bytes.Buffer)
+		encoder := json.NewEncoder(buf)
+		err = encoder.Encode(galleryImageData)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not encode galleryImageData"), 500)
+			return
+		}
+
+		dataParam := buf.String()
+		dataParam = strings.TrimSpace(dataParam)
+		dataParam = url.QueryEscape(dataParam)
+
+		generateUrl := fmt.Sprintf("http://localhost:%d/generate?data=%s", options.Port, dataParam)
+		log.Printf("Generating image for: %s\n", generateUrl)
+
+		screenshotImgData, err := options.Screenshot.Capture(generateUrl)
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not capture screenshot"), 500)
+			return
+		}
+
+		galleryImageSlug, err := data.GenerateGalleryImageSlug()
+		if err != nil {
+			Error(w, errors.Wrap(err, "could not generate gallery image slug"), 500)
+			return
+		}
+
+		screenshotImgDataReader := bytes.NewReader(screenshotImgData)
+		key := galleryImageSlug + ".png"
+		putObjectInput := &s3.PutObjectInput{
+			ACL:           aws.String("public-read"),
+			Body:          screenshotImgDataReader,
+			Key:           aws.String(key),
+			ContentType:   aws.String("image/png"),
+			CacheControl:  aws.String("max-age=31536000"),
+			ContentLength: aws.Int64(int64(len(screenshotImgData))),
+			Bucket:        aws.String(options.S3GalleryBucket),
+		}
+
+		if _, err := s3Client.PutObject(putObjectInput); err != nil {
+			Error(w, errors.Wrap(err, "could not upload to s3"), 500)
+			return
+		}
+
+		galleryImage := &data.GalleryImage{
+			Slug:      galleryImageSlug,
+			CreatorID: session.UserID,
+			CreatedAt: time.Now(),
+		}
+		galleryImage.SetData(galleryImageData)
+
+		if _, err := options.Backend.AddGalleryImage(galleryImage); err != nil {
+			Error(w, errors.Wrap(err, "could not save gallery image"), 500)
+			return
+		}
+
+		res, err := galleryImage.ToResponse(options.S3GalleryBucket)
+		if err != nil {
+			Error(w, errors.Wrap(err, "couldn't serialize response"), 500)
+			return
+		}
+
+		WriteJSON(w, res)
+	})
+}
+
+type PagedImpressionsQuery struct {
+	Before *time.Time
+	Limit  int
+}
+
+func GetPagedImpressions(options *Options) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		session := ContextSession(req.Context())
+		if session == nil {
+			Error(w, nil, 401)
+			return
+		}
+
+		queryParams := PagedImpressionsQuery{
+			Limit: 100,
+		}
+		query := req.URL.Query()
+
+		beforeStr := query.Get("before")
+		if beforeStr != "" {
+			before, err := time.Parse(time.RFC3339, beforeStr)
+			if err == nil {
+				queryParams.Before = &before
+			}
+		}
+
+		limitStr := query.Get("limit")
+		if limitStr != "" {
+			limit, err := strconv.Atoi(limitStr)
+			if err == nil && limit <= 1000 && limit > 0 {
+				queryParams.Limit = limit
+			}
+		}
+
+		rows, err := options.Backend.PagedImpressions(session.UserID, queryParams.Before, queryParams.Limit)
+		if err != nil {
+			Error(w, err, 500)
+		}
+
+		res := make(map[string]interface{})
+		res["impressions"] = rows
 
 		WriteJSON(w, res)
 	})

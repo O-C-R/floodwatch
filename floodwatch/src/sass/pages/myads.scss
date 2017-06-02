@@ -1,0 +1,80 @@
+$ad-size: 128px;
+$ad-padding: 10px;
+
+.myads {
+  .ads-container {
+    text-align: center;
+
+    .ad-container {
+      // Reset button
+      border:none;
+      background-image:none;
+      background-color:transparent;
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+
+      position: relative;
+      display: inline-block;
+      margin: 10px;
+      padding: 10px;
+
+      width: $ad-size;
+      height: $ad-size;
+      line-height: $ad-size;
+      text-align: center;
+
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+
+      &:hover {
+        background-size: contain;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .bottom {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+  }
+}
+
+.ad-modal {
+  text-align: center;
+
+  img {
+    max-width: 80vw;
+    max-height: 80vh;
+  }
+
+  .seen {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+
+    .url {
+      font-weight: normal;
+    }
+  }
+
+  .details {
+    display: block;
+    margin-top: 0;
+
+    font-style: italic;
+    font-size: 80%;
+
+    .time {
+
+    }
+  }
+
+  .close {
+    position: absolute;
+    top: 5px;
+    right: 7px;
+  }
+}

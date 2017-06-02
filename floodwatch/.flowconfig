@@ -1,5 +1,7 @@
 [ignore]
-<PROJECT_ROOT>/node_modules/fbjs/.*
+.*/node_modules/fbjs/.*
+.*/node_modules/eslint-config-.*
+.*/node_modules/react-scripts/.*
 
 [include]
 node_modules/flow-interfaces-chrome/interfaces/
@@ -7,5 +9,7 @@ node_modules/flow-interfaces-chrome/interfaces/
 [libs]
 
 [options]
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
+suppress_comment= \\(.\\|\n\\)*\\$FlowBug
 esproposal.class_instance_fields=enable
 esproposal.class_static_fields=enable

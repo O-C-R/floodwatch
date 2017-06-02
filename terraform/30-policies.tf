@@ -4,6 +4,7 @@ data "aws_iam_policy_document" "floodwatch-server" {
       "s3:PutObject",
       "s3:GetObject",
     ]
+
     resources = [
       "arn:aws:s3:::floodwatch-ads/*",
     ]
@@ -11,8 +12,21 @@ data "aws_iam_policy_document" "floodwatch-server" {
 
   statement {
     actions = [
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::floodwatch-gallery/*",
+    ]
+  }
+
+  statement {
+    actions = [
       "sqs:SendMessage",
     ]
+
     resources = [
       "${aws_sqs_queue.classifier-input.arn}",
     ]
@@ -23,14 +37,36 @@ data "aws_iam_policy_document" "floodwatch-server" {
       "sqs:DeleteMessage",
       "sqs:ReceiveMessage",
     ]
+
     resources = [
       "${aws_sqs_queue.classifier-output.arn}",
     ]
+  }
+
+  statement {
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail",
+    ]
+
+    resources = [
+      "*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ses:FromAddress"
+
+      values = [
+        "support@floodwatch.me",
+      ]
+    }
   }
 }
 
 resource "aws_iam_role" "floodwatch-server" {
   name = "floodwatch-server"
+
   assume_role_policy = <<EOF
 {
   "Statement": [
@@ -48,12 +84,12 @@ EOF
 
 resource "aws_iam_instance_profile" "floodwatch-server" {
   name = "floodwatch-server"
-  roles = ["${aws_iam_role.floodwatch-server.name}"]
+  role = "${aws_iam_role.floodwatch-server.name}"
 }
 
 resource "aws_iam_role_policy" "floodwatch-server" {
-  name = "floodwatch-server"
-  role = "${aws_iam_role.floodwatch-server.id}"
+  name   = "floodwatch-server"
+  role   = "${aws_iam_role.floodwatch-server.id}"
   policy = "${data.aws_iam_policy_document.floodwatch-server.json}"
 }
 
@@ -62,6 +98,7 @@ data "aws_iam_policy_document" "floodwatch-classification" {
     actions = [
       "s3:GetObject",
     ]
+
     resources = [
       "arn:aws:s3:::floodwatch-ads/*",
     ]
@@ -72,6 +109,7 @@ data "aws_iam_policy_document" "floodwatch-classification" {
       "sqs:DeleteMessage",
       "sqs:ReceiveMessage",
     ]
+
     resources = [
       "${aws_sqs_queue.classifier-input.arn}",
     ]
@@ -81,6 +119,7 @@ data "aws_iam_policy_document" "floodwatch-classification" {
     actions = [
       "sqs:SendMessage",
     ]
+
     resources = [
       "${aws_sqs_queue.classifier-output.arn}",
     ]
@@ -89,6 +128,7 @@ data "aws_iam_policy_document" "floodwatch-classification" {
 
 resource "aws_iam_role" "floodwatch-classification" {
   name = "floodwatch-classification"
+
   assume_role_policy = <<EOF
 {
   "Statement": [
@@ -105,14 +145,14 @@ EOF
 }
 
 resource "aws_iam_role_policy" "floodwatch-classification" {
-  name = "floodwatch-classification"
-  role = "${aws_iam_role.floodwatch-classification.id}"
+  name   = "floodwatch-classification"
+  role   = "${aws_iam_role.floodwatch-classification.id}"
   policy = "${data.aws_iam_policy_document.floodwatch-classification.json}"
 }
 
 resource "aws_iam_instance_profile" "floodwatch-classification" {
   name = "floodwatch-classification"
-  roles = ["${aws_iam_role.floodwatch-classification.name}"]
+  role = "${aws_iam_role.floodwatch-classification.name}"
 }
 
 data "aws_iam_policy_document" "floodwatch-classification-spot-fleet" {
@@ -124,6 +164,7 @@ data "aws_iam_policy_document" "floodwatch-classification-spot-fleet" {
       "ec2:TerminateInstances",
       "iam:PassRole",
     ]
+
     resources = [
       "*",
     ]
@@ -132,6 +173,7 @@ data "aws_iam_policy_document" "floodwatch-classification-spot-fleet" {
 
 resource "aws_iam_role" "floodwatch-classification-spot-fleet" {
   name = "floodwatch-classification-spot-fleet"
+
   assume_role_policy = <<EOF
 {
   "Statement": [
@@ -148,7 +190,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "floodwatch-classification-spot-fleet" {
-  name = "floodwatch-classification-spot-fleet"
-  role = "${aws_iam_role.floodwatch-classification-spot-fleet.id}"
+  name   = "floodwatch-classification-spot-fleet"
+  role   = "${aws_iam_role.floodwatch-classification-spot-fleet.id}"
   policy = "${data.aws_iam_policy_document.floodwatch-classification-spot-fleet.json}"
 }

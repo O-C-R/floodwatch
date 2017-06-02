@@ -2,9 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"time"
+
+	"github.com/kelseyhightower/envconfig"
 
 	"github.com/O-C-R/auth/session"
 
@@ -12,97 +15,49 @@ import (
 	awsSession "github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/O-C-R/floodwatch/floodwatch-server/backend"
+	"github.com/O-C-R/floodwatch/floodwatch-server/email"
+	"github.com/O-C-R/floodwatch/floodwatch-server/screenshot"
+	"github.com/O-C-R/floodwatch/floodwatch-server/scripts"
 	"github.com/O-C-R/floodwatch/floodwatch-server/webserver"
 )
 
+type Config struct {
+	Port         int    `default:"80"`
+	RedirectPort int    `default:"8000" envconfig:"REDIRECT_PORT"`
+	StaticPath   string `default:"./static" envconfig:"STATIC_PATH"`
+	BackendURL   string `default:"postgres://localhost/floodwatch?sslmode=disable" envconfig:"BACKEND_URL"`
+
+	SessionStoreAddr     string `default:"localhost:6379" envconfig:"SESSION_STORE_ADDRESS"`
+	SessionStorePassword string `envconfig:"SESSION_STORE_PASSWORD"`
+
+	AWSProfile                  string `default:"floodwatch" envconfig:"AWS_PROFILE"`
+	AWSRegion                   string `default:"us-east-1" envconfig:"AWS_REGION"`
+	S3Bucket                    string `default:"floodwatch-ads" envconfig:"S3_BUCKET"`
+	S3GalleryBucket             string `default:"floodwatch-gallery" envconfig:"S3_SCREENSHOT_BUCKET"`
+	SQSClassifierInputQueueURL  string `envconfig:"SQS_CLASSIFIER_INPUT_QUEUE_URL"`
+	SQSClassifierOutputQueueURL string `envconfig:"SQS_CLASSIFIER_OUTPUT_QUEUE_URL"`
+
+	TwofishesHost string `envconfig:"TWOFISHES_HOST"`
+	Hostname      string `default:"http://localhost:8080"`
+	FromEmail     string `default:"test@test.com" envconfig:"FROM_EMAIL"`
+	Insecure      bool   `default:"false"`
+
+	ChromeExe string `default:"/usr/bin/google-chrome" envconfig:"CHROME_EXE"`
+}
+
 var (
-	config struct {
-		addr, staticPath, backendURL, sessionStoreAddr, sessionStorePassword, s3Bucket, sqsClassifierInputQueueURL, sqsClassifierOutputQueueURL, twofishesHost, redirectAddr string
-		insecure                                                                                                                                                             bool
-	}
+	help          bool
+	verboseConfig bool
+	script        string
 )
 
 func init() {
-	flag.StringVar(&config.backendURL, "backend-url", "postgres://localhost/floodwatch?sslmode=disable", "postgres backend URL")
-	flag.StringVar(&config.sessionStoreAddr, "session-store-address", "localhost:6379", "redis session store address")
-	flag.StringVar(&config.sessionStorePassword, "session-store-password", "", "redis session store password")
-	flag.StringVar(&config.addr, "a", "127.0.0.1:8080", "address to listen on")
-	flag.StringVar(&config.s3Bucket, "bucket", "floodwatch-ads", "S3 bucket")
-	flag.StringVar(&config.sqsClassifierInputQueueURL, "input-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-input", "S3 bucket")
-	flag.StringVar(&config.sqsClassifierOutputQueueURL, "output-queue-url", "https://sqs.us-east-1.amazonaws.com/963245043784/classifier-output", "S3 bucket")
-	flag.StringVar(&config.staticPath, "static", "", "static path")
-	flag.StringVar(&config.twofishesHost, "twofishes-host", "http://twofishes.floodwatch.me", "host for twofishes server")
-	flag.StringVar(&config.redirectAddr, "redirect-addr", "127.0.0.1:8081", "address to redirect to https")
-	flag.BoolVar(&config.insecure, "i", false, "insecure (no user authentication)")
+	flag.BoolVar(&help, "h", false, "print usage")
+	flag.BoolVar(&verboseConfig, "c", false, "print config")
+	flag.StringVar(&script, "script", "", "run a named script (possible: `reclassify`)")
 }
 
-func main() {
-	flag.Parse()
-
-	if backendURL := os.Getenv("BACKEND_URL"); backendURL != "" {
-		config.backendURL = backendURL
-	}
-
-	if sessionStoreAddr := os.Getenv("SESSION_STORE_ADDRESS"); sessionStoreAddr != "" {
-		config.sessionStoreAddr = sessionStoreAddr
-	}
-
-	if sessionStorePassword := os.Getenv("SESSION_STORE_PASSWORD"); sessionStorePassword != "" {
-		config.sessionStorePassword = sessionStorePassword
-	}
-
-	if bucket := os.Getenv("BUCKET"); bucket != "" {
-		config.s3Bucket = bucket
-	}
-
-	if inputQueueURL := os.Getenv("INPUT_QUEUE_URL"); inputQueueURL != "" {
-		config.sqsClassifierInputQueueURL = inputQueueURL
-	}
-
-	if outputQueueURL := os.Getenv("OUTPUT_QUEUE_URL"); outputQueueURL != "" {
-		config.sqsClassifierOutputQueueURL = outputQueueURL
-	}
-
-	b, err := backend.New(config.backendURL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	sessionStore, err := session.NewSessionStore(session.SessionStoreOptions{
-		Addr:            config.sessionStoreAddr,
-		Password:        config.sessionStorePassword,
-		SessionDuration: time.Hour * 24 * 365,
-		MaxSessions:     100,
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	awsSession, err := awsSession.NewSessionWithOptions(awsSession.Options{
-		Profile: "floodwatch",
-		Config: aws.Config{
-			Region: aws.String("us-east-1"),
-			CredentialsChainVerboseErrors: aws.Bool(true),
-		},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	options := &webserver.Options{
-		Addr:                        config.addr,
-		RedirectAddr:                config.redirectAddr,
-		Backend:                     b,
-		SessionStore:                sessionStore,
-		AWSSession:                  awsSession,
-		S3Bucket:                    config.s3Bucket,
-		SQSClassifierInputQueueURL:  config.sqsClassifierInputQueueURL,
-		SQSClassifierOutputQueueURL: config.sqsClassifierOutputQueueURL,
-		Insecure:                    config.insecure,
-		StaticPath:                  config.staticPath,
-		TwofishesHost:               config.twofishesHost,
-	}
-
+func runWebserver(options *webserver.Options) {
 	server, err := webserver.New(options)
 	if err != nil {
 		log.Fatal(err)
@@ -119,4 +74,83 @@ func main() {
 	}()
 
 	log.Fatal(<-errs)
+}
+
+func main() {
+	flag.Parse()
+
+	var config Config
+	if help {
+		envconfig.Usage("fw", &config)
+		os.Exit(0)
+	}
+
+	if err := envconfig.Process("fw", &config); err != nil {
+		panic(err)
+	}
+
+	if verboseConfig {
+		fmt.Printf("CONFIG:\n%+v\n", config)
+	}
+
+	b, err := backend.New(config.BackendURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sessionStore, err := session.NewSessionStore(session.SessionStoreOptions{
+		Addr:            config.SessionStoreAddr,
+		Password:        config.SessionStorePassword,
+		SessionDuration: time.Hour * 24 * 365,
+		MaxSessions:     100,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	awsSession, err := awsSession.NewSessionWithOptions(awsSession.Options{
+		Profile: config.AWSProfile,
+		Config: aws.Config{
+			Region: aws.String(config.AWSRegion),
+			CredentialsChainVerboseErrors: aws.Bool(true),
+		},
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	emailer := email.NewAWSSESEmailer(awsSession, config.Hostname, config.FromEmail)
+	screenshotter := screenshot.Screenshotter{config.ChromeExe}
+
+	if script == "" {
+		options := &webserver.Options{
+			Port:         config.Port,
+			RedirectPort: config.RedirectPort,
+			Backend:      b,
+			Emailer:      emailer,
+			Hostname:     config.Hostname,
+			Screenshot:   screenshotter,
+
+			SessionStore:                sessionStore,
+			AWSSession:                  awsSession,
+			S3Bucket:                    config.S3Bucket,
+			S3GalleryBucket:             config.S3GalleryBucket,
+			SQSClassifierInputQueueURL:  config.SQSClassifierInputQueueURL,
+			SQSClassifierOutputQueueURL: config.SQSClassifierOutputQueueURL,
+			FromEmail:                   config.FromEmail,
+			Insecure:                    config.Insecure,
+			StaticPath:                  config.StaticPath,
+			TwofishesHost:               config.TwofishesHost,
+		}
+		runWebserver(options)
+	} else if script == "reclassify" {
+		options := &scripts.ReclassifyOptions{
+			Backend:                     b,
+			AWSSession:                  awsSession,
+			S3Bucket:                    config.S3Bucket,
+			SQSClassifierInputQueueURL:  config.SQSClassifierInputQueueURL,
+			SQSClassifierOutputQueueURL: config.SQSClassifierOutputQueueURL,
+		}
+		scripts.ReclassifyAll(options)
+	}
 }

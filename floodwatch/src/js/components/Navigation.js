@@ -1,27 +1,19 @@
 // @flow
 
-import React, {Component} from 'react';
-import {Link} from 'react-router';
-import {Grid, Nav, Navbar, NavItem, Row, Col} from 'react-bootstrap';
+import React, { Component } from 'react';
+import { Nav, Navbar, NavItem } from 'react-bootstrap';
 
 import history from '../common/history';
-import {FWApiClient} from '../api/api';
 
 type NavigationProps = {
-  navs: Array<{ to?: string; name: string, action?: Function }>;
+  navs: Array<{ to?: string, name: string, action?: Function }>,
 };
 
-type NavigationState = {
+type NavigationState = {};
 
-};
-
-export class Navigation extends Component {
+export default class Navigation extends Component {
   props: NavigationProps;
   state: NavigationState;
-
-  constructor(props: NavigationProps) {
-    super(props);
-  }
 
   handleSelect(selectedKey: string) {
     const keyNum = parseInt(selectedKey, 10);
@@ -46,12 +38,15 @@ export class Navigation extends Component {
             <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
-            <Nav pullRight onSelect={this.handleSelect.bind(this)} activeHref={window.location.pathname}>
-              {this.props.navs.map((nav, key) => {
-                return (
-                  <NavItem eventKey={key} key={key} href={nav.to}>{nav.name}</NavItem>
-                )
-              })}
+            <Nav
+              pullRight
+              onSelect={this.handleSelect.bind(this)}
+              activeHref={window.location.pathname}>
+              {this.props.navs.map((nav, key) => (
+                <NavItem eventKey={key} key={nav.name} href={nav.to}>
+                  {nav.name}
+                </NavItem>
+              ))}
             </Nav>
           </Navbar.Collapse>
         </div>

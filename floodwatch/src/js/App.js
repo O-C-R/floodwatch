@@ -1,28 +1,31 @@
 // @flow
 
 import React, { Component } from 'react';
-import {Router, Route, IndexRoute} from 'react-router';
+import { Router, Route, IndexRoute, Redirect } from 'react-router';
 
-import {FWApiClient} from './api/api.js';
+import FWApiClient from './api/api';
 import history from './common/history';
 
-import {Main} from './components/Main';
-
-import {Register} from './components/Register';
-import {RegisterDemographics} from './components/RegisterDemographics';
-import {Login} from './components/Login';
-import {ProfilePage} from './components/Profile';
-import {Faq} from './components/Faq';
-import {Compare} from './components/Compare';
-import {Landing} from './components/Landing';
-import {ResetPassword} from './components/ResetPassword';
+import Main from './pages/Main';
+import Register from './pages/Register';
+import RegisterDemographics from './pages/RegisterDemographics';
+import Login from './pages/Login';
+import ProfilePage from './pages/Profile';
+import Faq from './pages/Faq';
+import Compare from './pages/Compare';
+import Generate from './pages/Generate';
+import GalleryImage from './pages/GalleryImage';
+import MyAds from './pages/MyAds';
+import Landing from './pages/Landing';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function requireNoAuth(nextState, replace): void {
   if (FWApiClient.get().loggedIn()) {
     replace({
       pathname: '/compare',
-      state: { nextPathname: nextState.location.pathname }
-    })
+      state: { nextPathname: nextState.location.pathname },
+    });
   }
 }
 
@@ -30,21 +33,24 @@ function requireAuth(nextState, replace): void {
   if (!FWApiClient.get().loggedIn()) {
     replace({
       pathname: '/register',
-      state: { nextPathname: nextState.location.pathname }
-    })
+      state: { nextPathname: nextState.location.pathname },
+    });
   }
 }
 
-export class App extends Component {
+function onLogout() {
+  history.pushState('/');
+}
+
+export default class App extends Component {
   constructor() {
     super();
 
-    const apiHost = process.env.REACT_APP_API_HOST || `${window.location.protocol}//${window.location.host}`;
-    FWApiClient.setup(apiHost, this.onLogout.bind(this));
-  }
+    const apiHost =
+      process.env.REACT_APP_API_HOST ||
+      `${window.location.protocol}//${window.location.host}`;
 
-  onLogout() {
-    history.pushState('/');
+    FWApiClient.setup(apiHost, onLogout);
   }
 
   render() {
@@ -61,12 +67,19 @@ export class App extends Component {
             <Route path="demographics" component={RegisterDemographics} />
           </Route>
 
-          // TODO: <Route path="/forgot_password" />
+          <Route path="/forgot_password" component={ForgotPassword} />
           <Route path="/reset_password" component={ResetPassword} />
 
           <Route path="compare" component={Compare} onEnter={requireAuth} />
+          <Route path="myads" component={MyAds} onEnter={requireAuth} />
+
           <Route path="profile" component={ProfilePage} onEnter={requireAuth} />
         </Route>
+
+        {/* Routes for gallery */}
+        <Route path="/generate" component={Generate} />
+        <Redirect from="/i/:imageSlug" to="/gallery/image/:imageSlug" />
+        <Route path="/gallery/image/:imageSlug" component={GalleryImage} />
       </Router>
     );
   }

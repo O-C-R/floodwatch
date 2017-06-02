@@ -5,6 +5,7 @@ import numpy
 import os
 import tempfile
 import traceback
+import time
 
 class NumpyEncoder(JSONEncoder):
 	def default(self, obj):
@@ -26,7 +27,7 @@ while True:
 	receiveMessageResponse = sqs.receive_message(
 		QueueUrl=os.environ['INPUT_QUEUE_URL'],
 		MessageAttributeNames=['id','bucket','key'],
-		MaxNumberOfMessages=1,	
+		MaxNumberOfMessages=1,
 		VisibilityTimeout=60,
 		WaitTimeSeconds=20
 	)
@@ -36,16 +37,18 @@ while True:
 
 	for message in receiveMessageResponse['Messages']:
 		try:
+			start = time.time()
+
 			getObjectResponse = s3.get_object(
 				Bucket=message['MessageAttributes']['bucket']['StringValue'],
 				Key=message['MessageAttributes']['key']['StringValue'],
 			)
-	
+
 			objectFile=tempfile.NamedTemporaryFile(delete=False)
 			for chunk in iter(lambda: getObjectResponse['Body'].read(1024), b''):
 				objectFile.write(chunk)
 			objectFile.close()
-	
+
 			classifyResult=classifier.classify(imgPath=objectFile.name)
 
 			sqs.send_message(
@@ -60,7 +63,7 @@ while True:
 			)
 		except:
 			print(traceback.format_exc())
-		
+
 		try:
 			sqs.delete_message(
 				QueueUrl=os.environ['INPUT_QUEUE_URL'],
@@ -74,3 +77,6 @@ while True:
 				os.remove(objectFile.name)
 		except:
 			print(traceback.format_exc())
+
+		end = time.time()
+		print 'classified %s in %0.3f ms' % (message['MessageAttributes']['id']['StringValue'], (end-start)*1000.0)

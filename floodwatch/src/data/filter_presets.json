@@ -1,0 +1,83 @@
+{
+  "presets": [
+    {
+      "name": "You",
+      "filter": {
+        "personal": true
+      },
+      "always_available": true
+    },
+    {
+      "name": "All",
+      "filter": {},
+      "always_available": true
+    },
+    {
+      "name": "Men",
+      "filter": {
+        "demographics": [
+          {
+            "category_id": 3,
+            "operator": "and",
+            "values": [
+              18
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Women",
+      "filter": {
+        "demographics": [
+          {
+            "category_id": 3,
+            "operator": "and",
+            "values": [
+              17
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "White Christians",
+      "filter": {
+        "demographics": [
+          {
+            "category_id": 1,
+            "operator": "and",
+            "values": [
+              4
+            ]
+          },
+          {
+            "category_id": 2,
+            "operator": "and",
+            "values": [
+              11
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Male 20-30",
+      "filter": {
+        "age": {
+          "min": 20,
+          "max": 30
+        },
+        "demographics": [
+          {
+            "category_id": 3,
+            "operator": "and",
+            "values": [
+              18
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

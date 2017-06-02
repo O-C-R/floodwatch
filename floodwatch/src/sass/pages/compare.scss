@@ -1,4 +1,4 @@
-.compare {
+.compare, .generate {
 
 	.sentence {
 		line-height: 1.3;
@@ -88,8 +88,8 @@
 .filter-option {
 	.btn {
 		padding-left:40px;
-		box-shadow:none; 
-		border:none; 
+		box-shadow:none;
+		border:none;
 		background-color:white;
 	}
 
@@ -98,9 +98,31 @@
 
 .comparison-container {
 	button {
-		box-shadow:none; 
+		box-shadow:none;
 		background-color:white;
 	    border: solid 2px #f2f3f4;
 	    border-radius: 3px;
+	}
+}
+
+/* Special case rules for the generated image */
+.generate {
+	padding-top: 10px;
+	padding-bottom: 10px;
+	width: 100%;
+
+	.chart-sentence {
+		margin-top: 10px;
+	}
+}
+
+.logic-option {
+	&-inline {
+		margin-right: 7px;
+		font-weight: normal;
+
+		input[type="radio"] {
+			margin-right: 7px;
+		}
 	}
 }

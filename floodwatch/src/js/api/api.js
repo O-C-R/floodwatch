@@ -1,10 +1,20 @@
 // @flow
 
 import 'whatwg-fetch';
+import _ from 'lodash';
 import log from 'loglevel';
 
-import {BaseError} from '../common/util';
-import type {PersonResponse, FilterRequest, FilterResponse, PersonDemographics} from './types';
+import { BaseError } from '../common/util';
+import type {
+  PersonResponse,
+  PersonDemographicsRequest,
+  FilterPair,
+  FiltersResponse,
+  GalleryImageRequest,
+  GalleryImageResponse,
+  ImpressionsRequest,
+  ImpressionsResponse,
+} from './types';
 
 export class APIError extends BaseError {
   response: ?Response;
@@ -39,7 +49,7 @@ export class APIClient {
       res = await fetch(url.toString(), {
         method: 'POST',
         credentials: 'include',
-        body
+        body,
       });
     } catch (e) {
       log.error(e);
@@ -48,13 +58,13 @@ export class APIClient {
     }
 
     if (!res.ok) {
-      const body = await res.text();
+      const resBody = await res.text();
       if (res.status === 401) {
-        log.error('Bad auth while POSTing', url.toString(), body);
-        throw new AuthenticationError(res, body);
+        log.error('Bad auth while POSTing', url.toString(), resBody);
+        throw new AuthenticationError(res, resBody);
       } else {
-        log.error('Non-OK response while POSTing', url.toString(), body);
-        throw new APIError('HTTP error', res, body);
+        log.error('Non-OK response while POSTing', url.toString(), resBody);
+        throw new APIError('HTTP error', res, resBody);
       }
     }
 
@@ -65,7 +75,7 @@ export class APIClient {
     const url = new URL(path, this.baseUrl);
 
     if (params) {
-      for (const key in params) {
+      for (const key of Object.keys(params)) {
         url.searchParams.set(key, params[key]);
       }
     }
@@ -76,7 +86,7 @@ export class APIClient {
     try {
       res = await fetch(url.toString(), {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       });
     } catch (e) {
       log.error(e);
@@ -102,7 +112,7 @@ export class APIClient {
     const data = new FormData();
 
     if (body) {
-      for (const key in body) {
+      for (const key of Object.keys(body)) {
         data.append(key, body[key]);
       }
     }
@@ -114,7 +124,7 @@ export class APIClient {
   async postJSON(path: string, body?: Object): Promise<any> {
     const res = await this.post(path, JSON.stringify(body));
     if (res.status === 204) {
-      return null
+      return null;
     }
     return res.json();
   }
@@ -131,9 +141,9 @@ export class APIClient {
 }
 
 const LOGGED_IN_KEY = 'loggedIn';
-let fwApiClientInstance: ?FWApiClient;
-export class FWApiClient extends APIClient {
+export default class FWApiClient extends APIClient {
   unauthorizedHandler: () => void;
+  static fwApiClientInstance: ?FWApiClient;
 
   constructor(baseUrl: string, unauthorizedHandler: () => void) {
     super(baseUrl);
@@ -142,22 +152,30 @@ export class FWApiClient extends APIClient {
   }
 
   static setup(baseUrl: string, unauthorizedHandler: () => void): FWApiClient {
-    if (!fwApiClientInstance) {
-      fwApiClientInstance = new FWApiClient(baseUrl, unauthorizedHandler);
+    if (!FWApiClient.fwApiClientInstance) {
+      FWApiClient.fwApiClientInstance = new FWApiClient(
+        baseUrl,
+        unauthorizedHandler,
+      );
     }
 
-    return fwApiClientInstance;
+    return FWApiClient.fwApiClientInstance;
   }
 
   static get(): FWApiClient {
-    if (!fwApiClientInstance) {
+    if (!FWApiClient.fwApiClientInstance) {
       throw new APIError('API has not been set up!');
     }
 
-    return fwApiClientInstance;
+    return FWApiClient.fwApiClientInstance;
   }
 
-  onAuthError(e: AuthenticationError) {
+  /* eslint class-methods-use-this: ["error", {
+    "exceptMethods": ["onAuthError", "onLogin", "onLogout", "loggedIn"]
+  }] */
+  /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
+  onAuthError(_e: AuthenticationError) {
     if (this.loggedIn()) {
       this.unauthorizedHandler();
       this.onLogout();
@@ -216,11 +234,17 @@ export class FWApiClient extends APIClient {
     }
   }
 
-  async updatePersonDemographics(options: PersonDemographics): Promise<PersonResponse> {
+  async updatePersonDemographics(
+    options: PersonDemographicsRequest,
+  ): Promise<PersonResponse> {
     return this.postJSON('/api/person/demographics', options);
   }
 
-  async register(username: string, email: ?string, password: string): Promise<void> {
+  async register(
+    username: string,
+    email: ?string,
+    password: string,
+  ): Promise<void> {
     await this.postForm('/api/register', { username, email, password });
   }
 
@@ -231,13 +255,15 @@ export class FWApiClient extends APIClient {
   }
 
   async getLocationOptions(place: string) {
-    const res = this.getJSON('/api/twofishes?query=' + place + '&maxInterpretations=5')
-    return res
+    const res = this.getJSON(
+      `/api/twofishes?query=${place}&maxInterpretations=5`,
+    );
+    return res;
   }
 
   async getDecodedLocation(id: string) {
-    const res = this.getJSON('/api/twofishes?slug=' + id)
-    return res
+    const res = this.getJSON(`/api/twofishes?slug=${id}`);
+    return res;
   }
 
   async logout(): Promise<void> {
@@ -245,14 +271,46 @@ export class FWApiClient extends APIClient {
     this.onLogout();
   }
 
-  async getFilteredAdCounts(f: FilterRequest): Promise<FilterResponse> {
-    return this.postJSON('/api/ads/filtered', f);
+  async getFilteredAdCounts(f: FilterPair): Promise<FiltersResponse> {
+    // TODO: move this somewhere better
+    const cpy = _.cloneDeep(f);
+    if (cpy.filter_a.demographics) {
+      for (let i = cpy.filter_a.demographics.length - 1; i >= 0; --i) {
+        if (cpy.filter_a.demographics[i].values.length === 0) {
+          cpy.filter_a.demographics = cpy.filter_a.demographics.splice(i, 1);
+        }
+      }
+    }
+    if (cpy.filter_b.demographics) {
+      for (let i = cpy.filter_b.demographics.length - 1; i >= 0; --i) {
+        if (cpy.filter_b.demographics[i].values.length === 0) {
+          cpy.filter_b.demographics = cpy.filter_b.demographics.splice(i, 1);
+        }
+      }
+    }
+    return this.postJSON('/api/recorded_ads/filtered', f);
   }
 
-  async completePasswordReset(token: string, password: string): Promise<FilterResponse> {
+  startPasswordReset(email: string): Promise<void> {
+    return this.postJSON('/api/reset_password/start', { email });
+  }
+
+  completePasswordReset(token: string, password: string): Promise<void> {
     return this.postJSON('/api/reset_password/complete', {
       password_reset_token: token,
-      password
+      password,
     });
+  }
+
+  requestGalleryImage(req: GalleryImageRequest): Promise<GalleryImageResponse> {
+    return this.postJSON('/api/recorded_ads/screenshot', req);
+  }
+
+  getGalleryImage(slug: string): Promise<GalleryImageResponse> {
+    return this.getJSON(`/api/gallery/image/${slug}`);
+  }
+
+  getImpressionsPaged(req: ImpressionsRequest): Promise<ImpressionsResponse> {
+    return this.getJSON('/api/recorded_ads/impressions', req);
   }
 }
